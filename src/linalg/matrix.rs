@@ -133,6 +133,17 @@ impl Matrix {
 
         Matrix::new(values).expect("Transpose always produces a valid matrix")
     }
+
+    /// Creates an identity matrix of the given size.
+    pub fn identity(size: usize) -> Matrix {
+        let mut values = vec![vec![0.0; size]; size];
+
+        for i in 0..size {
+            values[i][i] = 1.0;
+        }
+
+        Matrix::new(values).expect("Identity matrix is always valid")
+    }
 }
 
 impl fmt::Display for Matrix {
@@ -334,5 +345,35 @@ mod tests {
         let matrix = Matrix::new(vec![]).unwrap();
 
         assert_eq!(matrix.transpose().shape(), (0, 0));
+    }
+
+    #[test]
+    fn creates_identity_matrix_1x1() {
+        let matrix = Matrix::identity(1);
+
+        let expected = Matrix::new(vec![vec![1.0]]).unwrap();
+
+        assert_eq!(matrix, expected);
+    }
+
+    #[test]
+    fn creates_identity_matrix_3x3() {
+        let matrix = Matrix::identity(3);
+
+        let expected = Matrix::new(vec![
+            vec![1.0, 0.0, 0.0],
+            vec![0.0, 1.0, 0.0],
+            vec![0.0, 0.0, 1.0],
+        ])
+        .unwrap();
+
+        assert_eq!(matrix, expected);
+    }
+
+    #[test]
+    fn creates_identity_matrix_0x0() {
+        let matrix = Matrix::identity(0);
+
+        assert_eq!(matrix.shape(), (0, 0));
     }
 }
