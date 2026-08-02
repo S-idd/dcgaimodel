@@ -116,6 +116,23 @@ impl Matrix {
 
         Matrix::new(values).expect("Scalar multiplication always produces a valid matrix")
     }
+
+    /// Returns the transpose of the matrix.
+    pub fn transpose(&self) -> Matrix {
+        if self.rows() == 0 || self.cols() == 0 {
+            return Matrix::new(vec![]).expect("An empty matrix is always valid");
+        }
+
+        let mut values = vec![vec![0.0; self.rows()]; self.cols()];
+
+        for row in 0..self.rows() {
+            for col in 0..self.cols() {
+                values[col][row] = self.values[row][col];
+            }
+        }
+
+        Matrix::new(values).expect("Transpose always produces a valid matrix")
+    }
 }
 
 impl fmt::Display for Matrix {
@@ -292,5 +309,30 @@ mod tests {
         let expected = Matrix::new(vec![vec![-2.0, 4.0], vec![-6.0, 8.0]]).unwrap();
 
         assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn transposes_square_matrix() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let expected = Matrix::new(vec![vec![1.0, 3.0], vec![2.0, 4.0]]).unwrap();
+
+        assert_eq!(matrix.transpose(), expected);
+    }
+
+    #[test]
+    fn transposes_rectangular_matrix() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]).unwrap();
+
+        let expected = Matrix::new(vec![vec![1.0, 4.0], vec![2.0, 5.0], vec![3.0, 6.0]]).unwrap();
+
+        assert_eq!(matrix.transpose(), expected);
+    }
+
+    #[test]
+    fn transpose_of_empty_matrix_is_empty() {
+        let matrix = Matrix::new(vec![]).unwrap();
+
+        assert_eq!(matrix.transpose().shape(), (0, 0));
     }
 }
