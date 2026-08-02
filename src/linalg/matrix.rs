@@ -1,5 +1,5 @@
 use crate::linalg::errors::LinalgError;
-
+use std::fmt;
 /// Represents a mathematical matrix.
 ///
 /// The matrix is stored in row-major order.
@@ -66,6 +66,28 @@ impl Matrix {
     }
 }
 
+impl fmt::Display for Matrix {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "[")?;
+
+        for row in &self.values {
+            write!(f, "  [")?;
+
+            for (index, value) in row.iter().enumerate() {
+                if index > 0 {
+                    write!(f, ", ")?;
+                }
+
+                write!(f, "{value}")?;
+            }
+
+            writeln!(f, "]")?;
+        }
+
+        write!(f, "]")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,5 +134,14 @@ mod tests {
         let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
 
         assert!(matrix.get(0, 2).is_err());
+    }
+
+    #[test]
+    fn displays_matrix_correctly() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let expected = "[\n  [1, 2]\n  [3, 4]\n]";
+
+        assert_eq!(format!("{}", matrix), expected);
     }
 }
