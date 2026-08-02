@@ -105,6 +105,17 @@ impl Matrix {
 
         Ok(Matrix::new(values).expect("element-wise operations always produce a valid matrix"))
     }
+
+    /// Multiplies every element of the matrix by a scalar.
+    pub fn scalar_multiply(&self, scalar: f64) -> Matrix {
+        let values = self
+            .values
+            .iter()
+            .map(|row| row.iter().map(|value| value * scalar).collect::<Vec<f64>>())
+            .collect::<Vec<Vec<f64>>>();
+
+        Matrix::new(values).expect("Scalar multiplication always produces a valid matrix")
+    }
 }
 
 impl fmt::Display for Matrix {
@@ -248,5 +259,38 @@ mod tests {
         let result = a.subtract(&b).unwrap();
 
         assert_eq!(result.shape(), (0, 0));
+    }
+
+    #[test]
+    fn multiplies_matrix_by_positive_scalar() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let result = matrix.scalar_multiply(2.0);
+
+        let expected = Matrix::new(vec![vec![2.0, 4.0], vec![6.0, 8.0]]).unwrap();
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn multiplies_matrix_by_zero() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let result = matrix.scalar_multiply(0.0);
+
+        let expected = Matrix::new(vec![vec![0.0, 0.0], vec![0.0, 0.0]]).unwrap();
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn multiplies_matrix_by_negative_scalar() {
+        let matrix = Matrix::new(vec![vec![1.0, -2.0], vec![3.0, -4.0]]).unwrap();
+
+        let result = matrix.scalar_multiply(-2.0);
+
+        let expected = Matrix::new(vec![vec![-2.0, 4.0], vec![-6.0, 8.0]]).unwrap();
+
+        assert_eq!(result, expected);
     }
 }
