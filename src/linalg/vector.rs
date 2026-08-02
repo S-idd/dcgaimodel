@@ -1,4 +1,4 @@
-use crate::linalg::errors::VectorError;
+use crate::linalg::errors::LinalgError;
 use std::fmt;
 use std::ops::Index;
 use std::slice::Iter;
@@ -29,20 +29,20 @@ impl Vector {
     }
 
     /// Returns the value at the given index.
-    pub fn get(&self, index: usize) -> Result<f64, VectorError> {
+    pub fn get(&self, index: usize) -> Result<f64, LinalgError> {
         self.values
             .get(index)
             .copied()
-            .ok_or(VectorError::IndexOutOfBounds {
+            .ok_or(LinalgError::IndexOutOfBounds {
                 index,
                 length: self.len(),
             })
     }
 
     /// Adds two vectors.
-    pub fn add(&self, other: &Vector) -> Result<Vector, VectorError> {
+    pub fn add(&self, other: &Vector) -> Result<Vector, LinalgError> {
         if self.len() != other.len() {
-            return Err(VectorError::DimensionMismatch {
+            return Err(LinalgError::DimensionMismatch {
                 left: self.len(),
                 right: other.len(),
             });
@@ -59,9 +59,9 @@ impl Vector {
     }
 
     /// Subtracts another vector from this vector.
-    pub fn subtract(&self, other: &Vector) -> Result<Vector, VectorError> {
+    pub fn subtract(&self, other: &Vector) -> Result<Vector, LinalgError> {
         if self.len() != other.len() {
-            return Err(VectorError::DimensionMismatch {
+            return Err(LinalgError::DimensionMismatch {
                 left: self.len(),
                 right: other.len(),
             });
@@ -87,9 +87,9 @@ impl Vector {
     /// Computes the dot product of two vectors.
     ///
     /// Returns an error if the vectors have different dimensions.
-    pub fn dot_product(&self, other: &Vector) -> Result<f64, VectorError> {
+    pub fn dot_product(&self, other: &Vector) -> Result<f64, LinalgError> {
         if self.len() != other.len() {
-            return Err(VectorError::DimensionMismatch {
+            return Err(LinalgError::DimensionMismatch {
                 left: self.len(),
                 right: other.len(),
             });
@@ -117,11 +117,11 @@ impl Vector {
     /// Returns a normalized version of the vector.
     ///
     /// A normalized vector has a magnitude of 1.
-    pub fn normalize(&self) -> Result<Vector, VectorError> {
+    pub fn normalize(&self) -> Result<Vector, LinalgError> {
         let magnitude = self.magnitude();
 
         if magnitude == 0.0 {
-            return Err(VectorError::ZeroMagnitude);
+            return Err(LinalgError::ZeroMagnitude);
         }
 
         let values = self.values.iter().map(|value| value / magnitude).collect();

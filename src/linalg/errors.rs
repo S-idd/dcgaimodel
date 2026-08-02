@@ -2,7 +2,7 @@ use std::fmt;
 
 /// Errors that can occur during vector operations.
 #[derive(Debug, PartialEq)]
-pub enum VectorError {
+pub enum LinalgError {
     /// The vectors do not have the same length.
     DimensionMismatch {
         left: usize,
@@ -18,14 +18,14 @@ pub enum VectorError {
     ZeroMagnitude,
 }
 
-impl fmt::Display for VectorError {
+impl fmt::Display for LinalgError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            VectorError::DimensionMismatch { left, right } => {
+            LinalgError::DimensionMismatch { left, right } => {
                 write!(f, "Dimension mismatch: left = {}, right = {}", left, right)
             }
 
-            VectorError::IndexOutOfBounds { index, length } => {
+            LinalgError::IndexOutOfBounds { index, length } => {
                 write!(
                     f,
                     "Index {} is out of bounds for vector of length {}",
@@ -33,11 +33,11 @@ impl fmt::Display for VectorError {
                 )
             }
 
-            VectorError::ZeroMagnitude => {
+            LinalgError::ZeroMagnitude => {
                 write!(f, "Cannot normalize a vector with zero magnitude.")
             }
         }
     }
 }
 
-impl std::error::Error for VectorError {}
+impl std::error::Error for LinalgError {}
