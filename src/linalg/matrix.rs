@@ -69,27 +69,20 @@ impl Matrix {
     ///
     /// Returns an error if the matrix dimensions do not match.
     pub fn add(&self, other: &Matrix) -> Result<Matrix, LinalgError> {
-        if self.shape() != other.shape() {
-            return Err(LinalgError::DimensionMismatch {
-                left: self.rows(),
-                right: other.rows(),
-            });
-        }
-
-        let values = self
-            .values
-            .iter()
-            .zip(other.values.iter())
-            .map(|(row_a, row_b)| row_a.iter().zip(row_b.iter()).map(|(a, b)| a + b).collect())
-            .collect();
-
-        Ok(Matrix::new(values).unwrap())
+        self.element_wise(other, |a, b| a + b)
     }
 
     /// Subtracts another matrix from this matrix.
     ///
     /// Returns an error if the matrix dimensions do not match.
     pub fn subtract(&self, other: &Matrix) -> Result<Matrix, LinalgError> {
+        self.element_wise(other, |a, b| a - b)
+    }
+
+    fn element_wise<F>(&self, other: &Matrix, op: F) -> Result<Matrix, LinalgError>
+    where
+        F: Fn(f64, f64) -> f64,
+    {
         if self.shape() != other.shape() {
             return Err(LinalgError::DimensionMismatch {
                 left: self.rows(),
@@ -101,10 +94,16 @@ impl Matrix {
             .values
             .iter()
             .zip(other.values.iter())
-            .map(|(row_a, row_b)| row_a.iter().zip(row_b.iter()).map(|(a, b)| a - b).collect())
+            .map(|(row_a, row_b)| {
+                row_a
+                    .iter()
+                    .zip(row_b.iter())
+                    .map(|(&a, &b)| op(a, b))
+                    .collect()
+            })
             .collect();
 
-        Ok(Matrix::new(values).unwrap())
+        Ok(Matrix::new(values).expect("element-wise operations always produce a valid matrix"))
     }
 }
 
