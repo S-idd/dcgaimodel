@@ -85,6 +85,27 @@ impl Matrix {
 
         Ok(Matrix::new(values).unwrap())
     }
+
+    /// Subtracts another matrix from this matrix.
+    ///
+    /// Returns an error if the matrix dimensions do not match.
+    pub fn subtract(&self, other: &Matrix) -> Result<Matrix, LinalgError> {
+        if self.shape() != other.shape() {
+            return Err(LinalgError::DimensionMismatch {
+                left: self.rows(),
+                right: other.rows(),
+            });
+        }
+
+        let values = self
+            .values
+            .iter()
+            .zip(other.values.iter())
+            .map(|(row_a, row_b)| row_a.iter().zip(row_b.iter()).map(|(a, b)| a - b).collect())
+            .collect();
+
+        Ok(Matrix::new(values).unwrap())
+    }
 }
 
 impl fmt::Display for Matrix {
@@ -194,6 +215,38 @@ mod tests {
         let b = Matrix::new(vec![]).unwrap();
 
         let result = a.add(&b).unwrap();
+
+        assert_eq!(result.shape(), (0, 0));
+    }
+
+    #[test]
+    fn subtracts_two_matrices() {
+        let a = Matrix::new(vec![vec![5.0, 6.0], vec![7.0, 8.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let result = a.subtract(&b).unwrap();
+
+        let expected = Matrix::new(vec![vec![4.0, 4.0], vec![4.0, 4.0]]).unwrap();
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn matrix_subtract_dimension_mismatch_returns_error() {
+        let a = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![1.0], vec![2.0]]).unwrap();
+
+        assert!(a.subtract(&b).is_err());
+    }
+
+    #[test]
+    fn subtracts_empty_matrices() {
+        let a = Matrix::new(vec![]).unwrap();
+        let b = Matrix::new(vec![]).unwrap();
+
+        let result = a.subtract(&b).unwrap();
 
         assert_eq!(result.shape(), (0, 0));
     }
