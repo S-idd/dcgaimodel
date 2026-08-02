@@ -64,6 +64,27 @@ impl Matrix {
 
         Ok(self.values[row][col])
     }
+
+    /// Adds two matrices.
+    ///
+    /// Returns an error if the matrix dimensions do not match.
+    pub fn add(&self, other: &Matrix) -> Result<Matrix, LinalgError> {
+        if self.shape() != other.shape() {
+            return Err(LinalgError::DimensionMismatch {
+                left: self.rows(),
+                right: other.rows(),
+            });
+        }
+
+        let values = self
+            .values
+            .iter()
+            .zip(other.values.iter())
+            .map(|(row_a, row_b)| row_a.iter().zip(row_b.iter()).map(|(a, b)| a + b).collect())
+            .collect();
+
+        Ok(Matrix::new(values).unwrap())
+    }
 }
 
 impl fmt::Display for Matrix {
@@ -143,5 +164,37 @@ mod tests {
         let expected = "[\n  [1, 2]\n  [3, 4]\n]";
 
         assert_eq!(format!("{}", matrix), expected);
+    }
+
+    #[test]
+    fn adds_two_matrices() {
+        let a = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![5.0, 6.0], vec![7.0, 8.0]]).unwrap();
+
+        let result = a.add(&b).unwrap();
+
+        let expected = Matrix::new(vec![vec![6.0, 8.0], vec![10.0, 12.0]]).unwrap();
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn matrix_add_dimension_mismatch_returns_error() {
+        let a = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![1.0], vec![2.0]]).unwrap();
+
+        assert!(a.add(&b).is_err());
+    }
+
+    #[test]
+    fn adds_empty_matrices() {
+        let a = Matrix::new(vec![]).unwrap();
+        let b = Matrix::new(vec![]).unwrap();
+
+        let result = a.add(&b).unwrap();
+
+        assert_eq!(result.shape(), (0, 0));
     }
 }
