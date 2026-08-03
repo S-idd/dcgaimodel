@@ -126,9 +126,9 @@ impl Matrix {
 
         let mut values = vec![vec![0.0; self.rows()]; self.cols()];
 
-        for row in 0..self.rows() {
-            for col in 0..self.cols() {
-                values[col][row] = self.values[row][col];
+        for (row, source_row) in self.values.iter().enumerate() {
+            for (col, value) in source_row.iter().enumerate() {
+                values[col][row] = *value;
             }
         }
 
@@ -139,8 +139,8 @@ impl Matrix {
     pub fn identity(size: usize) -> Matrix {
         let mut values = vec![vec![0.0; size]; size];
 
-        for i in 0..size {
-            values[i][i] = 1.0;
+        for (i, row) in values.iter_mut().enumerate() {
+            row[i] = 1.0;
         }
 
         Matrix::new(values).expect("Identity matrix is always valid")
@@ -188,19 +188,15 @@ impl Matrix {
         }
 
         let mut values = vec![vec![0.0; other.cols()]; self.rows()];
-
-        for row in 0..self.rows() {
-            for col in 0..other.cols() {
+        for (row_idx, result_row) in values.iter_mut().enumerate() {
+            for (col_idx, result_cell) in result_row.iter_mut().enumerate() {
                 let mut sum = 0.0;
-
                 for k in 0..self.cols() {
-                    sum += self.values[row][k] * other.values[k][col];
+                    sum += self.values[row_idx][k] * other.values[k][col_idx];
                 }
-
-                values[row][col] = sum;
+                *result_cell = sum;
             }
         }
-
         Ok(Matrix::new(values).expect("Matrix multiplication always produces a valid matrix"))
     }
 }
