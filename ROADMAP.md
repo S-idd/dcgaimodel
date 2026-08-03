@@ -102,10 +102,10 @@ The goal is not only to build an AI model, but also to understand every mathemat
 
 # Phase 5 — Dataset
 
-- [ ] CSV Loader
-- [ ] Batch Loader
-- [ ] Train/Test Split
-- [ ] Normalization
+- [x] CSV Loader
+- [x] Batch Loader
+- [x] Train/Test Split
+- [x] Normalization
 
 ---
 
