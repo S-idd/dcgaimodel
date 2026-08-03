@@ -21,22 +21,22 @@ The goal is not only to build an AI model, but also to understand every mathemat
 - [x] subtract()
 - [x] scalar_multiply()
 - [x] dot_product()
-- [ ] magnitude()
-- [ ] normalize()
+- [x] magnitude()
+- [x] normalize()
 
 ---
 
 ## Matrix
 
-- [ ] Matrix Structure
-- [ ] Identity Matrix
-- [ ] Zero Matrix
-- [ ] Matrix Addition
-- [ ] Matrix Subtraction
-- [ ] Scalar Multiplication
-- [ ] Matrix Multiplication
-- [ ] Matrix × Vector
-- [ ] Transpose
+- [x] Matrix Structure
+- [x] Identity Matrix
+- [x] Zero Matrix
+- [x] Matrix Addition
+- [x] Matrix Subtraction
+- [x] Scalar Multiplication
+- [x] Matrix Multiplication
+- [x] Matrix × Vector
+- [x] Transpose
 
 ---
 
@@ -44,34 +44,43 @@ The goal is not only to build an AI model, but also to understand every mathemat
 
 ## Neuron
 
-- [ ] Neuron Structure
-- [ ] Weights
-- [ ] Bias
-- [ ] Forward Pass
+- [x] Neuron Structure
+- [x] Weights
+- [x] Bias
+- [x] Forward Pass
 
 ---
 
 ## Layer
 
-- [ ] Dense Layer
-- [ ] Batch Forward Pass
+- [x] Dense Layer
+- [x] Batch Forward Pass
 
 ---
 
 ## Activations
 
-- [ ] ReLU
-- [ ] Sigmoid
-- [ ] Tanh
-- [ ] Softmax
+- [x] ReLU
+- [x] Sigmoid
+- [x] Tanh
+- [x] Softmax
 
 ---
 
 ## Loss Functions
 
-- [ ] Mean Squared Error
-- [ ] Binary Cross Entropy
-- [ ] Cross Entropy
+- [x] Mean Squared Error
+- [x] Binary Cross Entropy
+- [x] Cross Entropy
+
+---
+
+## Network
+
+- [x] Sequential Network
+- [x] Layer Activation Wiring
+- [x] Forward Propagation
+- [x] Batch Forward Pass
 
 ---
 
