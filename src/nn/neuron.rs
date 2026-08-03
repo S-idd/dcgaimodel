@@ -122,6 +122,9 @@ mod tests {
 
         let result = neuron.apply_gradients(&Vector::new(vec![1.0]), 0.0, 0.1);
 
-        assert_eq!(result, Err(LinalgError::DimensionMismatch { left: 2, right: 1 }));
+        assert_eq!(
+            result,
+            Err(LinalgError::DimensionMismatch { left: 2, right: 1 })
+        );
     }
 }

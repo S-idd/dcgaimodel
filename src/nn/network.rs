@@ -20,6 +20,15 @@ pub enum NetworkError {
         actual: usize,
     },
 
+    /// A layer activation does not support this backpropagation path yet.
+    UnsupportedActivation {
+        layer_index: usize,
+        activation: Activation,
+    },
+
+    /// Learning rate must be positive and finite.
+    InvalidLearningRate { value: f64 },
+
     /// A lower-level linear algebra operation failed.
     Linalg(LinalgError),
 }
@@ -40,6 +49,17 @@ impl fmt::Display for NetworkError {
                 "Dimension mismatch at layer {}: expected {}, got {}",
                 layer_index, expected, actual
             ),
+            NetworkError::UnsupportedActivation {
+                layer_index,
+                activation,
+            } => write!(
+                f,
+                "Activation {:?} at layer {} is not supported for this backpropagation path.",
+                activation, layer_index
+            ),
+            NetworkError::InvalidLearningRate { value } => {
+                write!(f, "Learning rate must be positive and finite: {}", value)
+            }
             NetworkError::Linalg(error) => write!(f, "Linear algebra error: {}", error),
         }
     }
@@ -101,6 +121,61 @@ impl NetworkLayer {
     }
 }
 
+/// Gradients for one dense layer.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LayerGradient {
+    weight_gradients: Vec<Vector>,
+    bias_gradients: Vector,
+}
+
+impl LayerGradient {
+    /// Creates gradients for one dense layer.
+    pub fn new(weight_gradients: Vec<Vector>, bias_gradients: Vector) -> Self {
+        Self {
+            weight_gradients,
+            bias_gradients,
+        }
+    }
+
+    /// Returns one weight-gradient vector per neuron.
+    pub fn weight_gradients(&self) -> &[Vector] {
+        &self.weight_gradients
+    }
+
+    /// Returns one bias gradient per neuron.
+    pub fn bias_gradients(&self) -> &Vector {
+        &self.bias_gradients
+    }
+}
+
+/// Gradients for an entire sequential network.
+#[derive(Debug, Clone, PartialEq)]
+pub struct NetworkGradients {
+    layer_gradients: Vec<LayerGradient>,
+}
+
+impl NetworkGradients {
+    /// Creates network gradients.
+    pub fn new(layer_gradients: Vec<LayerGradient>) -> Self {
+        Self { layer_gradients }
+    }
+
+    /// Returns one gradient group per network layer.
+    pub fn layer_gradients(&self) -> &[LayerGradient] {
+        &self.layer_gradients
+    }
+
+    /// Returns the number of gradient groups.
+    pub fn len(&self) -> usize {
+        self.layer_gradients.len()
+    }
+
+    /// Returns true when no gradients are present.
+    pub fn is_empty(&self) -> bool {
+        self.layer_gradients.is_empty()
+    }
+}
+
 /// A sequential feed-forward neural network.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Network {
@@ -118,6 +193,11 @@ impl Network {
     /// Returns the network layers.
     pub fn layers(&self) -> &[NetworkLayer] {
         &self.layers
+    }
+
+    /// Returns mutable access to the network layers.
+    pub fn layers_mut(&mut self) -> &mut [NetworkLayer] {
+        &mut self.layers
     }
 
     /// Returns the number of layers in the network.
@@ -174,6 +254,185 @@ impl Network {
             .map(|inputs| self.forward(inputs))
             .collect::<Result<Vec<Vector>, NetworkError>>()
     }
+
+    /// Computes MSE gradients for one input-target pair.
+    pub fn backpropagate_mse(
+        &self,
+        inputs: &Vector,
+        target: &Vector,
+    ) -> Result<NetworkGradients, NetworkError> {
+        let (prediction, trace) = self.forward_with_trace(inputs)?;
+
+        if prediction.len() != target.len() {
+            return Err(NetworkError::DimensionMismatch {
+                layer_index: self.len(),
+                expected: prediction.len(),
+                actual: target.len(),
+            });
+        }
+
+        let output_scale = 2.0 / prediction.len() as f64;
+        let mut upstream_gradients = prediction
+            .iter()
+            .zip(target.iter())
+            .map(|(predicted, expected)| output_scale * (predicted - expected))
+            .collect::<Vec<f64>>();
+
+        let mut layer_gradients = Vec::with_capacity(self.len());
+
+        for layer_index in (0..self.layers.len()).rev() {
+            let network_layer = &self.layers[layer_index];
+            let layer_trace = &trace[layer_index];
+            let activated_output = &layer_trace.output;
+            let layer_input = &layer_trace.input;
+
+            let deltas = upstream_gradients
+                .iter()
+                .zip(activated_output.iter())
+                .map(|(gradient, output)| {
+                    network_layer
+                        .activation()
+                        .derivative_from_output(*output)
+                        .map(|derivative| gradient * derivative)
+                        .ok_or(NetworkError::UnsupportedActivation {
+                            layer_index,
+                            activation: network_layer.activation(),
+                        })
+                })
+                .collect::<Result<Vec<f64>, NetworkError>>()?;
+
+            let weight_gradients = deltas
+                .iter()
+                .map(|delta| {
+                    Vector::new(
+                        layer_input
+                            .iter()
+                            .map(|input_value| delta * input_value)
+                            .collect(),
+                    )
+                })
+                .collect::<Vec<Vector>>();
+
+            let bias_gradients = Vector::new(deltas.clone());
+
+            upstream_gradients = vec![0.0; network_layer.input_size().unwrap_or(0)];
+
+            for (neuron, delta) in network_layer.layer().neurons().iter().zip(deltas.iter()) {
+                for (input_index, weight) in neuron.weights().iter().enumerate() {
+                    upstream_gradients[input_index] += delta * weight;
+                }
+            }
+
+            layer_gradients.push(LayerGradient::new(weight_gradients, bias_gradients));
+        }
+
+        layer_gradients.reverse();
+
+        Ok(NetworkGradients::new(layer_gradients))
+    }
+
+    /// Applies network gradients using vanilla gradient descent.
+    pub fn apply_gradients(
+        &mut self,
+        gradients: &NetworkGradients,
+        learning_rate: f64,
+    ) -> Result<(), NetworkError> {
+        if !learning_rate.is_finite() || learning_rate <= 0.0 {
+            return Err(NetworkError::InvalidLearningRate {
+                value: learning_rate,
+            });
+        }
+
+        if gradients.len() != self.len() {
+            return Err(NetworkError::DimensionMismatch {
+                layer_index: 0,
+                expected: self.len(),
+                actual: gradients.len(),
+            });
+        }
+
+        for (layer_index, (network_layer, layer_gradient)) in self
+            .layers
+            .iter_mut()
+            .zip(gradients.layer_gradients().iter())
+            .enumerate()
+        {
+            if layer_gradient.weight_gradients().len() != network_layer.output_size() {
+                return Err(NetworkError::DimensionMismatch {
+                    layer_index,
+                    expected: network_layer.output_size(),
+                    actual: layer_gradient.weight_gradients().len(),
+                });
+            }
+
+            if layer_gradient.bias_gradients().len() != network_layer.output_size() {
+                return Err(NetworkError::DimensionMismatch {
+                    layer_index,
+                    expected: network_layer.output_size(),
+                    actual: layer_gradient.bias_gradients().len(),
+                });
+            }
+
+            for (neuron_index, neuron) in network_layer.layer.neurons_mut().iter_mut().enumerate() {
+                neuron.apply_gradients(
+                    &layer_gradient.weight_gradients()[neuron_index],
+                    layer_gradient.bias_gradients()[neuron_index],
+                    learning_rate,
+                )?;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Runs one MSE training step and returns the gradients that were applied.
+    pub fn train_mse(
+        &mut self,
+        inputs: &Vector,
+        target: &Vector,
+        learning_rate: f64,
+    ) -> Result<NetworkGradients, NetworkError> {
+        let gradients = self.backpropagate_mse(inputs, target)?;
+
+        self.apply_gradients(&gradients, learning_rate)?;
+
+        Ok(gradients)
+    }
+
+    fn forward_with_trace(
+        &self,
+        inputs: &Vector,
+    ) -> Result<(Vector, Vec<LayerForwardTrace>), NetworkError> {
+        let expected = self.input_size();
+
+        if inputs.len() != expected {
+            return Err(NetworkError::DimensionMismatch {
+                layer_index: 0,
+                expected,
+                actual: inputs.len(),
+            });
+        }
+
+        let mut output = inputs.clone();
+        let mut trace = Vec::with_capacity(self.len());
+
+        for layer in &self.layers {
+            let layer_input = output;
+            output = layer.forward(&layer_input)?;
+            trace.push(LayerForwardTrace {
+                input: layer_input,
+                output: output.clone(),
+            });
+        }
+
+        Ok((output, trace))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+struct LayerForwardTrace {
+    input: Vector,
+    output: Vector,
 }
 
 fn validate_layers(layers: &[NetworkLayer]) -> Result<(), NetworkError> {
@@ -386,5 +645,168 @@ mod tests {
                 actual: 1
             })
         );
+    }
+
+    #[test]
+    fn backpropagate_mse_computes_single_layer_gradients() {
+        let network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![0.5, -1.0]], vec![0.25]),
+            Activation::Linear,
+        )])
+        .unwrap();
+
+        let gradients = network
+            .backpropagate_mse(&Vector::new(vec![2.0, -3.0]), &Vector::new(vec![1.0]))
+            .unwrap();
+
+        let layer_gradient = &gradients.layer_gradients()[0];
+
+        assert_eq!(
+            layer_gradient.weight_gradients(),
+            &[Vector::new(vec![13.0, -19.5])]
+        );
+        assert_eq!(layer_gradient.bias_gradients(), &Vector::new(vec![6.5]));
+    }
+
+    #[test]
+    fn backpropagate_mse_uses_chain_rule_for_hidden_layers() {
+        let network = Network::new(vec![
+            NetworkLayer::new(
+                dense_layer(vec![vec![1.0, 0.0], vec![0.0, 1.0]], vec![0.0, 0.0]),
+                Activation::Linear,
+            ),
+            NetworkLayer::new(
+                dense_layer(vec![vec![2.0, -1.0]], vec![0.0]),
+                Activation::Linear,
+            ),
+        ])
+        .unwrap();
+
+        let gradients = network
+            .backpropagate_mse(&Vector::new(vec![1.0, 3.0]), &Vector::new(vec![1.0]))
+            .unwrap();
+
+        assert_eq!(
+            gradients.layer_gradients()[0].weight_gradients(),
+            &[Vector::new(vec![-8.0, -24.0]), Vector::new(vec![4.0, 12.0])]
+        );
+        assert_eq!(
+            gradients.layer_gradients()[0].bias_gradients(),
+            &Vector::new(vec![-8.0, 4.0])
+        );
+        assert_eq!(
+            gradients.layer_gradients()[1].weight_gradients(),
+            &[Vector::new(vec![-4.0, -12.0])]
+        );
+        assert_eq!(
+            gradients.layer_gradients()[1].bias_gradients(),
+            &Vector::new(vec![-4.0])
+        );
+    }
+
+    #[test]
+    fn backpropagate_mse_rejects_target_dimension_mismatch() {
+        let network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![1.0, 1.0]], vec![0.0]),
+            Activation::Linear,
+        )])
+        .unwrap();
+
+        let result =
+            network.backpropagate_mse(&Vector::new(vec![1.0, 2.0]), &Vector::new(vec![1.0, 2.0]));
+
+        assert_eq!(
+            result,
+            Err(NetworkError::DimensionMismatch {
+                layer_index: 1,
+                expected: 1,
+                actual: 2
+            })
+        );
+    }
+
+    #[test]
+    fn backpropagate_mse_rejects_softmax_activation() {
+        let network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![1.0, 0.0], vec![0.0, 1.0]], vec![0.0, 0.0]),
+            Activation::Softmax,
+        )])
+        .unwrap();
+
+        let result =
+            network.backpropagate_mse(&Vector::new(vec![1.0, 2.0]), &Vector::new(vec![0.0, 1.0]));
+
+        assert_eq!(
+            result,
+            Err(NetworkError::UnsupportedActivation {
+                layer_index: 0,
+                activation: Activation::Softmax
+            })
+        );
+    }
+
+    #[test]
+    fn apply_gradients_updates_network_weights() {
+        let mut network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![1.0, -2.0]], vec![0.5]),
+            Activation::Linear,
+        )])
+        .unwrap();
+        let gradients = NetworkGradients::new(vec![LayerGradient::new(
+            vec![Vector::new(vec![0.25, -0.5])],
+            Vector::new(vec![1.0]),
+        )]);
+
+        network.apply_gradients(&gradients, 0.1).unwrap();
+
+        let neuron = &network.layers()[0].layer().neurons()[0];
+
+        assert_eq!(neuron.weights(), &Vector::new(vec![0.975, -1.95]));
+        assert_eq!(neuron.bias(), 0.4);
+    }
+
+    #[test]
+    fn apply_gradients_rejects_invalid_learning_rate() {
+        let mut network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![1.0]], vec![0.0]),
+            Activation::Linear,
+        )])
+        .unwrap();
+        let gradients = NetworkGradients::new(vec![LayerGradient::new(
+            vec![Vector::new(vec![1.0])],
+            Vector::new(vec![1.0]),
+        )]);
+
+        let result = network.apply_gradients(&gradients, 0.0);
+
+        assert_eq!(
+            result,
+            Err(NetworkError::InvalidLearningRate { value: 0.0 })
+        );
+    }
+
+    #[test]
+    fn train_mse_updates_weights_and_reduces_loss() {
+        let mut network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![0.0]], vec![0.0]),
+            Activation::Linear,
+        )])
+        .unwrap();
+        let input = Vector::new(vec![1.0]);
+        let target = Vector::new(vec![1.0]);
+        let initial_prediction = network.forward(&input).unwrap();
+        let initial_error = initial_prediction[0] - target[0];
+
+        let gradients = network.train_mse(&input, &target, 0.1).unwrap();
+
+        let updated_prediction = network.forward(&input).unwrap();
+        let updated_error = updated_prediction[0] - target[0];
+
+        assert_eq!(
+            gradients.layer_gradients()[0].weight_gradients(),
+            &[Vector::new(vec![-2.0])]
+        );
+        assert!(updated_error.abs() < initial_error.abs());
+        assert_close(updated_prediction[0], 0.4);
     }
 }

@@ -507,6 +507,145 @@ Completed
 
 ---
 
+## Sprint 13 — MSE Backpropagation
+
+### Objective
+
+Implement the first complete backpropagation path for sequential dense networks.
+
+### Features
+
+- Added activation derivatives for trainable activations
+- Added neuron-level gradient application
+- Added `LayerGradient`
+- Added `NetworkGradients`
+- Added MSE backpropagation
+- Added chain-rule gradient propagation through hidden layers
+- Added gradient-descent weight updates
+- Added one-step MSE training helper
+- Added explicit unsupported activation handling for Softmax backpropagation
+
+### Files Modified
+
+```
+src/activations/mod.rs
+src/nn/neuron.rs
+src/nn/layer.rs
+src/nn/network.rs
+src/nn/mod.rs
+```
+
+### Tests Added
+
+- Activation derivatives
+- Neuron gradient application
+- Neuron gradient dimension mismatch
+- Single-layer MSE gradients
+- Hidden-layer chain-rule gradients
+- Backprop target dimension mismatch
+- Unsupported Softmax backpropagation
+- Network gradient application
+- Invalid learning rate
+- One-step MSE training update
+
+### Result
+
+122 Tests Passed
+
+### Status
+
+Completed
+
+---
+
+## Sprint 14 — SGD Optimizer
+
+### Objective
+
+Introduce the optimizer abstraction and implement stochastic gradient descent.
+
+### Features
+
+- Added `Optimizer` trait
+- Added `OptimizerError`
+- Added `Sgd`
+- Added learning-rate validation
+- Added optimizer gradient step
+- Added optimizer-backed MSE training step
+
+### Files Modified
+
+```
+src/nn/optimizer.rs
+src/nn/mod.rs
+```
+
+### Tests Added
+
+- Create SGD optimizer
+- Reject invalid learning rate
+- Update learning rate
+- SGD applies gradients to network
+- SGD returns network errors
+- SGD MSE training step reduces error
+
+### Result
+
+128 Tests Passed
+
+### Status
+
+Completed
+
+---
+
+## Sprint 15 — Momentum and Adam Optimizers
+
+### Objective
+
+Complete Phase 4 optimizer support.
+
+### Features
+
+- Added Momentum optimizer
+- Added velocity state tracking
+- Added Adam optimizer
+- Added first and second moment tracking
+- Added Adam bias correction
+- Added optimizer hyperparameter validation
+- Added optimizer-backed MSE training helpers
+
+### Files Modified
+
+```
+src/nn/optimizer.rs
+src/nn/mod.rs
+```
+
+### Tests Added
+
+- Create Momentum optimizer
+- Reject invalid momentum
+- Update Momentum hyperparameters
+- Momentum velocity accumulation
+- Momentum MSE training step
+- Create Adam optimizer with defaults
+- Create Adam optimizer with explicit hyperparameters
+- Reject invalid Adam hyperparameters
+- Update Adam learning rate
+- Adam bias-corrected update
+- Adam MSE training step
+
+### Result
+
+139 Tests Passed
+
+### Status
+
+Completed
+
+---
+
 # Current Progress
 
 ## Mathematical Foundation
@@ -544,10 +683,13 @@ Completed
 - [x] Loss Functions
 - [x] Network
 - [x] Forward Propagation
-- [ ] Backpropagation
+- [x] Backpropagation
+- [x] SGD Optimizer
+- [x] Momentum Optimizer
+- [x] Adam Optimizer
 - [ ] Training Loop
 
 ---
 
 Last Updated:
-Week 1 — Network Wiring and Forward Propagation
+Week 1 — Phase 4 Optimizers Complete

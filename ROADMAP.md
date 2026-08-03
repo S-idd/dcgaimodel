@@ -86,17 +86,17 @@ The goal is not only to build an AI model, but also to understand every mathemat
 
 # Phase 3 — Backpropagation
 
-- [ ] Chain Rule
-- [ ] Gradient Computation
-- [ ] Weight Updates
+- [x] Chain Rule
+- [x] Gradient Computation
+- [x] Weight Updates
 
 ---
 
 # Phase 4 — Optimizers
 
-- [ ] SGD
-- [ ] Momentum
-- [ ] Adam
+- [x] SGD
+- [x] Momentum
+- [x] Adam
 
 ---
 

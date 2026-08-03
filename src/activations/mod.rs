@@ -145,7 +145,10 @@ mod tests {
         assert_eq!(Activation::Linear.derivative_from_output(3.0), Some(1.0));
         assert_eq!(Activation::Relu.derivative_from_output(2.0), Some(1.0));
         assert_eq!(Activation::Relu.derivative_from_output(0.0), Some(0.0));
-        assert_eq!(Activation::Sigmoid.derivative_from_output(0.25), Some(0.1875));
+        assert_eq!(
+            Activation::Sigmoid.derivative_from_output(0.25),
+            Some(0.1875)
+        );
         assert_eq!(Activation::Tanh.derivative_from_output(0.5), Some(0.75));
         assert_eq!(Activation::Softmax.derivative_from_output(0.5), None);
     }
