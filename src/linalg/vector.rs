@@ -18,11 +18,6 @@ impl Vector {
         Self { values }
     }
 
-    /// Returns the number of elements.
-    pub fn len(&self) -> usize {
-        self.values.len()
-    }
-
     /// Returns true if empty.
     pub fn is_empty(&self) -> bool {
         self.values.is_empty()
@@ -127,6 +122,16 @@ impl Vector {
         let values = self.values.iter().map(|value| value / magnitude).collect();
 
         Ok(Vector::new(values))
+    }
+
+    /// Returns the number of elements in the vector.
+    pub fn len(&self) -> usize {
+        self.values.len()
+    }
+
+    /// Returns an iterator over the vector elements.
+    pub fn iter(&self) -> std::slice::Iter<'_, f64> {
+        self.values.iter()
     }
 }
 

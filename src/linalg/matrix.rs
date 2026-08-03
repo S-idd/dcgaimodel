@@ -1,3 +1,4 @@
+use super::vector::Vector;
 use crate::linalg::errors::LinalgError;
 use std::fmt;
 /// Represents a mathematical matrix.
@@ -143,6 +144,64 @@ impl Matrix {
         }
 
         Matrix::new(values).expect("Identity matrix is always valid")
+    }
+
+    /// Creates a matrix filled with zeros.
+    ///
+    /// # Arguments
+    ///
+    /// * `rows` - Number of rows
+    /// * `cols` - Number of columns
+    pub fn zeros(rows: usize, cols: usize) -> Matrix {
+        Matrix::new(vec![vec![0.0; cols]; rows]).expect("Zero matrix is always valid")
+    }
+
+    /// Multiplies this matrix by a vector.
+    ///
+    /// Returns an error if the dimensions do not match.
+    pub fn multiply_vector(&self, vector: &Vector) -> Result<Vector, LinalgError> {
+        if self.cols() != vector.len() {
+            return Err(LinalgError::DimensionMismatch {
+                left: self.cols(),
+                right: vector.len(),
+            });
+        }
+
+        let values = self
+            .values
+            .iter()
+            .map(|row| row.iter().zip(vector.iter()).map(|(a, b)| a * b).sum())
+            .collect();
+
+        Ok(Vector::new(values))
+    }
+
+    /// Multiplies this matrix by another matrix.
+    ///
+    /// Returns an error if the dimensions do not match.
+    pub fn multiply_matrix(&self, other: &Matrix) -> Result<Matrix, LinalgError> {
+        if self.cols() != other.rows() {
+            return Err(LinalgError::DimensionMismatch {
+                left: self.cols(),
+                right: other.rows(),
+            });
+        }
+
+        let mut values = vec![vec![0.0; other.cols()]; self.rows()];
+
+        for row in 0..self.rows() {
+            for col in 0..other.cols() {
+                let mut sum = 0.0;
+
+                for k in 0..self.cols() {
+                    sum += self.values[row][k] * other.values[k][col];
+                }
+
+                values[row][col] = sum;
+            }
+        }
+
+        Ok(Matrix::new(values).expect("Matrix multiplication always produces a valid matrix"))
     }
 }
 
@@ -375,5 +434,95 @@ mod tests {
         let matrix = Matrix::identity(0);
 
         assert_eq!(matrix.shape(), (0, 0));
+    }
+
+    #[test]
+    fn creates_zero_matrix_2x3() {
+        let matrix = Matrix::zeros(2, 3);
+
+        let expected = Matrix::new(vec![vec![0.0, 0.0, 0.0], vec![0.0, 0.0, 0.0]]).unwrap();
+
+        assert_eq!(matrix, expected);
+    }
+
+    #[test]
+    fn creates_zero_matrix_0x0() {
+        let matrix = Matrix::zeros(0, 0);
+
+        assert_eq!(matrix.shape(), (0, 0));
+    }
+
+    #[test]
+    fn creates_zero_matrix_3x1() {
+        let matrix = Matrix::zeros(3, 1);
+
+        let expected = Matrix::new(vec![vec![0.0], vec![0.0], vec![0.0]]).unwrap();
+
+        assert_eq!(matrix, expected);
+    }
+
+    #[test]
+    fn multiplies_matrix_by_vector() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]).unwrap();
+
+        let vector = Vector::new(vec![7.0, 8.0, 9.0]);
+
+        let result = matrix.multiply_vector(&vector).unwrap();
+
+        let expected = Vector::new(vec![50.0, 122.0]);
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn matrix_vector_dimension_mismatch_returns_error() {
+        let matrix = Matrix::new(vec![vec![1.0, 2.0], vec![3.0, 4.0]]).unwrap();
+
+        let vector = Vector::new(vec![1.0]);
+
+        assert!(matrix.multiply_vector(&vector).is_err());
+    }
+
+    #[test]
+    fn multiply_empty_matrix_by_empty_vector() {
+        let matrix = Matrix::new(vec![]).unwrap();
+        let vector = Vector::new(vec![]);
+
+        let result = matrix.multiply_vector(&vector).unwrap();
+
+        assert_eq!(result.len(), 0);
+    }
+
+    #[test]
+    fn multiplies_two_matrices() {
+        let a = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![7.0, 8.0], vec![9.0, 10.0], vec![11.0, 12.0]]).unwrap();
+
+        let result = a.multiply_matrix(&b).unwrap();
+
+        let expected = Matrix::new(vec![vec![58.0, 64.0], vec![139.0, 154.0]]).unwrap();
+
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn matrix_matrix_dimension_mismatch_returns_error() {
+        let a = Matrix::new(vec![vec![1.0, 2.0]]).unwrap();
+
+        let b = Matrix::new(vec![vec![1.0, 2.0]]).unwrap();
+
+        assert!(a.multiply_matrix(&b).is_err());
+    }
+
+    #[test]
+    fn multiply_identity_matrix() {
+        let identity = Matrix::identity(2);
+
+        let matrix = Matrix::new(vec![vec![5.0, 6.0], vec![7.0, 8.0]]).unwrap();
+
+        let result = identity.multiply_matrix(&matrix).unwrap();
+
+        assert_eq!(result, matrix);
     }
 }
