@@ -5,5 +5,12 @@ pub mod optimizer;
 
 pub use layer::Layer;
 pub use network::{LayerGradient, Network, NetworkError, NetworkGradients, NetworkLayer};
-pub use neuron::Neuron;
-pub use optimizer::{Adam, Momentum, Optimizer, OptimizerError, Sgd};
+pub use neuron::{Neuron, NeuronCache};
+
+pub use optimizer::{
+    Adam,
+    Momentum,
+    Optimizer,
+    OptimizerError,
+    Sgd,
+};
