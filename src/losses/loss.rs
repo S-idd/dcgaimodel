@@ -45,6 +45,15 @@ impl fmt::Display for LossError {
 
 impl std::error::Error for LossError {}
 
+/// Common interface implemented by all loss functions.
+pub trait Loss {
+    /// Computes the loss between predictions and targets.
+    fn forward(&self, predicted: &Vector, target: &Vector) -> Result<f64, LossError>;
+
+    /// Computes the gradient of the loss with respect to predictions.
+    fn backward(&self, predicted: &Vector, target: &Vector) -> Result<Vector, LossError>;
+}
+
 /// Validates that two vectors share the same, non-zero length.
 ///
 /// Shared by every loss function since each one operates on a

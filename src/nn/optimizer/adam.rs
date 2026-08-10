@@ -1,10 +1,10 @@
 use super::error::OptimizerError;
+use super::traits::Optimizer;
 use super::utils::{
     adam_update, combine_gradients, same_gradient_shape, validate_beta, validate_epsilon,
     validate_learning_rate, zeros_like,
 };
 use crate::linalg::Vector;
-use super::traits::Optimizer;
 use crate::nn::{Network, NetworkGradients};
 
 /// Adam optimizer.

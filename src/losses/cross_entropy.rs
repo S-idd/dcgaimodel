@@ -1,26 +1,61 @@
 use crate::linalg::Vector;
 
 use super::loss::{
-    LossError, clamp_probability, validate_distribution, validate_pair, validate_probability,
+    Loss, LossError, clamp_probability, validate_distribution, validate_pair, validate_probability,
     validate_target,
 };
+
+/// Multiclass Cross Entropy loss.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct CrossEntropy;
+
+impl CrossEntropy {
+    pub fn new() -> Self {
+        Self
+    }
+}
 
 /// Computes multiclass cross entropy between two probability distributions.
 ///
 /// Both vectors must contain probabilities in the inclusive range `0..=1` and
 /// each vector must sum to 1.
+/// Computes multiclass cross entropy between two probability distributions.
 pub fn cross_entropy(predicted: &Vector, target: &Vector) -> Result<f64, LossError> {
-    validate_pair(predicted, target)?;
-    validate_distribution(predicted, validate_probability)?;
-    validate_distribution(target, validate_target)?;
+    CrossEntropy::new().forward(predicted, target)
+}
 
-    let sum = predicted
-        .iter()
-        .zip(target.iter())
-        .map(|(prediction, expected)| -expected * clamp_probability(*prediction).ln())
-        .sum::<f64>();
+impl Loss for CrossEntropy {
+    fn forward(&self, predicted: &Vector, target: &Vector) -> Result<f64, LossError> {
+        validate_pair(predicted, target)?;
+        validate_distribution(predicted, validate_probability)?;
+        validate_distribution(target, validate_target)?;
 
-    Ok(sum)
+        let sum = predicted
+            .iter()
+            .zip(target.iter())
+            .map(|(prediction, expected)| -expected * clamp_probability(*prediction).ln())
+            .sum::<f64>();
+
+        Ok(sum)
+    }
+
+    fn backward(&self, predicted: &Vector, target: &Vector) -> Result<Vector, LossError> {
+        validate_pair(predicted, target)?;
+        validate_distribution(predicted, validate_probability)?;
+        validate_distribution(target, validate_target)?;
+
+        let gradient = predicted
+            .iter()
+            .zip(target.iter())
+            .map(|(prediction, expected)| {
+                let probability = clamp_probability(*prediction);
+
+                -expected / probability
+            })
+            .collect();
+
+        Ok(Vector::new(gradient))
+    }
 }
 
 #[cfg(test)]
@@ -117,5 +152,51 @@ mod tests {
         let result = cross_entropy(&predicted, &target);
 
         assert_eq!(result, Err(LossError::InvalidDistribution { sum: 0.8 }));
+    }
+
+    #[test]
+    fn cross_entropy_backward_computes_gradient() {
+        let predicted = Vector::new(vec![0.2, 0.5, 0.3]);
+        let target = Vector::new(vec![0.0, 1.0, 0.0]);
+
+        let loss = CrossEntropy::new();
+
+        let gradient = loss.backward(&predicted, &target).unwrap();
+
+        assert_close(gradient[0], 0.0);
+        assert_close(gradient[1], -2.0);
+        assert_close(gradient[2], 0.0);
+    }
+
+    #[test]
+    fn cross_entropy_backward_supports_soft_targets() {
+        let predicted = Vector::new(vec![0.2, 0.5, 0.3]);
+        let target = Vector::new(vec![0.1, 0.7, 0.2]);
+
+        let loss = CrossEntropy::new();
+
+        let gradient = loss.backward(&predicted, &target).unwrap();
+
+        assert_close(gradient[0], -0.1 / 0.2);
+        assert_close(gradient[1], -0.7 / 0.5);
+        assert_close(gradient[2], -0.2 / 0.3);
+    }
+
+    #[test]
+    fn cross_entropy_backward_rejects_dimension_mismatch() {
+        let predicted = Vector::new(vec![0.5, 0.5]);
+        let target = Vector::new(vec![1.0]);
+
+        let loss = CrossEntropy::new();
+
+        let result = loss.backward(&predicted, &target);
+
+        assert_eq!(
+            result,
+            Err(LossError::DimensionMismatch {
+                predicted: 2,
+                target: 1
+            })
+        );
     }
 }

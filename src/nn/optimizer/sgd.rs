@@ -1,7 +1,7 @@
 use super::error::OptimizerError;
+use super::traits::Optimizer;
 use super::utils::validate_learning_rate;
 use crate::linalg::Vector;
-use super::traits::Optimizer;
 use crate::nn::{Network, NetworkGradients};
 
 /// Stochastic Gradient Descent optimizer.

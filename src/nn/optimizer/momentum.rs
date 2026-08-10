@@ -1,9 +1,9 @@
 use super::error::OptimizerError;
+use super::traits::Optimizer;
 use super::utils::{
     combine_gradients, ensure_state_shape, validate_learning_rate, validate_momentum,
 };
 use crate::linalg::Vector;
-use super::traits::Optimizer;
 use crate::nn::{Network, NetworkGradients};
 
 /// Stochastic Gradient Descent with momentum.

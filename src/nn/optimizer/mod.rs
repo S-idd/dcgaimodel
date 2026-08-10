@@ -11,9 +11,6 @@ pub use momentum::Momentum;
 pub use sgd::Sgd;
 pub use traits::Optimizer;
 
-// Re-Export The Optimizer Trait From This Module 
-
-/// Test-only helpers shared across the sgd/momentum/adam test modules.
 #[cfg(test)]
 pub(crate) mod test_support {
     use crate::activations::Activation;
