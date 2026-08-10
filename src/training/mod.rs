@@ -1,3 +1,3 @@
 mod trainer;
 
-pub use trainer::Trainer;
+pub use trainer::{Trainer, TrainerError, TrainingConfig, TrainingHistory};

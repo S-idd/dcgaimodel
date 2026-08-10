@@ -29,6 +29,12 @@ pub enum NetworkError {
     /// Learning rate must be positive and finite.
     InvalidLearningRate { value: f64 },
 
+    /// Two layer gradients contain different numbers of neuron gradients.
+    GradientNeuronCountMismatch { left: usize, right: usize },
+
+    /// Two network gradients contain different numbers of layer gradients.
+    GradientLayerCountMismatch { left: usize, right: usize },
+
     /// A lower-level linear algebra operation failed.
     Linalg(LinalgError),
 }
@@ -60,6 +66,16 @@ impl fmt::Display for NetworkError {
             NetworkError::InvalidLearningRate { value } => {
                 write!(f, "Learning rate must be positive and finite: {}", value)
             }
+            NetworkError::GradientNeuronCountMismatch { left, right } => write!(
+                f,
+                "Gradient neuron-count mismatch: left = {}, right = {}",
+                left, right
+            ),
+            NetworkError::GradientLayerCountMismatch { left, right } => write!(
+                f,
+                "Gradient layer-count mismatch: left = {}, right = {}",
+                left, right
+            ),
             NetworkError::Linalg(error) => write!(f, "Linear algebra error: {}", error),
         }
     }
@@ -146,6 +162,40 @@ impl LayerGradient {
     pub fn bias_gradients(&self) -> &Vector {
         &self.bias_gradients
     }
+
+    /// Adds another layer gradient element-wise.
+    ///
+    /// Returns an error when the gradients contain different numbers of
+    /// neuron gradients or when corresponding vectors have different lengths.
+    pub fn add(&self, other: &Self) -> Result<Self, NetworkError> {
+        if self.weight_gradients.len() != other.weight_gradients.len() {
+            return Err(NetworkError::GradientNeuronCountMismatch {
+                left: self.weight_gradients.len(),
+                right: other.weight_gradients.len(),
+            });
+        }
+
+        let weight_gradients = self
+            .weight_gradients
+            .iter()
+            .zip(other.weight_gradients.iter())
+            .map(|(left, right)| left.add(right))
+            .collect::<Result<Vec<_>, _>>()?;
+        let bias_gradients = self.bias_gradients.add(&other.bias_gradients)?;
+
+        Ok(Self::new(weight_gradients, bias_gradients))
+    }
+
+    /// Returns a copy with every gradient value multiplied by `factor`.
+    pub fn scale(&self, factor: f64) -> Self {
+        Self::new(
+            self.weight_gradients
+                .iter()
+                .map(|gradient| gradient.scalar_multiply(factor))
+                .collect(),
+            self.bias_gradients.scalar_multiply(factor),
+        )
+    }
 }
 
 /// Gradients for an entire sequential network.
@@ -173,6 +223,39 @@ impl NetworkGradients {
     /// Returns true when no gradients are present.
     pub fn is_empty(&self) -> bool {
         self.layer_gradients.is_empty()
+    }
+
+    /// Adds another network gradient element-wise.
+    ///
+    /// Returns an error when the gradients contain different numbers of
+    /// layers or when a corresponding layer gradient has an incompatible
+    /// shape.
+    pub fn add(&self, other: &Self) -> Result<Self, NetworkError> {
+        if self.len() != other.len() {
+            return Err(NetworkError::GradientLayerCountMismatch {
+                left: self.len(),
+                right: other.len(),
+            });
+        }
+
+        let layer_gradients = self
+            .layer_gradients
+            .iter()
+            .zip(other.layer_gradients.iter())
+            .map(|(left, right)| left.add(right))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(Self::new(layer_gradients))
+    }
+
+    /// Returns a copy with every layer gradient multiplied by `factor`.
+    pub fn scale(&self, factor: f64) -> Self {
+        Self::new(
+            self.layer_gradients
+                .iter()
+                .map(|gradient| gradient.scale(factor))
+                .collect(),
+        )
     }
 }
 
@@ -475,6 +558,260 @@ mod tests {
         let weights = weights.into_iter().map(Vector::new).collect();
 
         Layer::dense(weights, biases).unwrap()
+    }
+
+    fn sample_layer_gradient() -> LayerGradient {
+        LayerGradient::new(
+            vec![Vector::new(vec![1.0, 2.0]), Vector::new(vec![3.0, 4.0])],
+            Vector::new(vec![5.0, 6.0]),
+        )
+    }
+
+    #[test]
+    fn creates_layer_gradient_successfully() {
+        let gradient = sample_layer_gradient();
+
+        assert_eq!(gradient.weight_gradients().len(), 2);
+        assert_eq!(gradient.bias_gradients().len(), 2);
+    }
+
+    #[test]
+    fn layer_gradient_accessors_return_values() {
+        let gradient = sample_layer_gradient();
+
+        assert_eq!(
+            gradient.weight_gradients(),
+            &[Vector::new(vec![1.0, 2.0]), Vector::new(vec![3.0, 4.0])]
+        );
+        assert_eq!(gradient.bias_gradients(), &Vector::new(vec![5.0, 6.0]));
+    }
+
+    #[test]
+    fn layer_gradient_adds_compatible_gradients() {
+        let left = sample_layer_gradient();
+        let right = LayerGradient::new(
+            vec![Vector::new(vec![10.0, 20.0]), Vector::new(vec![30.0, 40.0])],
+            Vector::new(vec![50.0, 60.0]),
+        );
+
+        let result = left.add(&right).unwrap();
+
+        assert_eq!(
+            result,
+            LayerGradient::new(
+                vec![Vector::new(vec![11.0, 22.0]), Vector::new(vec![33.0, 44.0])],
+                Vector::new(vec![55.0, 66.0]),
+            )
+        );
+    }
+
+    #[test]
+    fn layer_gradient_add_rejects_incompatible_neuron_counts() {
+        let left = LayerGradient::new(
+            vec![Vector::new(vec![1.0]), Vector::new(vec![2.0])],
+            Vector::new(vec![1.0, 2.0]),
+        );
+        let right = LayerGradient::new(vec![Vector::new(vec![3.0])], Vector::new(vec![3.0]));
+
+        assert_eq!(
+            left.add(&right),
+            Err(NetworkError::GradientNeuronCountMismatch { left: 2, right: 1 })
+        );
+    }
+
+    #[test]
+    fn layer_gradient_add_rejects_incompatible_weight_vector_sizes() {
+        let left = LayerGradient::new(vec![Vector::new(vec![1.0, 2.0])], Vector::new(vec![3.0]));
+        let right = LayerGradient::new(vec![Vector::new(vec![4.0])], Vector::new(vec![5.0]));
+
+        assert_eq!(
+            left.add(&right),
+            Err(NetworkError::Linalg(LinalgError::DimensionMismatch {
+                left: 2,
+                right: 1,
+            }))
+        );
+    }
+
+    #[test]
+    fn layer_gradient_add_rejects_incompatible_bias_sizes() {
+        let left = LayerGradient::new(vec![Vector::new(vec![1.0])], Vector::new(vec![2.0, 3.0]));
+        let right = LayerGradient::new(vec![Vector::new(vec![4.0])], Vector::new(vec![5.0]));
+
+        assert_eq!(
+            left.add(&right),
+            Err(NetworkError::Linalg(LinalgError::DimensionMismatch {
+                left: 2,
+                right: 1,
+            }))
+        );
+    }
+
+    #[test]
+    fn layer_gradient_scale_by_one_preserves_values() {
+        let gradient = sample_layer_gradient();
+
+        assert_eq!(gradient.scale(1.0), gradient);
+    }
+
+    #[test]
+    fn layer_gradient_scale_by_zero_zeros_every_value() {
+        let result = sample_layer_gradient().scale(0.0);
+
+        assert_eq!(
+            result,
+            LayerGradient::new(
+                vec![Vector::new(vec![0.0, 0.0]), Vector::new(vec![0.0, 0.0])],
+                Vector::new(vec![0.0, 0.0]),
+            )
+        );
+    }
+
+    #[test]
+    fn layer_gradient_scale_by_half_averages_values() {
+        let result = sample_layer_gradient().scale(0.5);
+
+        assert_eq!(
+            result,
+            LayerGradient::new(
+                vec![Vector::new(vec![0.5, 1.0]), Vector::new(vec![1.5, 2.0])],
+                Vector::new(vec![2.5, 3.0]),
+            )
+        );
+    }
+
+    #[test]
+    fn layer_gradient_scale_by_negative_value_negates_values() {
+        let result = sample_layer_gradient().scale(-1.0);
+
+        assert_eq!(
+            result,
+            LayerGradient::new(
+                vec![Vector::new(vec![-1.0, -2.0]), Vector::new(vec![-3.0, -4.0])],
+                Vector::new(vec![-5.0, -6.0]),
+            )
+        );
+    }
+
+    #[test]
+    fn creates_network_gradients_successfully() {
+        let gradients = NetworkGradients::new(vec![sample_layer_gradient()]);
+
+        assert_eq!(gradients.len(), 1);
+        assert!(!gradients.is_empty());
+    }
+
+    #[test]
+    fn network_gradient_accessors_return_values() {
+        let layer_gradient = sample_layer_gradient();
+        let gradients = NetworkGradients::new(vec![layer_gradient.clone()]);
+
+        assert_eq!(gradients.layer_gradients(), &[layer_gradient]);
+    }
+
+    #[test]
+    fn network_gradient_reports_empty_state() {
+        let gradients = NetworkGradients::new(vec![]);
+
+        assert_eq!(gradients.len(), 0);
+        assert!(gradients.is_empty());
+    }
+
+    #[test]
+    fn network_gradients_add_compatible_layers() {
+        let left = NetworkGradients::new(vec![sample_layer_gradient()]);
+        let right = NetworkGradients::new(vec![LayerGradient::new(
+            vec![Vector::new(vec![10.0, 20.0]), Vector::new(vec![30.0, 40.0])],
+            Vector::new(vec![50.0, 60.0]),
+        )]);
+
+        let result = left.add(&right).unwrap();
+
+        assert_eq!(
+            result,
+            NetworkGradients::new(vec![LayerGradient::new(
+                vec![Vector::new(vec![11.0, 22.0]), Vector::new(vec![33.0, 44.0])],
+                Vector::new(vec![55.0, 66.0]),
+            )])
+        );
+    }
+
+    #[test]
+    fn network_gradients_add_rejects_incompatible_layer_counts() {
+        let left = NetworkGradients::new(vec![sample_layer_gradient()]);
+        let right = NetworkGradients::new(vec![]);
+
+        assert_eq!(
+            left.add(&right),
+            Err(NetworkError::GradientLayerCountMismatch { left: 1, right: 0 })
+        );
+    }
+
+    #[test]
+    fn network_gradients_add_propagates_layer_gradient_errors() {
+        let left = NetworkGradients::new(vec![LayerGradient::new(
+            vec![Vector::new(vec![1.0, 2.0])],
+            Vector::new(vec![3.0]),
+        )]);
+        let right = NetworkGradients::new(vec![LayerGradient::new(
+            vec![Vector::new(vec![4.0])],
+            Vector::new(vec![5.0]),
+        )]);
+
+        assert_eq!(
+            left.add(&right),
+            Err(NetworkError::Linalg(LinalgError::DimensionMismatch {
+                left: 2,
+                right: 1,
+            }))
+        );
+    }
+
+    #[test]
+    fn network_gradients_scale_every_layer() {
+        let gradients = NetworkGradients::new(vec![
+            sample_layer_gradient(),
+            LayerGradient::new(vec![Vector::new(vec![7.0])], Vector::new(vec![8.0])),
+        ]);
+
+        let result = gradients.scale(0.5);
+
+        assert_eq!(
+            result,
+            NetworkGradients::new(vec![
+                LayerGradient::new(
+                    vec![Vector::new(vec![0.5, 1.0]), Vector::new(vec![1.5, 2.0])],
+                    Vector::new(vec![2.5, 3.0]),
+                ),
+                LayerGradient::new(vec![Vector::new(vec![3.5])], Vector::new(vec![4.0])),
+            ])
+        );
+    }
+
+    #[test]
+    fn network_gradients_scale_by_one_preserves_values() {
+        let gradients = NetworkGradients::new(vec![sample_layer_gradient()]);
+
+        assert_eq!(gradients.scale(1.0), gradients);
+    }
+
+    #[test]
+    fn network_gradients_scale_by_zero_zeros_every_value() {
+        let gradients = NetworkGradients::new(vec![
+            sample_layer_gradient(),
+            LayerGradient::new(vec![Vector::new(vec![7.0])], Vector::new(vec![8.0])),
+        ]);
+
+        assert_eq!(
+            gradients.scale(0.0),
+            NetworkGradients::new(vec![
+                LayerGradient::new(
+                    vec![Vector::new(vec![0.0, 0.0]), Vector::new(vec![0.0, 0.0])],
+                    Vector::new(vec![0.0, 0.0]),
+                ),
+                LayerGradient::new(vec![Vector::new(vec![0.0])], Vector::new(vec![0.0])),
+            ])
+        );
     }
 
     #[test]
