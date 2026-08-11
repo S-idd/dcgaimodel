@@ -1,10 +1,14 @@
 pub mod activations;
 pub mod api;
 pub mod dataset;
+pub mod evaluation;
+pub mod features;
 pub mod inference;
 pub mod linalg;
 pub mod losses;
+pub mod models;
 pub mod nn;
+pub mod prediction;
 pub mod preprocessing;
 pub mod training;
 pub mod utils;
