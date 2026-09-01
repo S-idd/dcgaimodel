@@ -1,0 +1,2412 @@
+{
+  "format_version": "dcg-kubernetes-openapi-prescreen-v1",
+  "artifact_kind": "pre-screen-only",
+  "source_provenance": {
+    "source": "kubernetes/kubernetes",
+    "source_kind": "public-version-history",
+    "source_url": "https://github.com/kubernetes/kubernetes",
+    "source_license": "Apache-2.0",
+    "source_path_pattern": "api/openapi-spec/swagger.json#/definitions/<component-name>",
+    "license_path": "LICENSES/LICENSE",
+    "removal_notes": "https://kubernetes.io/docs/reference/using-api/deprecation-guide/",
+    "no_raw_schema_pairs_persisted": true
+  },
+  "method": {
+    "scan": "all adjacent Kubernetes minor-version bumps from v1.21.0 through v1.32.0",
+    "single_mutation_rules": [
+      "FIELD_ADDED",
+      "FIELD_REMOVED",
+      "TYPE_CHANGED",
+      "ENUM_CHANGED",
+      "CONSTRAINT_OR_RESTRICTION_CHANGED"
+    ],
+    "exclusions": [
+      "whole component adds/removes",
+      "METADATA_ONLY",
+      "COMPOUND",
+      "UNMAPPED_SINGLE_CHANGE"
+    ],
+    "projection": "existing preflight-external command with max structural distance 1; it hashes the supplied JAR but never launches Java or runs model inference"
+  },
+  "selected_pairs": [
+    {
+      "pair_id": "v1.21.0->v1.22.0",
+      "base_revision": "v1.21.0",
+      "candidate_revision": "v1.22.0",
+      "base_commit": "cb303e613a121a29364f75cc67d3d580833a7479",
+      "candidate_commit": "c2b5237ccd9c0f1d600d3072634ca66cefdf272f",
+      "base_blob_sha1": "60cc68f14be4f491ecf5b6336dcea39e613b3b28",
+      "candidate_blob_sha1": "5404b05fb9bce80daa329a275b86e2efb226e89d",
+      "raw_diff_lines": {
+        "added": 18502,
+        "removed": 38844
+      },
+      "changed_component_count": 72,
+      "whole_component_added_count": 2,
+      "whole_component_removed_count": 116,
+      "classification_counts": {
+        "METADATA_ONLY": 62,
+        "FIELD_ADDED": 7,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 2,
+        "FIELD_REMOVED": 1
+      },
+      "changed_components": [
+        {
+          "component": "io.k8s.api.apiserverinternal.v1alpha1.StorageVersionList",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.Deployment",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.RollingUpdateDaemonSet",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSet",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetList",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/minReadySeconds"
+          ]
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetStatus",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/availableReplicas"
+          ]
+        },
+        {
+          "component": "io.k8s.api.authentication.v1.TokenRequest",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authentication.v1.TokenReview",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authorization.v1.LocalSubjectAccessReview",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authorization.v1.SelfSubjectAccessReview",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authorization.v1.SelfSubjectRulesReview",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authorization.v1.SelfSubjectRulesReviewSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authorization.v1.SubjectAccessReview",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.autoscaling.v1.CrossVersionObjectReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobStatus",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/uncountedTerminatedPods"
+          ]
+        },
+        {
+          "component": "io.k8s.api.certificates.v1.CertificateSigningRequest",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.certificates.v1.CertificateSigningRequestSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/expirationSeconds"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.ConfigMapKeySelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ConfigMapNodeConfigSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Container",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ContainerImage",
+          "decision": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "mutation_kinds": [
+            "CONSTRAINT_OR_RESTRICTION_CHANGED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "required"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.EndpointAddress",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EnvVar",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EphemeralContainer",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.LocalObjectReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NodeConfigSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NodeSelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NodeSelectorTerm",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NodeSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ObjectFieldSelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ObjectReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeClaimSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/dataSourceRef"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodAffinityTerm",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Probe",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ReplicationControllerSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ResourceFieldSelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ScopeSelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.SecretKeySelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.SecretReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServicePort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServiceSpec",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": [
+            "properties/topologyKeys"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.TopologySelectorTerm",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.TypedLocalObjectReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.WindowsSecurityContextOptions",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/hostProcess"
+          ]
+        },
+        {
+          "component": "io.k8s.api.discovery.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta1.Subject",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.networking.v1.HTTPIngressPath",
+          "decision": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "mutation_kinds": [
+            "CONSTRAINT_OR_RESTRICTION_CHANGED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "required"
+          ]
+        },
+        {
+          "component": "io.k8s.api.networking.v1.NetworkPolicyPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1.Scheduling",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1alpha1.RuntimeClass",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1alpha1.RuntimeClassSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1alpha1.Scheduling",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1beta1.RuntimeClass",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.node.v1beta1.Scheduling",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.policy.v1beta1.PodDisruptionBudget",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.policy.v1beta1.PodDisruptionBudgetList",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.PolicyRule",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.RoleRef",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.Subject",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1alpha1.PolicyRule",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.storage.v1.CSIDriverSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.storage.v1.StorageClass",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionList",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.ManagedFieldsEntry",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/subresource"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.OwnerReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIService",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceList",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        }
+      ],
+      "selection_basis": "Kubernetes documents removed deprecated API versions in v1.22."
+    },
+    {
+      "pair_id": "v1.24.0->v1.25.0",
+      "base_revision": "v1.24.0",
+      "candidate_revision": "v1.25.0",
+      "base_commit": "4ce5a8954017644c5420bae81d72b09b735c21f0",
+      "candidate_commit": "a866cbe2e5bbaa01cfd5e969aa3e033f3282a8a2",
+      "base_blob_sha1": "399f47223fa4c428e721f89b299f10a18d374363",
+      "candidate_blob_sha1": "980551e60cad3fcd7806d2ea0853462508aa7841",
+      "raw_diff_lines": {
+        "added": 6475,
+        "removed": 14959
+      },
+      "changed_component_count": 31,
+      "whole_component_added_count": 7,
+      "whole_component_removed_count": 55,
+      "classification_counts": {
+        "METADATA_ONLY": 25,
+        "FIELD_ADDED": 4,
+        "COMPOUND": 1,
+        "FIELD_REMOVED": 1
+      },
+      "changed_components": [
+        {
+          "component": "io.k8s.api.apps.v1.RollingUpdateDaemonSet",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSet",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.authentication.v1.TokenRequestSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.CronJobSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/podFailurePolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.CSIPersistentVolumeSource",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/nodeExpandSecretRef"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.Container",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ContainerImage",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EndpointSubset",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Endpoints",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EphemeralContainer",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodIP",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": [
+            "properties/hostUsers"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServiceSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.TopologySpreadConstraint",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 5,
+          "semantic_paths": [
+            "properties/matchLabelKeys",
+            "properties/nodeAffinityPolicy",
+            "properties/nodeTaintsPolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.discovery.v1.Endpoint",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta1.LimitedPriorityLevelConfiguration",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta2.LimitedPriorityLevelConfiguration",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.networking.v1.IngressSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.networking.v1.NetworkPolicyPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.PolicyRule",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.storage.v1.CSIDriverSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/seLinuxMount"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.api.resource.Quantity",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/clusterName"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.WatchEvent",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.runtime.RawExtension",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        }
+      ],
+      "selection_basis": "Kubernetes documents removed deprecated API versions in v1.25."
+    },
+    {
+      "pair_id": "v1.27.0->v1.28.0",
+      "base_revision": "v1.27.0",
+      "candidate_revision": "v1.28.0",
+      "base_commit": "1b4df30b3cdfeaba6024e81e559a6cd09a089d65",
+      "candidate_commit": "855e7c48de7388eb330da0f8d9d2394ee818fb8d",
+      "base_blob_sha1": "12903fd69f2c8534e4921e131f6a60dd83fb432b",
+      "candidate_blob_sha1": "6c7f34825af6638ca2d83dabaea438bcc011dfe9",
+      "raw_diff_lines": {
+        "added": 7816,
+        "removed": 23666
+      },
+      "changed_component_count": 33,
+      "whole_component_added_count": 24,
+      "whole_component_removed_count": 1,
+      "classification_counts": {
+        "METADATA_ONLY": 19,
+        "COMPOUND": 6,
+        "FIELD_ADDED": 7,
+        "FIELD_REMOVED": 1
+      },
+      "changed_components": [
+        {
+          "component": "io.k8s.api.admissionregistration.v1.MutatingWebhook",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1.ValidatingWebhook",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1alpha1.ParamRef",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 5,
+          "semantic_paths": [
+            "properties/parameterNotFoundAction",
+            "properties/selector"
+          ]
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1alpha1.ValidatingAdmissionPolicyBinding",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1alpha1.ValidatingAdmissionPolicyBindingSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1alpha1.ValidatingAdmissionPolicySpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/variables"
+          ]
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1alpha1.Validation",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apiserverinternal.v1alpha1.ServerStorageVersion",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/servedVersions"
+          ]
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobSpec",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": [
+            "properties/backoffLimitPerIndex",
+            "properties/maxFailedIndexes",
+            "properties/podReplacementPolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobStatus",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/failedIndexes",
+            "properties/terminating"
+          ]
+        },
+        {
+          "component": "io.k8s.api.batch.v1.PodFailurePolicyRule",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ClaimSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Container",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/restartPolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EphemeralContainer",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/restartPolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.HTTPHeader",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeClaimStatus",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED",
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": [
+            "properties/allocatedResourceStatuses",
+            "properties/resizeStatus"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeStatus",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/lastPhaseTransitionTime"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodIP",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodStatus",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": [
+            "properties/hostIPs",
+            "properties/resourceClaimStatuses"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.SeccompProfile",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServicePort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServiceSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.WindowsSecurityContextOptions",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.discovery.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfigurationSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/exempt"
+          ]
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta3.LimitedPriorityLevelConfiguration",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.flowcontrol.v1beta3.PriorityLevelConfigurationSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/exempt"
+          ]
+        },
+        {
+          "component": "io.k8s.api.networking.v1.NetworkPolicy",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/status"
+          ]
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.ClusterRoleBinding",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.rbac.v1.RoleBinding",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.ValidationRule",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/fieldPath",
+            "properties/reason"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        }
+      ],
+      "selection_basis": "Discovered schema-level FIELD_REMOVED candidate; not presented as a release-note-confirmed API removal."
+    },
+    {
+      "pair_id": "v1.28.0->v1.29.0",
+      "base_revision": "v1.28.0",
+      "candidate_revision": "v1.29.0",
+      "base_commit": "855e7c48de7388eb330da0f8d9d2394ee818fb8d",
+      "candidate_commit": "3f7a50f38688eb332e2a1b013678c6435d539ae6",
+      "base_blob_sha1": "6c7f34825af6638ca2d83dabaea438bcc011dfe9",
+      "candidate_blob_sha1": "46401f328bd1f437d583719fcbd8b10df78189f8",
+      "raw_diff_lines": {
+        "added": 1818,
+        "removed": 752
+      },
+      "changed_component_count": 22,
+      "whole_component_added_count": 33,
+      "whole_component_removed_count": 26,
+      "classification_counts": {
+        "METADATA_ONLY": 12,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 1,
+        "FIELD_ADDED": 5,
+        "COMPOUND": 3,
+        "FIELD_REMOVED": 1
+      },
+      "changed_components": [
+        {
+          "component": "io.k8s.api.batch.v1.JobSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.PodFailurePolicyRule",
+          "decision": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "mutation_kinds": [
+            "CONSTRAINT_OR_RESTRICTION_CHANGED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "required"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.CSIPersistentVolumeSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.LifecycleHandler",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/sleep"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.LoadBalancerIngress",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/ipMode"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeClaimSpec",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "UNMAPPED",
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/resources/$ref",
+            "properties/volumeAttributesClassName"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeClaimStatus",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/currentVolumeAttributesClassName",
+            "properties/modifyVolumeStatus"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/volumeAttributesClassName"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodAffinityTerm",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": [
+            "properties/matchLabelKeys",
+            "properties/mismatchLabelKeys"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServicePort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.VolumeProjection",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/clusterTrustBundle"
+          ]
+        },
+        {
+          "component": "io.k8s.api.discovery.v1.EndpointPort",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.networking.v1alpha1.ParentReference",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/uid"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha2.PodSchedulingContextSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha2.ResourceClaimSchedulingStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.storage.v1.CSIDriverSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.ValidationRule",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/optionalOldSelf"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.WatchEvent",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        }
+      ],
+      "selection_basis": "Kubernetes documents removal of flowcontrol.apiserver.k8s.io/v1beta2 in v1.29."
+    },
+    {
+      "pair_id": "v1.31.0->v1.32.0",
+      "base_revision": "v1.31.0",
+      "candidate_revision": "v1.32.0",
+      "base_commit": "9edcffcde5595e8a5b1a35f88c421764e575afce",
+      "candidate_commit": "70d3cc986aa8221cd1dfb1121852688902d3bf53",
+      "base_blob_sha1": "ed0410aa5f64158537519fb5e6f39708cad3683e",
+      "candidate_blob_sha1": "4b1b1c7af1ab06df08ed74e5a80eb2cb62e2f1b4",
+      "raw_diff_lines": {
+        "added": 13075,
+        "removed": 10933
+      },
+      "changed_component_count": 41,
+      "whole_component_added_count": 47,
+      "whole_component_removed_count": 44,
+      "classification_counts": {
+        "METADATA_ONLY": 32,
+        "FIELD_ADDED": 4,
+        "FIELD_REMOVED": 3,
+        "COMPOUND": 2
+      },
+      "changed_components": [
+        {
+          "component": "io.k8s.api.admissionregistration.v1.ValidatingAdmissionPolicyBindingSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.admissionregistration.v1beta1.ValidatingAdmissionPolicyBindingSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.apps.v1.StatefulSetSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.autoscaling.v2.MetricSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.autoscaling.v2.MetricStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.batch.v1.JobSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Binding",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.CSIPersistentVolumeSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.GRPCAction",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.LifecycleHandler",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.LocalVolumeSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NamespaceCondition",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.NodeStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeClaimCondition",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PersistentVolumeSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 17,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodDNSConfigOption",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodSecurityContext",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/seLinuxChangePolicy"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodSpec",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/resources"
+          ]
+        },
+        {
+          "component": "io.k8s.api.core.v1.PodStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.PortStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Probe",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 4,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ResourceHealth",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ResourceStatus",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 3,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServiceAccount",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.ServiceSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.TypedObjectReference",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.core.v1.Volume",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 18,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.AllocationResult",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/controller"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.CELDeviceSelector",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.DeviceClassSpec",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/suitableNodes"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.DeviceRequest",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.DeviceRequestAllocationResult",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/adminAccess"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.OpaqueDeviceConfiguration",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.ResourceClaimSpec",
+          "decision": "FIELD_REMOVED",
+          "mutation_kinds": [
+            "FIELD_REMOVED"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": [
+            "properties/controller"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.ResourceClaimStatus",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_REMOVED",
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/deallocationRequested",
+            "properties/devices"
+          ]
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.ResourceClaimTemplateSpec",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.api.resource.v1alpha3.ResourceSliceList",
+          "decision": "COMPOUND",
+          "mutation_kinds": [
+            "FIELD_REMOVED",
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/listMeta",
+            "properties/metadata"
+          ]
+        },
+        {
+          "component": "io.k8s.api.storage.v1.VolumeAttachmentSource",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions",
+          "decision": "FIELD_ADDED",
+          "mutation_kinds": [
+            "FIELD_ADDED"
+          ],
+          "raw_operation_count": 2,
+          "semantic_paths": [
+            "properties/ignoreStoreReadErrorWithClusterBreakingPotential"
+          ]
+        },
+        {
+          "component": "io.k8s.apimachinery.pkg.apis.meta.v1.WatchEvent",
+          "decision": "METADATA_ONLY",
+          "mutation_kinds": [
+            "METADATA_ONLY"
+          ],
+          "raw_operation_count": 1,
+          "semantic_paths": []
+        }
+      ],
+      "selection_basis": "Kubernetes documents removal of flowcontrol.apiserver.k8s.io/v1beta3 in v1.32."
+    }
+  ],
+  "all_scanned_pair_summaries": [
+    {
+      "pair_id": "v1.21.0->v1.22.0",
+      "raw_diff_lines": {
+        "added": 18502,
+        "removed": 38844
+      },
+      "changed_component_count": 72,
+      "whole_component_added_count": 2,
+      "whole_component_removed_count": 116,
+      "classification_counts": {
+        "METADATA_ONLY": 62,
+        "FIELD_ADDED": 7,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 2,
+        "FIELD_REMOVED": 1
+      }
+    },
+    {
+      "pair_id": "v1.22.0->v1.23.0",
+      "raw_diff_lines": {
+        "added": 13900,
+        "removed": 13095
+      },
+      "changed_component_count": 60,
+      "whole_component_added_count": 51,
+      "whole_component_removed_count": 21,
+      "classification_counts": {
+        "METADATA_ONLY": 18,
+        "ENUM_CHANGED": 27,
+        "COMPOUND": 10,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 3,
+        "FIELD_ADDED": 2
+      }
+    },
+    {
+      "pair_id": "v1.23.0->v1.24.0",
+      "raw_diff_lines": {
+        "added": 2341,
+        "removed": 3333
+      },
+      "changed_component_count": 116,
+      "whole_component_added_count": 3,
+      "whole_component_removed_count": 7,
+      "classification_counts": {
+        "METADATA_ONLY": 76,
+        "ENUM_CHANGED": 27,
+        "FIELD_ADDED": 3,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 1,
+        "COMPOUND": 9
+      }
+    },
+    {
+      "pair_id": "v1.24.0->v1.25.0",
+      "raw_diff_lines": {
+        "added": 6475,
+        "removed": 14959
+      },
+      "changed_component_count": 31,
+      "whole_component_added_count": 7,
+      "whole_component_removed_count": 55,
+      "classification_counts": {
+        "METADATA_ONLY": 25,
+        "FIELD_ADDED": 4,
+        "COMPOUND": 1,
+        "FIELD_REMOVED": 1
+      }
+    },
+    {
+      "pair_id": "v1.25.0->v1.26.0",
+      "raw_diff_lines": {
+        "added": 14081,
+        "removed": 8509
+      },
+      "changed_component_count": 24,
+      "whole_component_added_count": 62,
+      "whole_component_removed_count": 46,
+      "classification_counts": {
+        "METADATA_ONLY": 17,
+        "FIELD_ADDED": 3,
+        "UNMAPPED_SINGLE_CHANGE": 2,
+        "COMPOUND": 2
+      }
+    },
+    {
+      "pair_id": "v1.26.0->v1.27.0",
+      "raw_diff_lines": {
+        "added": 11717,
+        "removed": 8245
+      },
+      "changed_component_count": 127,
+      "whole_component_added_count": 35,
+      "whole_component_removed_count": 20,
+      "classification_counts": {
+        "FIELD_ADDED": 9,
+        "COMPOUND": 2,
+        "METADATA_ONLY": 116
+      }
+    },
+    {
+      "pair_id": "v1.27.0->v1.28.0",
+      "raw_diff_lines": {
+        "added": 7816,
+        "removed": 23666
+      },
+      "changed_component_count": 33,
+      "whole_component_added_count": 24,
+      "whole_component_removed_count": 1,
+      "classification_counts": {
+        "METADATA_ONLY": 19,
+        "COMPOUND": 6,
+        "FIELD_ADDED": 7,
+        "FIELD_REMOVED": 1
+      }
+    },
+    {
+      "pair_id": "v1.28.0->v1.29.0",
+      "raw_diff_lines": {
+        "added": 1818,
+        "removed": 752
+      },
+      "changed_component_count": 22,
+      "whole_component_added_count": 33,
+      "whole_component_removed_count": 26,
+      "classification_counts": {
+        "METADATA_ONLY": 12,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 1,
+        "FIELD_ADDED": 5,
+        "COMPOUND": 3,
+        "FIELD_REMOVED": 1
+      }
+    },
+    {
+      "pair_id": "v1.29.0->v1.30.0",
+      "raw_diff_lines": {
+        "added": 18336,
+        "removed": 12205
+      },
+      "changed_component_count": 119,
+      "whole_component_added_count": 49,
+      "whole_component_removed_count": 0,
+      "classification_counts": {
+        "METADATA_ONLY": 106,
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 3,
+        "COMPOUND": 1,
+        "FIELD_ADDED": 9
+      }
+    },
+    {
+      "pair_id": "v1.30.0->v1.31.0",
+      "raw_diff_lines": {
+        "added": 7523,
+        "removed": 7335
+      },
+      "changed_component_count": 46,
+      "whole_component_added_count": 57,
+      "whole_component_removed_count": 48,
+      "classification_counts": {
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": 9,
+        "METADATA_ONLY": 28,
+        "COMPOUND": 4,
+        "FIELD_ADDED": 5
+      }
+    },
+    {
+      "pair_id": "v1.31.0->v1.32.0",
+      "raw_diff_lines": {
+        "added": 13075,
+        "removed": 10933
+      },
+      "changed_component_count": 41,
+      "whole_component_added_count": 47,
+      "whole_component_removed_count": 44,
+      "classification_counts": {
+        "METADATA_ONLY": 32,
+        "FIELD_ADDED": 4,
+        "FIELD_REMOVED": 3,
+        "COMPOUND": 2
+      }
+    }
+  ],
+  "projection": {
+    "input_mutation_distribution": {
+      "FIELD_REMOVED": 7,
+      "TYPE_CHANGED": 0,
+      "CONSTRAINT_OR_RESTRICTION_CHANGED": 3
+    },
+    "preflight": {
+      "format_version": "dcg-external-manifest-preflight-report-v1",
+      "oracle_invoked": false,
+      "model_inference_invoked": false,
+      "manifest_sha256": "75542ff00cdc1ddd179817620b7cacaef9a812203008fcf72a9636c97c41fcc4",
+      "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+      "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+      "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+      "max_structural_coordinate_distance": 1,
+      "passed": false,
+      "total_records": 10,
+      "accepted_records": 2,
+      "rejected_records": 8,
+      "records": [
+        {
+          "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.core.v1.ContainerImage",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.core.v1.ContainerImage",
+          "policy_pack": "baseline",
+          "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "pair_fingerprint": "4eb0545b2fe7ad8842c279eb1a4a716897916a7aab74c4844992c2ac18f506a0",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.core.v1.ServiceSpec",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.core.v1.ServiceSpec",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "2dc5150f13380bc97bbaed60a8b58beab548e029df2ac5b468faa8e36b4f5ee7",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.networking.v1.HTTPIngressPath",
+          "policy_pack": "baseline",
+          "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "pair_fingerprint": "7ed47a48477bb9c2dbce17694e6e35c34fe3e4ebe7aed9bca885373aa26c5a49",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 2,
+          "accepted": true,
+          "rejection_reasons": []
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.24.0-to-v1.25.0.io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "8e134d02f5ee72f27104cd4db2adf572cdcb5d23a8fbcfe907075eff854dff62",
+          "exact_model_feature_overlap": true,
+          "nearest_policy_free_structural_distance": 0,
+          "accepted": false,
+          "rejection_reasons": [
+            "full V6 model-input feature vector is already present in V9",
+            "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.27.0-to-v1.28.0.io.k8s.api.networking.v1.NetworkPolicy",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.networking.v1.NetworkPolicy",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "77bab1df3a282c01263a90f1a34e76f500c8aad5a25ab11c78de0e148cf38026",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.batch.v1.PodFailurePolicyRule",
+          "policy_pack": "baseline",
+          "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "pair_fingerprint": "64ab0afc547d9a897409d30de37214d0aa8b47dac7436746623bdedfea923aa4",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 2,
+          "accepted": true,
+          "rejection_reasons": []
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.networking.v1alpha1.ParentReference",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.networking.v1alpha1.ParentReference",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "4fdbf54a5df824d38122593ab4b6a1d228e03bf47959937fb57f8947deb2163f",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.31.0-to-v1.32.0.io.k8s.api.resource.v1alpha3.AllocationResult",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.resource.v1alpha3.AllocationResult",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "e7c2c2a9ab14be0dcdbb4d7dcdbab98f025b08a021dcc258b1d24c38698bdc9a",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.31.0-to-v1.32.0.io.k8s.api.resource.v1alpha3.DeviceClassSpec",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.resource.v1alpha3.DeviceClassSpec",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "2eb46be19624b5ea69a2e97203b36af073fd0d3a2c79f565540dc2a52280a9ff",
+          "exact_model_feature_overlap": true,
+          "nearest_policy_free_structural_distance": 0,
+          "accepted": false,
+          "rejection_reasons": [
+            "full V6 model-input feature vector is already present in V9",
+            "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+          ]
+        },
+        {
+          "record_id": "kubernetes.prescreen.v1.31.0-to-v1.32.0.io.k8s.api.resource.v1alpha3.ResourceClaimSpec",
+          "source": "kubernetes/kubernetes",
+          "family_id": "kubernetes.openapi.io.k8s.api.resource.v1alpha3.ResourceClaimSpec",
+          "policy_pack": "baseline",
+          "mutation_id": "FIELD_REMOVED",
+          "pair_fingerprint": "c73ce0f3d1fc57700230ae11324754266d8ee2bbcb23c83a37663c37d71867b9",
+          "exact_model_feature_overlap": false,
+          "nearest_policy_free_structural_distance": 1,
+          "accepted": false,
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        }
+      ]
+    },
+    "exact_feature_overlap_count": 2,
+    "near_structural_overlap_count": 8
+  },
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false
+}

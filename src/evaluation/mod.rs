@@ -1,10 +1,17 @@
 //! Model-evaluation metrics for DCG predictions.
 
+mod baseline;
 mod classification;
 mod regression;
+mod threshold;
 
+pub use baseline::{
+    BaselineComparisonReport, MajorityClassBaseline, breaking_change_heuristic,
+    compare_classification_baselines, evaluate_baseline,
+};
 pub use classification::{ClassificationMetrics, ConfusionMatrix, evaluate_binary_classification};
 pub use regression::{RegressionMetrics, evaluate_regression};
+pub use threshold::{ThresholdEvaluation, evaluate_threshold, evaluate_thresholds};
 
 use std::error::Error;
 use std::fmt;
@@ -20,6 +27,15 @@ pub enum EvaluationError {
     InvalidLabel { value: f64 },
     /// A value was NaN or infinite.
     NonFiniteValue { value: f64 },
+    /// A bounded score was outside `0.0..=1.0`.
+    InvalidScore { value: f64 },
+    /// A classification threshold was invalid.
+    InvalidThreshold { value: f64 },
+    /// A feature vector did not contain enough data for an evaluation baseline.
+    FeatureDimensionMismatch {
+        expected_at_least: usize,
+        actual: usize,
+    },
     /// Existing loss validation failed.
     Loss(crate::losses::LossError),
 }
@@ -37,6 +53,15 @@ impl fmt::Display for EvaluationError {
             ),
             Self::InvalidLabel { value } => write!(f, "Invalid binary label: {value}"),
             Self::NonFiniteValue { value } => write!(f, "Non-finite evaluation value: {value}"),
+            Self::InvalidScore { value } => write!(f, "Invalid bounded score: {value}"),
+            Self::InvalidThreshold { value } => write!(f, "Invalid threshold: {value}"),
+            Self::FeatureDimensionMismatch {
+                expected_at_least,
+                actual,
+            } => write!(
+                f,
+                "Feature vector too short for baseline: expected at least {expected_at_least}, got {actual}"
+            ),
             Self::Loss(error) => write!(f, "Loss evaluation error: {error}"),
         }
     }

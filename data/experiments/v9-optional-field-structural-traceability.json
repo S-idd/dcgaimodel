@@ -1,0 +1,43 @@
+{
+  "format_version": "dcg-structural-traceability-v1",
+  "status": "traceability_only",
+  "reason": "Both held-out optional-field root profiles contain only SAFE oracle labels. A one-class challenge cannot measure three-way generalization, so no model was fitted and no accuracy was calculated.",
+  "dataset": {
+    "path": "data/generated/dcg-oracle-production-v9-structural-balanced.json",
+    "dataset_version": "dcg-oracle-production-v9-structural-balanced",
+    "feature_version": "dcg-features-v6",
+    "sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3"
+  },
+  "oracle_identity": {
+    "jar_path": "data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar",
+    "jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "policy_packs_path": "data-contract-governance/contracts/policy-packs-v5-compositional.json",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "protocol": {
+    "name": "held-out-mutation-variant:optional_field_added",
+    "mutation": "optional_field_added",
+    "variant_key": "root_object_profile",
+    "family_isolation": {
+      "global_family_leakage": false,
+      "global_pair_leakage": false,
+      "optional_field_family_role_overlap": 0
+    },
+    "profiles": {
+      "root-open": {
+        "standard": { "records": 11580, "families": 193 },
+        "challenge": { "records": 2760, "families": 46, "labels": { "safe": 2760 } },
+        "scored": false
+      },
+      "root-closed": {
+        "standard": { "records": 9000, "families": 150 },
+        "challenge": { "records": 1800, "families": 30, "labels": { "safe": 1800 } },
+        "scored": false
+      }
+    },
+    "missing_root_profile_records": 0,
+    "accuracy": null,
+    "model_artifact": null
+  },
+  "conclusion": "The profiles are explicitly represented and family-isolated, but each held-out structural challenge is SAFE-only under the pinned JAR and approved policy packs. This is a valid corpus traceability result, not an accuracy or generalization result."
+}

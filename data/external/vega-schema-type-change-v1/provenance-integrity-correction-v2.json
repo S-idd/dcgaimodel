@@ -1,0 +1,88 @@
+{
+  "format_version": "dcg-vega-provenance-integrity-correction-v2",
+  "finding": "versioned-schema-filenames-are-not-git-refs",
+  "direct_ref_checks": [
+    {
+      "command": "git rev-parse v2.7.0",
+      "exit_code": 128,
+      "result": "unknown revision or path"
+    },
+    {
+      "command": "git rev-parse v3.0.0",
+      "exit_code": 128,
+      "result": "unknown revision or path"
+    }
+  ],
+  "root_cause": "The first pre-screen treated base_revision and candidate_revision as versioned schema filenames but populated both per-side commit fields with the repository snapshot commit. The schema bytes and blob IDs were correct, but the commit fields did not identify the commits that last produced each version file. The first persisted source clone was also shallow, which prevented reliable file-history resolution.",
+  "pipeline_correction": {
+    "full_history_required": true,
+    "shallow_repository_rejected": true,
+    "commit_resolution": "git log -1 --format=%H <snapshot> -- <versioned-file-path>",
+    "blob_resolution": "git rev-parse <resolved-file-commit>:<versioned-file-path>",
+    "snapshot_blob_cross_check_required": true
+  },
+  "corrected_provenance": {
+    "base_revision": "v2.7.0",
+    "base_revision_kind": "versioned-schema-filename",
+    "base_source_path": "vega-lite/v2.7.0.json",
+    "base_commit": "e5be017ddb189b5409cf08907ca7ddc231279cfe",
+    "base_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+    "candidate_revision": "v3.0.0",
+    "candidate_revision_kind": "versioned-schema-filename",
+    "candidate_source_path": "vega-lite/v3.0.0.json",
+    "candidate_commit": "48e92bf221eaa44571d00485f1af8d910071ae1f",
+    "candidate_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+    "repository_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2"
+  },
+  "blob_cross_checks": [
+    {
+      "path": "vega-lite/v2.7.0.json",
+      "file_commit_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+      "snapshot_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+      "match": true
+    },
+    {
+      "path": "vega-lite/v3.0.0.json",
+      "file_commit_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+      "snapshot_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+      "match": true
+    }
+  ],
+  "corrected_artifacts": [
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-prescreen-v2.json",
+      "sha256": "6b3edf9667716fe6898913c776a60ca43230fbb5282774153d0a9512ec91ba97"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-candidates-v4.json",
+      "sha256": "3fc4791f480c0987f376b98954ae34f6fb91f19ec76c5d5874c6ca4213888fea"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-overlap-projection-v2.json",
+      "sha256": "d35013e34750828f0de060ac059e360367c04e3596ce60a5e93f09127faee250"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/traces-v2/conditional-predicate-raw-trace-v2.json",
+      "sha256": "950799efe52b550db72840d6cfafe153f76a6524ca52651d8a63f375efa02bd7"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/traces-v2/conditional-selection-raw-trace-v2.json",
+      "sha256": "a3181d9b818228ff916e65e6f358b1a18404dc0e1585446d612fb1c5decd6171"
+    }
+  ],
+  "independent_reproduction": {
+    "fresh_full_clone": true,
+    "workspace": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace",
+    "source_origin": "https://github.com/vega/schema.git",
+    "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+    "pre_screen_bit_for_bit_match": true,
+    "candidate_manifest_bit_for_bit_match": true,
+    "overlap_projection_bit_for_bit_match": true,
+    "raw_traces_bit_for_bit_match": true
+  },
+  "projection_result_changed": false,
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "calibration_changed": false
+}

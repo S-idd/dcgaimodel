@@ -1,5 +1,6 @@
 use crate::dataset::{Dataset, DatasetBatch, DatasetError};
 use crate::linalg::Vector;
+use crate::losses::{LossError, cross_entropy};
 use crate::nn::{Network, NetworkError, NetworkGradients, Optimizer, OptimizerError};
 use std::error::Error;
 use std::fmt;
@@ -21,6 +22,18 @@ pub enum TrainerError {
 
     /// An optimizer operation failed.
     Optimizer(OptimizerError),
+
+    /// Objective-loss validation failed.
+    Loss(LossError),
+}
+
+/// Objective used for batch gradients and loss reporting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TrainingObjective {
+    /// Existing single/multi-output mean-squared-error path.
+    MeanSquaredError,
+    /// Fused Softmax-output Cross-Entropy path for categorical targets.
+    SoftmaxCrossEntropy,
 }
 
 impl fmt::Display for TrainerError {
@@ -41,6 +54,7 @@ impl fmt::Display for TrainerError {
             TrainerError::Optimizer(error) => {
                 write!(f, "Optimizer error: {}", error)
             }
+            TrainerError::Loss(error) => write!(f, "Loss error: {error}"),
         }
     }
 }
@@ -51,6 +65,7 @@ impl Error for TrainerError {
             TrainerError::Dataset(error) => Some(error),
             TrainerError::Network(error) => Some(error),
             TrainerError::Optimizer(error) => Some(error),
+            TrainerError::Loss(error) => Some(error),
             TrainerError::EmptyDataset | TrainerError::InvalidEpochs { .. } => None,
         }
     }
@@ -71,6 +86,12 @@ impl From<NetworkError> for TrainerError {
 impl From<OptimizerError> for TrainerError {
     fn from(error: OptimizerError) -> Self {
         Self::Optimizer(error)
+    }
+}
+
+impl From<LossError> for TrainerError {
+    fn from(error: LossError) -> Self {
+        Self::Loss(error)
     }
 }
 
@@ -114,18 +135,26 @@ impl Default for TrainingConfig {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TrainingHistory {
     epoch_losses: Vec<f64>,
+    validation_losses: Vec<f64>,
 }
 
 impl TrainingHistory {
     fn new() -> Self {
         Self {
             epoch_losses: Vec::new(),
+            validation_losses: Vec::new(),
         }
     }
 
     /// Returns the average loss recorded for every epoch.
     pub fn epoch_losses(&self) -> &[f64] {
         &self.epoch_losses
+    }
+
+    /// Returns post-epoch validation losses, or an empty slice when no
+    /// validation dataset was supplied to the trainer.
+    pub fn validation_losses(&self) -> &[f64] {
+        &self.validation_losses
     }
 
     /// Returns the number of completed epochs.
@@ -146,6 +175,10 @@ impl TrainingHistory {
     fn push(&mut self, loss: f64) {
         self.epoch_losses.push(loss);
     }
+
+    fn push_validation(&mut self, loss: f64) {
+        self.validation_losses.push(loss);
+    }
 }
 
 /// Coordinates dataset iteration, backpropagation, and optimization.
@@ -158,6 +191,7 @@ pub struct Trainer<O> {
     network: Network,
     optimizer: O,
     config: TrainingConfig,
+    objective: TrainingObjective,
 }
 
 impl<O: Optimizer> Trainer<O> {
@@ -167,7 +201,28 @@ impl<O: Optimizer> Trainer<O> {
             network,
             optimizer,
             config,
+            objective: TrainingObjective::MeanSquaredError,
         }
+    }
+
+    /// Creates a trainer with an explicit, supported objective.
+    pub fn with_objective(
+        network: Network,
+        optimizer: O,
+        config: TrainingConfig,
+        objective: TrainingObjective,
+    ) -> Self {
+        Self {
+            network,
+            optimizer,
+            config,
+            objective,
+        }
+    }
+
+    /// Returns the configured supervised-training objective.
+    pub fn objective(&self) -> TrainingObjective {
+        self.objective
     }
 
     /// Returns an immutable reference to the network.
@@ -209,6 +264,16 @@ impl<O: Optimizer> Trainer<O> {
     /// 4. Passes the averaged gradients to the optimizer.
     /// 5. Records the average pre-update batch loss.
     pub fn train(&mut self, dataset: &Dataset) -> Result<TrainingHistory, TrainerError> {
+        self.train_with_validation(dataset, None)
+    }
+
+    /// Trains on `dataset` and records a forward-only validation loss after
+    /// every epoch when `validation_dataset` is supplied.
+    pub fn train_with_validation(
+        &mut self,
+        dataset: &Dataset,
+        validation_dataset: Option<&Dataset>,
+    ) -> Result<TrainingHistory, TrainerError> {
         if dataset.is_empty() {
             return Err(TrainerError::EmptyDataset);
         }
@@ -232,6 +297,13 @@ impl<O: Optimizer> Trainer<O> {
 
             let average_epoch_loss = epoch_loss / epoch_examples as f64;
             history.push(average_epoch_loss);
+            if let Some(validation_dataset) = validation_dataset {
+                history.push_validation(dataset_mean_loss(
+                    &self.network,
+                    validation_dataset,
+                    self.objective,
+                )?);
+            }
         }
 
         Ok(history)
@@ -269,10 +341,20 @@ impl<O: Optimizer> Trainer<O> {
                 }));
             }
 
-            let sample_loss = mean_squared_error(&prediction, target);
+            let sample_loss = match self.objective {
+                TrainingObjective::MeanSquaredError => mean_squared_error(&prediction, target),
+                TrainingObjective::SoftmaxCrossEntropy => cross_entropy(&prediction, target)?,
+            };
             total_loss += sample_loss;
 
-            let gradients = self.network.backpropagate_mse(inputs, target)?;
+            let gradients = match self.objective {
+                TrainingObjective::MeanSquaredError => {
+                    self.network.backpropagate_mse(inputs, target)?
+                }
+                TrainingObjective::SoftmaxCrossEntropy => self
+                    .network
+                    .backpropagate_softmax_cross_entropy(inputs, target)?,
+            };
 
             if let Some(accumulated) = accumulated_gradients.take() {
                 accumulated_gradients = Some(accumulated.add(&gradients)?);
@@ -287,6 +369,25 @@ impl<O: Optimizer> Trainer<O> {
 
         Ok((gradients, total_loss / batch.len() as f64))
     }
+}
+
+fn dataset_mean_loss(
+    network: &Network,
+    dataset: &Dataset,
+    objective: TrainingObjective,
+) -> Result<f64, TrainerError> {
+    if dataset.is_empty() {
+        return Err(TrainerError::EmptyDataset);
+    }
+    let mut total = 0.0;
+    for (features, target) in dataset.features().iter().zip(dataset.targets()) {
+        let prediction = network.forward(features)?;
+        total += match objective {
+            TrainingObjective::MeanSquaredError => mean_squared_error(&prediction, target),
+            TrainingObjective::SoftmaxCrossEntropy => cross_entropy(&prediction, target)?,
+        };
+    }
+    Ok(total / dataset.len() as f64)
 }
 
 /// Computes MSE directly from two vectors.
@@ -518,6 +619,7 @@ mod tests {
     fn history_get_returns_epoch_loss() {
         let history = TrainingHistory {
             epoch_losses: vec![1.0, 0.5, 0.25],
+            validation_losses: vec![],
         };
 
         assert_eq!(history.get(0), Some(1.0));
@@ -551,6 +653,30 @@ mod tests {
         // Batch losses before their respective updates are 5.0 (two examples)
         // and 0.25 (one example), so the epoch average is (10.0 + 0.25) / 3.
         assert!((history.epoch_losses()[0] - 10.25 / 3.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn records_validation_loss_without_mutating_validation_data() {
+        let training =
+            Dataset::new(vec![Vector::new(vec![1.0])], vec![Vector::new(vec![1.0])]).unwrap();
+        let validation = training.clone();
+        let original_validation = validation.clone();
+        let mut trainer = Trainer::new(
+            single_neuron_network(0.0, 0.0),
+            TestOptimizer,
+            TrainingConfig::new(3, 1).unwrap(),
+        );
+        let history = trainer
+            .train_with_validation(&training, Some(&validation))
+            .unwrap();
+        assert_eq!(history.validation_losses().len(), 3);
+        assert!(
+            history
+                .validation_losses()
+                .iter()
+                .all(|loss| loss.is_finite())
+        );
+        assert_eq!(validation, original_validation);
     }
 
     #[test]

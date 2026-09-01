@@ -1,9 +1,82 @@
 use crate::dataset::{Dataset, DatasetError};
+use crate::features::DCG_FEATURE_VERSION;
 use crate::features::{ContractChange, ContractFeatureExtractor, FeatureError, FeatureExtractor};
 use crate::linalg::Vector;
 use crate::prediction::PredictionKind;
 use std::error::Error;
 use std::fmt;
+
+/// The authoritative compatibility category emitted by the deterministic oracle.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CompatibilityLabel {
+    /// Compatible with no oracle warning.
+    Safe,
+    /// Compatible, but the oracle emitted one or more warnings.
+    Warning,
+    /// The oracle rejected the candidate as breaking.
+    Breaking,
+}
+
+impl CompatibilityLabel {
+    /// Stable portable spelling used in prepared dataset JSON.
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Safe => "safe",
+            Self::Warning => "warning",
+            Self::Breaking => "breaking",
+        }
+    }
+
+    /// Parses a portable oracle outcome without accepting aliases silently.
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "safe" => Some(Self::Safe),
+            "warning" => Some(Self::Warning),
+            "breaking" => Some(Self::Breaking),
+            _ => None,
+        }
+    }
+
+    /// Derived binary view: only BREAKING is positive.
+    pub const fn binary_breaking(self) -> f64 {
+        match self {
+            Self::Breaking => 1.0,
+            Self::Safe | Self::Warning => 0.0,
+        }
+    }
+
+    /// Stable class ordinal for future correct multiclass training/evaluation.
+    pub const fn class_index(self) -> u8 {
+        match self {
+            Self::Safe => 0,
+            Self::Warning => 1,
+            Self::Breaking => 2,
+        }
+    }
+}
+
+/// Centralized supervised target selection for DCG prepared data.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TargetMode {
+    /// One-output binary target: BREAKING vs SAFE/WARNING.
+    BinaryBreaking,
+    /// Three-way SAFE/WARNING/BREAKING target for Softmax + Cross-Entropy training.
+    ThreeWayCompatibility,
+}
+
+impl TargetMode {
+    /// Converts one canonical oracle category into the selected supervised target.
+    pub fn target_for(self, label: CompatibilityLabel) -> Vector {
+        match self {
+            Self::BinaryBreaking => Vector::new(vec![label.binary_breaking()]),
+            Self::ThreeWayCompatibility => {
+                let mut values = vec![0.0; 3];
+                values[label.class_index() as usize] = 1.0;
+                Vector::new(values)
+            }
+        }
+    }
+}
 
 /// Supervised labels for a changed contract.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -36,7 +109,7 @@ impl ContractLabels {
         Ok(())
     }
 
-    fn target_for(&self, kind: PredictionKind) -> Vector {
+    pub(crate) fn target_for(&self, kind: PredictionKind) -> Vector {
         let value = match kind {
             PredictionKind::BreakingChange => self.breaking_change,
             PredictionKind::Compatibility => self.incompatible,
@@ -53,6 +126,43 @@ pub struct ContractExample {
     pub contract: ContractChange,
     /// Ground-truth labels for the three supported tasks.
     pub labels: ContractLabels,
+}
+
+/// Portable prepared representation of a DCG example.
+///
+/// Raw contract information is deliberately converted before it reaches the
+/// generic neural-network engine. Dataset persistence can attach its own
+/// contract-family, policy-pack, and schema-version metadata without exposing
+/// JSON Schema concerns to network primitives.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DcgTrainingRecord {
+    /// Portable contract or scenario identifier.
+    pub contract_id: String,
+    /// Identifier of the self-contained source fixture/dataset.
+    pub source: String,
+    /// Version of the ordered numerical feature schema.
+    pub feature_version: &'static str,
+    /// Validated canonical raw feature vector.
+    pub features: Vector,
+    /// Authoritative deterministic-policy training labels.
+    pub labels: ContractLabels,
+}
+
+impl ContractExample {
+    /// Prepares a portable record without coupling NN internals to DCG schema types.
+    pub fn to_training_record(
+        &self,
+        source: impl Into<String>,
+    ) -> Result<DcgTrainingRecord, DcgDatasetError> {
+        self.labels.validate()?;
+        Ok(DcgTrainingRecord {
+            contract_id: self.contract.contract_name.clone(),
+            source: source.into(),
+            feature_version: DCG_FEATURE_VERSION,
+            features: ContractFeatureExtractor::new().extract(&self.contract)?,
+            labels: self.labels,
+        })
+    }
 }
 
 /// Errors returned while converting DCG examples into the generic dataset.
@@ -270,6 +380,32 @@ mod tests {
                 name: "risk_score",
                 value: f64::INFINITY
             })
+        );
+    }
+
+    #[test]
+    fn prepares_versioned_training_records() {
+        let record = synthetic_examples()[0]
+            .to_training_record("synthetic-fixtures-v1")
+            .unwrap();
+        assert_eq!(record.feature_version, DCG_FEATURE_VERSION);
+        assert_eq!(record.features.len(), 8);
+        assert_eq!(record.source, "synthetic-fixtures-v1");
+    }
+
+    #[test]
+    fn target_mode_keeps_safe_warning_and_breaking_distinct() {
+        assert_eq!(
+            TargetMode::ThreeWayCompatibility.target_for(CompatibilityLabel::Safe),
+            Vector::new(vec![1.0, 0.0, 0.0])
+        );
+        assert_eq!(
+            TargetMode::ThreeWayCompatibility.target_for(CompatibilityLabel::Warning),
+            Vector::new(vec![0.0, 1.0, 0.0])
+        );
+        assert_eq!(
+            TargetMode::BinaryBreaking.target_for(CompatibilityLabel::Warning),
+            Vector::new(vec![0.0])
         );
     }
 }

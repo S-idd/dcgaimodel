@@ -12,6 +12,89 @@ This project follows a milestone-based development process. Every completed spri
 
 # Version 0.1.0 (Development)
 
+## Repository and Community Infrastructure
+
+- Added GitHub Actions for Rust formatting, Clippy, tests, and scheduled `cargo audit` checks.
+- Added Dependabot configuration for Cargo and GitHub Actions dependencies.
+- Added Apache-2.0 licensing, security reporting guidance, a code of conduct, issue forms, a pull-request template, and code ownership.
+- Declared Rust 1.88 as the minimum supported version and added shared toolchain, rustfmt, Clippy, EditorConfig, and Git attribute settings.
+- Excluded generated corpora, oracle staging trees, external repository checkouts, and the separately maintained governance repository from the Rust repository.
+
+## Milestone 4 — Reliability, Persistence, and Inference Readiness
+
+### Features
+
+- Added the versioned `dcg-features-v1` feature contract and strict raw-feature validation.
+- Added self-contained realistic DCG contract-change fixtures and prepared training records.
+- Added seeded train/validation/test split support and validated persisted scaler statistics.
+- Added prepared-dataset JSON artifacts with source, family/split-group, contract version, policy-pack, label, and feature-version metadata.
+- Added family-aware partitioning, per-epoch validation loss tracking, and a unified train/validation/test pipeline.
+- Added majority and deterministic breaking-count baselines plus arbitrary threshold evaluation.
+- Added pipeline-level validation threshold and isolated-test baseline reports.
+- Added `dcgaimodel-artifact-v1` JSON model artifacts with network, scaler, and training metadata validation.
+- Added inference-only `InferenceRuntime` and structured `PredictionResult` output.
+- Added an end-to-end realistic-fixture train → save → load → infer integration test.
+
+### Safety boundary
+
+`dcgaimodel` predictions are advisory. Deterministic DCG compatibility and policy enforcement remain authoritative. An ML prediction must not override a deterministic breaking-change or policy violation result.
+
+### Dependencies
+
+- Added `serde` and `serde_json` for an explicit, portable, validated JSON artifact format.
+
+### Status
+
+Completed — verified by the Milestone 4 quality gate.
+
+## Training Readiness — Feature V2 and Oracle Dataset Expansion
+
+- Added `dcg-features-v2`, a versioned 28-feature structural and policy-context schema-pair contract without oracle-label leakage.
+- Added canonical SAFE/WARNING/BREAKING storage with a centralized derived binary BREAKING target.
+- Added V2-aware prepared-data and model-artifact feature-version validation while preserving V1 semantics.
+- Added deterministic broad seed sampling, three-policy oracle generation, balanced outcome retention, dataset statistics, duplicate-ID rejection, and readiness reporting.
+- Added a grouped three-way compatibility workflow with one-hot SAFE/WARNING/BREAKING targets, a three-output Softmax head, fused Cross-Entropy gradients, and per-epoch validation loss.
+- Added a small V2 binary smoke run only; no production-quality training claim is made.
+
+## Three-Way Artifact Persistence and Reproducible CPU Evaluation
+
+- Added a separate `dcgaimodel-three-way-artifact-v1` format for SAFE/WARNING/BREAKING Softmax models, preserving the old binary artifact format unchanged.
+- Persisted the fixed SAFE/WARNING/BREAKING output order, training-only scaler, full training metadata, and SHA-256 identities for the dataset, oracle JAR, and policy-pack file.
+- Added a CPU multi-seed experiment runner that verifies the supplied JAR and policy pack against generated-record provenance before training.
+- Added per-seed normal, held-out-policy, held-out-mutation, `ENUM_VALUE_ADDED` structural-variant, and same-mutation/different-policy reports with full loss histories and aggregate confusion matrices.
+- Recorded one-class mutation holdouts as traceability-only and the full policy-sensitive `ENUM_VALUE_ADDED` holdout as structurally unidentifiable, rather than reporting either as a valid generalization score.
+
+## Policy-Holdout Generalization Safeguards
+
+- Added `dcg-features-v4`, which replaces policy-name identity features with the declared `ENUM_VALUE_ADDED` IGNORE/WARNING/BREAKING disposition parsed from the approved policy-pack JSON.
+- Added a V4 held-out-policy identifiability gate. A policy profile absent from training is recorded as structurally unidentifiable instead of being presented as a supervised generalization score.
+- Confirmed the current three-pack configuration has one unique semantic profile per pack; a measurable policy-identity holdout requires separately approved peer profiles and new pinned-input conformance evidence.
+
+## V4 Policy-Identity Benchmark Completion and V5 Feature Foundation
+
+- Added the approved six-pack peer-policy configuration, preserving the original policy-pack file unchanged.
+- Captured 58,086 six-policy pinned-JAR conformance checks and created 120 explicit, hash-pinned qualified promotions. Policy-variable cells remain unpromoted.
+- Generated and audited the V4 production corpus: 17,994 JAR-labelled records across 392 independent families, with 300 standard and 92 family-isolated challenge families. It reports `benchmark_ready=true` with no family or oracle-pair leakage.
+- Completed the V4 three-seed CPU Softmax experiment, persisting 39 models and aggregate reports. Held-out named-policy accuracy is 99.66%–99.76%; this is policy-name generalization over known peer semantics, not zero-shot policy-behavior generalization.
+- Added `dcg-features-v5`, a 59-feature contract that replaces V4's enum-only policy context with 24 resolved IGNORE/WARNING/BREAKING actions spanning all eight JAR rule IDs.
+- Matched feature-policy resolution to the executable JAR's baseline-plus-pack-overrides behavior; feature extraction remains independent of oracle exit code and compatibility label.
+- Expanded `CONSTRAINT_TIGHTENED` generation into 15 bounded, independently identified variants: numeric minimum/maximum/multiple-of, string minimum/maximum length and pattern, object property bounds, array item/uniqueness constraints, and mixed forms.
+- Added an opt-in pinned-JAR test that stages every hard candidate and verifies its actual `BACKWARD`/`baseline` label. The reviewed run used JAR SHA-256 `809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc` and policy-pack SHA-256 `65a5f29addcf999683b18c888c6d60a082023fa0514c6b1b3881fc7512d5039a`; all 15 were valid and `BREAKING`.
+- Added the separately pinned V5 compositional policy file, with the original six profiles plus a complete 3×3 `ENUM_VALUE_ADDED` × `CONSTRAINT_TIGHTENED` IGNORE/WARNING/BREAKING matrix. It has SHA-256 `8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6`.
+- Updated V5 held-out-policy gating: an unseen full vector is scored as a compositional test only when each rule/action component is represented independently in training; a missing component remains structurally unidentifiable. This does not inspect labels.
+- Executed 18 targeted pinned-JAR checks over the nine compositional profiles (enum addition and constraint tightening per profile). Every result matched the declared SAFE/WARNING/BREAKING action; full three-mode conformance remains required before promotions or corpus claims.
+- Added bounded `--oracle-workers` parallelism to Rust generation. Oracle calls for one candidate are executed in isolated processes but consumed in the declared policy order, so quotas, family reservation, labels, and record order stay deterministic.
+- Certified the eight-worker implementation against serial generation with the V5 JAR and policy file: two quota-stress replays (135 retained records) and a full-label 20-source replay (5,340 retained records) were byte-identical to their serial references.
+
+## Counterfactual Corpus and Generalization Safeguards
+
+- Added complete-family `standard`/`challenge` dataset roles; challenge records are persisted but excluded from train/validation/test splitting.
+- Added bounded per-policy/mutation/oracle-outcome retention for counterfactual corpus generation.
+- Added reusable policy × label, mutation × label, and policy × mutation × label shortcut audits with observed oracle-invariant mutation exceptions.
+- Added corpus gates for challenge leakage, complete three-policy family/mutation coverage, shortcut risks, and multi-class challenge views.
+- Added held-out-policy, held-out-mutation, and same-mutation/different-policy challenge subset protocols.
+- Added a bounded oracle-backed counterfactual smoke-generation and audit procedure. This remains a corpus-design readiness check, not operational-generalization evidence.
+
 ## Sprint 1 — Project Initialization
 
 ### Objective

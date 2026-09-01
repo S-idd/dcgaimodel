@@ -52,6 +52,20 @@ pub enum DatasetError {
     /// Test ratio must be finite and in the open range `0..1`.
     InvalidSplitRatio { ratio: f64 },
 
+    /// Train, validation, and test ratios were not a usable complete split.
+    InvalidSplitConfiguration {
+        train_ratio: f64,
+        validation_ratio: f64,
+        test_ratio: f64,
+    },
+
+    /// A dataset value was NaN or infinite.
+    NonFiniteValue {
+        row: usize,
+        column: usize,
+        value: f64,
+    },
+
     /// File IO failed.
     IoError { message: String },
 }
@@ -112,6 +126,18 @@ impl fmt::Display for DatasetError {
                     ratio
                 )
             }
+            DatasetError::InvalidSplitConfiguration {
+                train_ratio,
+                validation_ratio,
+                test_ratio,
+            } => write!(
+                f,
+                "Invalid train/validation/test ratios: {train_ratio}/{validation_ratio}/{test_ratio}"
+            ),
+            DatasetError::NonFiniteValue { row, column, value } => write!(
+                f,
+                "Dataset value at row {row}, column {column} is not finite: {value}"
+            ),
             DatasetError::IoError { message } => write!(f, "Dataset IO error: {}", message),
         }
     }
@@ -132,6 +158,84 @@ impl From<std::io::Error> for DatasetError {
 pub struct Dataset {
     features: Vec<Vector>,
     targets: Vec<Vector>,
+}
+
+/// Reproducible configuration for an isolated train/validation/test split.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct DatasetSplitConfig {
+    /// Fraction of rows allocated to training.
+    pub train_ratio: f64,
+    /// Fraction of rows allocated to validation/model selection.
+    pub validation_ratio: f64,
+    /// Fraction of rows reserved for final testing.
+    pub test_ratio: f64,
+    /// Seed used by the internal deterministic row permutation.
+    pub seed: u64,
+}
+
+impl DatasetSplitConfig {
+    /// Creates a split configuration with ratios that sum to one.
+    pub fn new(
+        train_ratio: f64,
+        validation_ratio: f64,
+        test_ratio: f64,
+        seed: u64,
+    ) -> Result<Self, DatasetError> {
+        let ratios = [train_ratio, validation_ratio, test_ratio];
+        if ratios
+            .iter()
+            .any(|ratio| !ratio.is_finite() || *ratio <= 0.0)
+            || (ratios.iter().sum::<f64>() - 1.0).abs() > 1e-12
+        {
+            return Err(DatasetError::InvalidSplitConfiguration {
+                train_ratio,
+                validation_ratio,
+                test_ratio,
+            });
+        }
+        Ok(Self {
+            train_ratio,
+            validation_ratio,
+            test_ratio,
+            seed,
+        })
+    }
+}
+
+impl Default for DatasetSplitConfig {
+    fn default() -> Self {
+        Self {
+            train_ratio: 0.70,
+            validation_ratio: 0.15,
+            test_ratio: 0.15,
+            seed: 0,
+        }
+    }
+}
+
+/// Three isolated partitions produced from a seeded deterministic permutation.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DatasetSplit {
+    train: Dataset,
+    validation: Dataset,
+    test: Dataset,
+}
+
+impl DatasetSplit {
+    /// Returns the training partition used to fit preprocessing and weights.
+    pub fn train(&self) -> &Dataset {
+        &self.train
+    }
+
+    /// Returns the validation partition used for model or threshold selection.
+    pub fn validation(&self) -> &Dataset {
+        &self.validation
+    }
+
+    /// Returns the final isolated test partition.
+    pub fn test(&self) -> &Dataset {
+        &self.test
+    }
 }
 
 impl Dataset {
@@ -301,6 +405,84 @@ impl Dataset {
 
         Ok((train, test))
     }
+
+    /// Creates reproducible train, validation, and test partitions.
+    ///
+    /// The seed controls a local deterministic permutation, rather than any
+    /// global random state. For related contract versions, callers should use
+    /// a group-aware split outside this generic row container; fixtures expose
+    /// their `contract_family` specifically so that risk is not hidden.
+    pub fn train_validation_test_split(
+        &self,
+        config: DatasetSplitConfig,
+    ) -> Result<DatasetSplit, DatasetError> {
+        DatasetSplitConfig::new(
+            config.train_ratio,
+            config.validation_ratio,
+            config.test_ratio,
+            config.seed,
+        )?;
+        if self.len() < 3 {
+            return Err(DatasetError::EmptyDataset);
+        }
+
+        let mut indices = (0..self.len()).collect::<Vec<_>>();
+        let mut state = config.seed;
+        for index in (1..indices.len()).rev() {
+            state = state.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let swap_index = (state as usize) % (index + 1);
+            indices.swap(index, swap_index);
+        }
+
+        let ratios = [
+            config.train_ratio,
+            config.validation_ratio,
+            config.test_ratio,
+        ];
+        let mut counts = ratios.map(|ratio| (ratio * self.len() as f64).floor() as usize);
+        let mut remaining = self.len() - counts.iter().sum::<usize>();
+        while remaining > 0 {
+            let index = (0..3)
+                .max_by(|left, right| {
+                    let left_fraction = ratios[*left] * self.len() as f64 - counts[*left] as f64;
+                    let right_fraction = ratios[*right] * self.len() as f64 - counts[*right] as f64;
+                    left_fraction.total_cmp(&right_fraction)
+                })
+                .unwrap_or(0);
+            counts[index] += 1;
+            remaining -= 1;
+        }
+        for count in &mut counts {
+            if *count == 0 {
+                *count = 1;
+            }
+        }
+        while counts.iter().sum::<usize>() > self.len() {
+            let index = (0..3)
+                .filter(|index| counts[*index] > 1)
+                .max_by_key(|index| counts[*index])
+                .ok_or(DatasetError::EmptyDataset)?;
+            counts[index] -= 1;
+        }
+
+        let make_partition = |rows: &[usize]| {
+            Dataset::new(
+                rows.iter()
+                    .map(|index| self.features[*index].clone())
+                    .collect(),
+                rows.iter()
+                    .map(|index| self.targets[*index].clone())
+                    .collect(),
+            )
+        };
+        let train_end = counts[0];
+        let validation_end = train_end + counts[1];
+        Ok(DatasetSplit {
+            train: make_partition(&indices[..train_end])?,
+            validation: make_partition(&indices[train_end..validation_end])?,
+            test: make_partition(&indices[validation_end..])?,
+        })
+    }
 }
 
 /// A mini-batch of supervised examples.
@@ -358,6 +540,18 @@ fn validate_dataset(features: &[Vector], targets: &[Vector]) -> Result<(), Datas
                     row,
                     expected,
                     actual: feature.len(),
+                });
+            }
+        }
+    }
+
+    for (row, values) in features.iter().chain(targets.iter()).enumerate() {
+        for (column, value) in values.iter().enumerate() {
+            if !value.is_finite() {
+                return Err(DatasetError::NonFiniteValue {
+                    row,
+                    column,
+                    value: *value,
                 });
             }
         }
@@ -633,5 +827,41 @@ mod tests {
         let result = dataset.train_test_split(1.0);
 
         assert_eq!(result, Err(DatasetError::InvalidSplitRatio { ratio: 1.0 }));
+    }
+
+    #[test]
+    fn produces_reproducible_three_way_splits() {
+        let dataset = Dataset::new(
+            (0..10)
+                .map(|value| Vector::new(vec![value as f64]))
+                .collect(),
+            (0..10)
+                .map(|value| Vector::new(vec![(value % 2) as f64]))
+                .collect(),
+        )
+        .unwrap();
+        let config = DatasetSplitConfig::new(0.7, 0.15, 0.15, 42).unwrap();
+        let first = dataset.train_validation_test_split(config).unwrap();
+        let second = dataset.train_validation_test_split(config).unwrap();
+        assert_eq!(first, second);
+        assert_eq!(
+            first.train().len() + first.validation().len() + first.test().len(),
+            10
+        );
+        assert!(!first.train().is_empty());
+        assert!(!first.validation().is_empty());
+        assert!(!first.test().is_empty());
+    }
+
+    #[test]
+    fn rejects_invalid_three_way_split_and_non_finite_data() {
+        assert!(DatasetSplitConfig::new(0.7, 0.2, 0.2, 1).is_err());
+        assert!(matches!(
+            Dataset::new(
+                vec![Vector::new(vec![f64::NAN])],
+                vec![Vector::new(vec![0.0])]
+            ),
+            Err(DatasetError::NonFiniteValue { .. })
+        ));
     }
 }

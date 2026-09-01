@@ -1,0 +1,69 @@
+{
+  "format_version": "dcg-external-traceability-audit-v1",
+  "source_manifest_path": "stripe-openapi-external-manifest-v3.json",
+  "source_manifest_sha256": "be66872fcb14034807faad297b81b1a932bc98e87e4a8538e9615d1a40a522ce",
+  "source_preflight_report_path": "v9-preflight-report.json",
+  "source_preflight_report_sha256": "48cf97dfad2e9481472e27b7ff890fd69312d0cb0cde51f4b9b11266eec43e28",
+  "status": "traceability-only",
+  "accuracy_evidence": false,
+  "clean_record_count": 16,
+  "clean_record_ids": [
+    "stripe.openapi.v2323-to-v2324.dispute",
+    "stripe.openapi.v2323-to-v2324.dispute_enhanced_eligibility",
+    "stripe.openapi.v2323-to-v2324.dispute_enhanced_evidence",
+    "stripe.openapi.v2323-to-v2324.financial_connections.account",
+    "stripe.openapi.v2323-to-v2324.payment_intent_payment_method_options",
+    "stripe.openapi.v2323-to-v2324.payment_method_bizum",
+    "stripe.openapi.v2323-to-v2324.payment_method_blik",
+    "stripe.openapi.v2323-to-v2324.payment_method_pix",
+    "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details",
+    "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details_pix",
+    "stripe.openapi.v2348-to-v2349.card",
+    "stripe.openapi.v2348-to-v2349.funding_instructions_bank_transfer_financial_address",
+    "stripe.openapi.v2348-to-v2349.payment_intent_next_action",
+    "stripe.openapi.v2348-to-v2349.setup_intent_next_action",
+    "stripe.openapi.v2348-to-v2349.tax_product_resource_tax_rate_details",
+    "stripe.openapi.v2348-to-v2349.tax_rate"
+  ],
+  "rejected_record_count": 30,
+  "rejection_skew": {
+    "ENUM_CHANGED": {
+      "selected": 21,
+      "clean": 4,
+      "rejected": 17,
+      "rejection_rate": 0.8095238095238095
+    },
+    "FIELD_ADDED": {
+      "selected": 22,
+      "clean": 9,
+      "rejected": 13,
+      "rejection_rate": 0.5909090909090909
+    },
+    "CONSTRAINT_OR_RESTRICTION_CHANGED": {
+      "selected": 2,
+      "clean": 2,
+      "rejected": 0,
+      "rejection_rate": 0
+    },
+    "FIELD_REMOVED": {
+      "selected": 1,
+      "clean": 1,
+      "rejected": 0,
+      "rejection_rate": 0
+    },
+    "TYPE_CHANGED": {
+      "selected": 0,
+      "clean": 0,
+      "rejected": 0,
+      "rejection_rate": null
+    }
+  },
+  "overlap_characterization": "V9 overlap is structural: V6 represents schema-change shape and resolved policy context, not Stripe domain or component identity. The overlap audit found feature-space similarity rather than raw-pair leakage.",
+  "preflight_report_path": "v9-preflight-report-after-traceability.json",
+  "original_preflight_report_path": "v9-preflight-report.json",
+  "limitations": [
+    "The clean rows are traceability evidence only and must not be used for reported model accuracy.",
+    "The clean set has one FIELD_REMOVED row and zero TYPE_CHANGED rows, so it is not evidence for BREAKING-label accuracy.",
+    "No SAFE/WARNING/BREAKING labels are present in this traceability decision."
+  ]
+}

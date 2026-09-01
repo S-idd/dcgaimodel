@@ -1,0 +1,382 @@
+{
+  "format_version": "dcg-external-feature-diagnostic-v1",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "record_id": "kubernetes.diagnostic.v1.24.0-to-v1.25.0.io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+  "source": "kubernetes/kubernetes",
+  "source_path": "api/openapi-spec/swagger.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+  "mutation_id": "FIELD_REMOVED",
+  "policy_pack": "baseline",
+  "full_v6_feature_count": 76,
+  "structural_coordinate_count": 49,
+  "structural_coordinates": [
+    {
+      "index": 0,
+      "name": "field_count",
+      "value": 15.0
+    },
+    {
+      "index": 1,
+      "name": "fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 2,
+      "name": "fields_removed",
+      "value": 1.0
+    },
+    {
+      "index": 3,
+      "name": "fields_changed",
+      "value": 0.0
+    },
+    {
+      "index": 4,
+      "name": "schema_depth",
+      "value": 4.0
+    },
+    {
+      "index": 5,
+      "name": "required_field_count",
+      "value": 0.0
+    },
+    {
+      "index": 6,
+      "name": "required_fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 7,
+      "name": "required_fields_removed",
+      "value": 0.0
+    },
+    {
+      "index": 8,
+      "name": "type_changes",
+      "value": 0.0
+    },
+    {
+      "index": 9,
+      "name": "type_widening",
+      "value": 0.0
+    },
+    {
+      "index": 10,
+      "name": "type_narrowing",
+      "value": 0.0
+    },
+    {
+      "index": 11,
+      "name": "enum_values_added",
+      "value": 0.0
+    },
+    {
+      "index": 12,
+      "name": "enum_values_removed",
+      "value": 0.0
+    },
+    {
+      "index": 13,
+      "name": "enum_definitions_added",
+      "value": 0.0
+    },
+    {
+      "index": 14,
+      "name": "enum_definitions_removed",
+      "value": 0.0
+    },
+    {
+      "index": 15,
+      "name": "constraint_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 16,
+      "name": "constraint_relaxed",
+      "value": 0.0
+    },
+    {
+      "index": 17,
+      "name": "conditional_changed",
+      "value": 0.0
+    },
+    {
+      "index": 18,
+      "name": "one_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 19,
+      "name": "any_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 20,
+      "name": "all_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 21,
+      "name": "not_changed",
+      "value": 0.0
+    },
+    {
+      "index": 22,
+      "name": "additional_properties_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 23,
+      "name": "additional_properties_relaxed",
+      "value": 0.0
+    },
+    {
+      "index": 48,
+      "name": "root_fields_added_string",
+      "value": 0.0
+    },
+    {
+      "index": 49,
+      "name": "root_fields_added_numeric",
+      "value": 0.0
+    },
+    {
+      "index": 50,
+      "name": "root_fields_added_boolean",
+      "value": 0.0
+    },
+    {
+      "index": 51,
+      "name": "root_fields_added_array",
+      "value": 0.0
+    },
+    {
+      "index": 52,
+      "name": "root_fields_added_object",
+      "value": 0.0
+    },
+    {
+      "index": 53,
+      "name": "root_fields_added_other",
+      "value": 0.0
+    },
+    {
+      "index": 54,
+      "name": "root_additional_properties_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 55,
+      "name": "root_property_names_changed",
+      "value": 0.0
+    },
+    {
+      "index": 56,
+      "name": "root_dependent_required_changed",
+      "value": 0.0
+    },
+    {
+      "index": 57,
+      "name": "root_dependent_schemas_changed",
+      "value": 0.0
+    },
+    {
+      "index": 58,
+      "name": "root_schema_applicators_changed",
+      "value": 0.0
+    },
+    {
+      "index": 62,
+      "name": "root_object_closed_before",
+      "value": 0.0
+    },
+    {
+      "index": 63,
+      "name": "root_object_closed_after",
+      "value": 0.0
+    },
+    {
+      "index": 64,
+      "name": "root_optional_fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 65,
+      "name": "root_optional_fields_added_to_closed_object",
+      "value": 0.0
+    },
+    {
+      "index": 66,
+      "name": "constraint_numeric_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 67,
+      "name": "constraint_string_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 68,
+      "name": "constraint_array_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 69,
+      "name": "constraint_object_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 70,
+      "name": "constraint_lower_bound_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 71,
+      "name": "constraint_upper_bound_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 72,
+      "name": "constraint_pattern_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 73,
+      "name": "constraint_multiple_of_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 74,
+      "name": "constraint_unique_items_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 75,
+      "name": "constraint_compound_tightened",
+      "value": 0.0
+    }
+  ],
+  "nonzero_v6_features": [
+    {
+      "index": 0,
+      "name": "field_count",
+      "value": 15.0
+    },
+    {
+      "index": 2,
+      "name": "fields_removed",
+      "value": 1.0
+    },
+    {
+      "index": 4,
+      "name": "schema_depth",
+      "value": 4.0
+    },
+    {
+      "index": 26,
+      "name": "policy_field_removed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 29,
+      "name": "policy_field_type_changed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 32,
+      "name": "policy_required_field_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 35,
+      "name": "policy_enum_value_removed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 37,
+      "name": "policy_enum_value_added_warning",
+      "value": 1.0
+    },
+    {
+      "index": 41,
+      "name": "policy_constraint_tightened_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 44,
+      "name": "policy_conditional_restriction_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 47,
+      "name": "policy_schema_restriction_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 61,
+      "name": "active_rule_action_breaking",
+      "value": 1.0
+    }
+  ],
+  "exact_full_v6_feature_match_count": 12,
+  "nearest_v9_structural_distance": 0,
+  "nearest_v9_record_count": 60,
+  "nearest_v9_records": [
+    {
+      "record_id": "o30476:field_removed:remove-first-root-property:baseline",
+      "source": "jsonschemabench",
+      "family_id": "o30476",
+      "policy_pack": "baseline",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "5a18015cab25ba50734f8642a4d74f24cb2472a82a3ed832fbec4f37230a52c6",
+      "structural_coordinate_distance": 0,
+      "differing_structural_coordinates": []
+    },
+    {
+      "record_id": "o30476:field_removed:remove-first-root-property:baseline-warning-peer",
+      "source": "jsonschemabench",
+      "family_id": "o30476",
+      "policy_pack": "baseline-warning-peer",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "779d61775cc13e04ce83ea8a894562943cdfb57c3f5089df1a899712d90bf389",
+      "structural_coordinate_distance": 0,
+      "differing_structural_coordinates": []
+    },
+    {
+      "record_id": "o30476:field_removed:remove-first-root-property:composition-enum-breaking-constraint-breaking",
+      "source": "jsonschemabench",
+      "family_id": "o30476",
+      "policy_pack": "composition-enum-breaking-constraint-breaking",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "99773be25edc84b4cc614d97c0314a348cf30baf2890c57e1bc3a98c6cfe2b23",
+      "structural_coordinate_distance": 0,
+      "differing_structural_coordinates": []
+    },
+    {
+      "record_id": "o30476:field_removed:remove-first-root-property:composition-enum-breaking-constraint-ignore",
+      "source": "jsonschemabench",
+      "family_id": "o30476",
+      "policy_pack": "composition-enum-breaking-constraint-ignore",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "d399b0b2b66be945203640c4e97b17433733e78742fd392dc998310c7b94cc0e",
+      "structural_coordinate_distance": 0,
+      "differing_structural_coordinates": []
+    },
+    {
+      "record_id": "o30476:field_removed:remove-first-root-property:composition-enum-breaking-constraint-warning",
+      "source": "jsonschemabench",
+      "family_id": "o30476",
+      "policy_pack": "composition-enum-breaking-constraint-warning",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "05e310a29d409d2702e3f1c6195018dcbcfe15c73a5f8e456f2e0d9b087712fe",
+      "structural_coordinate_distance": 0,
+      "differing_structural_coordinates": []
+    }
+  ]
+}

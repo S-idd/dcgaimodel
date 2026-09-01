@@ -1,0 +1,1550 @@
+{
+  "format_version": "dcg-vega-type-change-raw-trace-v1",
+  "record_id": "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalPredicate<ValueDef>",
+  "mutation_id": "TYPE_CHANGED",
+  "provenance": {
+    "source": "vega/schema",
+    "source_kind": "public-version-history",
+    "source_url": "https://github.com/vega/schema",
+    "source_license": "BSD-3-Clause",
+    "source_path": "vega-lite/v2.7.0.json->vega-lite/v3.0.0.json#/definitions/ConditionalPredicate<ValueDef>",
+    "family_id": "vega.schema.vega-lite.ConditionalPredicate<ValueDef>",
+    "contract_id": "vega.schema.vega-lite.ConditionalPredicate<ValueDef>",
+    "base_revision": "v2.7.0",
+    "candidate_revision": "v3.0.0",
+    "base_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+    "candidate_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+    "base_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+    "candidate_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb"
+  },
+  "raw_schema_change": {
+    "semantic_path": "properties/value/type",
+    "before": {
+      "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+      "type": [
+        "number",
+        "string",
+        "boolean"
+      ]
+    },
+    "after": {
+      "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+      "type": [
+        "number",
+        "string",
+        "boolean",
+        "null"
+      ]
+    }
+  },
+  "v6_feature_trace": {
+    "feature_count": 76,
+    "structural_coordinate_count": 49,
+    "nonzero_structural_coordinates": [
+      {
+        "index": 0,
+        "name": "field_count",
+        "value": 2
+      },
+      {
+        "index": 3,
+        "name": "fields_changed",
+        "value": 1
+      },
+      {
+        "index": 4,
+        "name": "schema_depth",
+        "value": 4
+      },
+      {
+        "index": 5,
+        "name": "required_field_count",
+        "value": 2
+      },
+      {
+        "index": 8,
+        "name": "type_changes",
+        "value": 1
+      },
+      {
+        "index": 9,
+        "name": "type_widening",
+        "value": 1
+      },
+      {
+        "index": 62,
+        "name": "root_object_closed_before",
+        "value": 1
+      },
+      {
+        "index": 63,
+        "name": "root_object_closed_after",
+        "value": 1
+      }
+    ],
+    "all_nonzero_features": [
+      {
+        "index": 0,
+        "name": "field_count",
+        "value": 2
+      },
+      {
+        "index": 3,
+        "name": "fields_changed",
+        "value": 1
+      },
+      {
+        "index": 4,
+        "name": "schema_depth",
+        "value": 4
+      },
+      {
+        "index": 5,
+        "name": "required_field_count",
+        "value": 2
+      },
+      {
+        "index": 8,
+        "name": "type_changes",
+        "value": 1
+      },
+      {
+        "index": 9,
+        "name": "type_widening",
+        "value": 1
+      },
+      {
+        "index": 26,
+        "name": "policy_field_removed_breaking",
+        "value": 1
+      },
+      {
+        "index": 29,
+        "name": "policy_field_type_changed_breaking",
+        "value": 1
+      },
+      {
+        "index": 32,
+        "name": "policy_required_field_added_breaking",
+        "value": 1
+      },
+      {
+        "index": 35,
+        "name": "policy_enum_value_removed_breaking",
+        "value": 1
+      },
+      {
+        "index": 37,
+        "name": "policy_enum_value_added_warning",
+        "value": 1
+      },
+      {
+        "index": 41,
+        "name": "policy_constraint_tightened_breaking",
+        "value": 1
+      },
+      {
+        "index": 44,
+        "name": "policy_conditional_restriction_added_breaking",
+        "value": 1
+      },
+      {
+        "index": 47,
+        "name": "policy_schema_restriction_added_breaking",
+        "value": 1
+      },
+      {
+        "index": 61,
+        "name": "active_rule_action_breaking",
+        "value": 1
+      },
+      {
+        "index": 62,
+        "name": "root_object_closed_before",
+        "value": 1
+      },
+      {
+        "index": 63,
+        "name": "root_object_closed_after",
+        "value": 1
+      }
+    ]
+  },
+  "overlap_projection": {
+    "exact_full_v6_feature_match_count": 0,
+    "nearest_v9_structural_distance": 1,
+    "nearest_v9_record_count": 75,
+    "nearest_v9_records": [
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:baseline",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "baseline",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "05a70b86810a13cbc5a76254d99f4db9be3624e7a6315bc5828fdb42fb79f233",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:baseline-warning-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "baseline-warning-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "e3e933d8ded6d4360b65a3f72e304f916523f021696dc3d36fcb20ad9004448f",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-breaking-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "844740d00eb6419098a09a59fd2dc214bfca51cab5f14cfdb7f4e59b21da7546",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-breaking-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "b399c79e64eb98e3ceb8a775d45b37bdfc84313dfe5162d57a6da6a0332ce3af",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-breaking-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "84778d3d57315d00b61724c9a33d24110454301cf1b2b30bcd7738d7bcddf487",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-ignore-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "879c57c172791a717347ade416be15abd1411b7a93f208a256f9dae431083a0e",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-ignore-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "2fa23a267c3be9a1567cc178ea951b75a8a36b001c2a6cb53c37a841ff061600",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-ignore-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "993a406cc0c38550c2d35d9f9bc1eeb1646fe6cafc873c92ac8991419b2bfe60",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-warning-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "3ae07f6726ab753944f6b1f604b28b5466ad8d36114c88f9cf126be873796313",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-warning-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "7e97cbab4181eb39bc7e41f14e267f348f2d153c8e28108922969c8bfe66f407",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "composition-enum-warning-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "31229fce3b4aa050fe96719eb375e50b50f026e7a9675e9e6a26abd35ca0da17",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:relaxed",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "relaxed",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "1f554591c69b75fa17418ee6e873fadb1f38c4436d69273ee7d3d881a65fba40",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:relaxed-ignore-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "relaxed-ignore-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "f2e10144816b481eaba7538509b6c9c3c850dc0ed11f031769f193370d7a3419",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:strict",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "strict",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "d3e57dcefa972d25851e594a3befc25079c3ddc40481943b727ce5d0b94d0960",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20483:field_type_changed:change-first-supported-root-type:strict-breaking-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20483",
+        "policy_pack": "strict-breaking-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "81709eb242ef452f767d06da990899554bb1a837658731a79c71b04ed3346c42",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:baseline",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "baseline",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "ad2e6fb23464b7f07b5312ac0f171ce700c880ed927c9fdc62a77f952a727156",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:baseline-warning-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "baseline-warning-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "a6c48b325817cc63b46b62102af6ca4f69a9d55e870edebe63149bb4f824b3ec",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-breaking-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "a3931dcf2c9d5dd49f4a771552864d6008bb843bde7f06ae8e469fd5368c6dff",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-breaking-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "d462e09802bc1be331b777a844da3caf9354371af92d02e356d34056c521a3ea",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-breaking-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "d84247db6c040c2590c983d8dab42db744acc99b15ee667c9b88fb906547a0b5",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-ignore-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "b5fec6bd195dad7caafeac54a7ce912b308b7a4408f0ecd0c77f193075c27bfd",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-ignore-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "66212fa0ab1845647681d2fda778585b3f9725eefb16baba98168fe7e7ef0039",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-ignore-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "a29d52b45283d58dc0e878003668337086491a9bdc761c58b418c45a103f7237",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-warning-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "2e9fb401b42745e66e003dd7180657d30cc3a76c9b0265206463b887663442d0",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-warning-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "3da30a7733ab2e4a3def14632997eb5841b2c4fe05f8ccf7b3dde0ca8819c2ff",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "composition-enum-warning-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "1c1d77dc7d54d6d69a826c3984c9b8939dd7c41f8418e96c5f07427af910111f",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:relaxed",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "relaxed",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "586a2cc99e2d666b4b3c896aa67abb4b28d3104616cb99af9d83d1e0e2b694de",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:relaxed-ignore-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "relaxed-ignore-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "43fe6630c78b6b2650163e2295a9cac368fae1ec2ae0ff15757024cfa38e86b6",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:strict",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "strict",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "8212899d4c79546ef5d3b6e62ea43354b05199ae8696361693e3d6d703a46a31",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o20489:field_type_changed:change-first-supported-root-type:strict-breaking-peer",
+        "source": "jsonschemabench",
+        "family_id": "o20489",
+        "policy_pack": "strict-breaking-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "6397618c93fcc17a81bcc50cb09ad8649a03dbdb381709b08d096f50c756e057",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:baseline",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "baseline",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "3c3accd45007057ea7f8037a80e03cfadc6dee64984e86b50f85c12d6321d88f",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:baseline-warning-peer",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "baseline-warning-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "f147adad7410dae26f3e102d13da4fa39fd37b8c6b0f35af673118a455cc56de",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-breaking-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "60fb2cd4a0c47d9b3186f816d31f94badbf4ab2ff236dae6f89cc30de501f4a7",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-breaking-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "bc430a83c20d4c6b5fd28257d751a56e0d4c62cd79027db5c577c811d42d25e0",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-breaking-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "0f74a665bae2b9198cabbba1da01e9347357caa0ff3a1420fee347b43a19f8aa",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-ignore-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "63bd6682238103c4f8c5ddef495fed7404514ed25c3d2ee0b27425ecb5d30256",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-ignore-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "8b943cd8bc83d2fb355114df129973444359fc7e10c62647bc1198f7036fd377",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-ignore-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "0a6bc615c26a10eeae87fc0d59f07d27a2c040c948c28c57973ce82663b5f54a",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-warning-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "fade88c85e9cd4885d8f10acee760ae771febf486e4529941be81c1098121260",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-warning-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "38d7277fa28241b98948426c3222ea82748783a71ad6b4c047482669f2978af8",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "composition-enum-warning-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "8783ed3f2253ad528bf1f5954e666ec69a566c8488b2652f2a041c58395e478c",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:relaxed",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "relaxed",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "5cfb3ae37c900edd3d9a4472b211cf7b026e1285463c4b3ce0350e93dcbf3675",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:relaxed-ignore-peer",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "relaxed-ignore-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "e11c3182b6bb8e954386bd6777470e1869b548cfb3c4ffe2a72c1f932cd11f08",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:strict",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "strict",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "1078fbd5e6d42ac1a5f159be645310c1379d07b2948baf8543820d8594591294",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o21861:field_type_changed:change-first-supported-root-type:strict-breaking-peer",
+        "source": "jsonschemabench",
+        "family_id": "o21861",
+        "policy_pack": "strict-breaking-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "23f81d897c1e40883ec5ec1617625c59b1f052d319832ba9c1ed1931af140b62",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:baseline",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "baseline",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "50b151433f2685c41c33053ee984891b4fded019699dfd684adaa06971eab551",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:baseline-warning-peer",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "baseline-warning-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "fb7c372f60adf024e245d7436856f0735cd1d04764bc96e00a4991d453ada011",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-breaking-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "7f8877468d272fdfec96c325aed7c9611beb006be182c7beaade57ea5998ccb5",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-breaking-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "592e3962364ed2daf9596876c978c2f35ece7d3d15916a1ccb4af5f5bc3d6db8",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-breaking-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "cc483e2df6788c4d84691c845594b2fe72e740ca7563d7c35bc02dc881f6414a",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-ignore-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "0987f6a91ffea07addc4060eebd468aa50ffb140fe262f16a7c8da648cd5e75a",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-ignore-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "c8cf6916553ae5a57cc1d49a9e7b1ca40f134e6be3dcd2d8ddc490a661e842cc",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-ignore-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "cc7cc938e6bbfb9ba8f32859354abc53276395c1e2bf4329150da1911b5c9490",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-warning-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "c96042f6dd6641d7c3cfdfc47663be04a60bb179ccecec6848a64d7be165ad44",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-warning-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "ce3a9a2db4e420d81bba8c2aa1121d63d97a8aa35d912f796bab5b5804ec9f44",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "composition-enum-warning-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "39abfc9427f6636d29b9dde2991c854799c3a5ab23eab03025a0bd64fe30697b",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:relaxed",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "relaxed",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "fc320743c8f3bf32b217009332e5477c81de7470b3a1968cf096d20a0c707dc9",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:relaxed-ignore-peer",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "relaxed-ignore-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "949be24bb2ec05a94d5445b9ac495339f6a61542edd15833e1cf235aec9b24ef",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:strict",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "strict",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "a258e5b6bbbf3844e24b387b293991f37f7da91dabc4fd0f5a2caec2730e7dd8",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o61080:field_type_changed:change-first-supported-root-type:strict-breaking-peer",
+        "source": "jsonschemabench",
+        "family_id": "o61080",
+        "policy_pack": "strict-breaking-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "c5ba0c1bfb1b335d6be101f26b413ef08a4d897adc050e90fc4856699a0634a1",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:baseline",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "baseline",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "e6635fe8f3699e5980194d67f0b941008891e465c61eac77eb933a474ec0de1e",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:baseline-warning-peer",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "baseline-warning-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "1454a9106895c9b03b3b5cb29569bd275378f8c1cc875ff39662db165e80d7c0",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-breaking-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "0c4485d681d2e74f195a5827845c0e95a80eab1de4b31da382bf4f89d3f23d0a",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-breaking-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "c3dd6a475896fe4813b0381e9dcde25825d50ae138139d38ffb644f57be6f65e",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-breaking-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-breaking-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "e8c30fd3f4f7a5b698d1a9deec8cc7bda5f23b06f1a4870bededce7d900d8255",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-ignore-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "fb361e2f37f7cc3ab6e061f80339c7e206d91f30cb951abb3616a8681d9cdf26",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-ignore-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "36657725d8e85b68fc872b66bba68ec46d72feb4800e4946aaa46b34fc11600a",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-ignore-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-ignore-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "6ffa1c8ea5a5def10836156e5cf1eca1fb33ab0e6e508e4330f9d16b50f5d9d6",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-breaking",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-warning-constraint-breaking",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "3513f1fcec8cf1191e3340cf4c5c12385e78713f70bfe8114a1fd49c1e60e3df",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-ignore",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-warning-constraint-ignore",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "8a5c605446c970d024f14125463446b1d5745553cf47c705f1abbc70905de838",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:composition-enum-warning-constraint-warning",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "composition-enum-warning-constraint-warning",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "738b0100226948655627ed14ec79c6582e121a06d29abc400628239897bcc1f4",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:relaxed",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "relaxed",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "839e6d881070a1c4fa2dfaf95f2e0a93506a5ef3b2e8c8e415fa1e542020d8c7",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:relaxed-ignore-peer",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "relaxed-ignore-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "247e50803e58b78d30442f29d4fef7cef39173bea228b4009d392c2b12ba326c",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:strict",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "strict",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "91e7ddb48feaebf74500955110f3a6f0b6f9734051734c4eef0f6927c16a5268",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      },
+      {
+        "record_id": "o6235:field_type_changed:change-first-supported-root-type:strict-breaking-peer",
+        "source": "jsonschemabench",
+        "family_id": "o6235",
+        "policy_pack": "strict-breaking-peer",
+        "declared_mutation": "field_type_changed",
+        "mutation_variant": "change-first-supported-root-type",
+        "pair_fingerprint": "5f2e670b153001a90e5b643a4b99dd39b7183eed98caa875e67ef9d8407f997d",
+        "structural_coordinate_distance": 1,
+        "differing_structural_coordinates": [
+          {
+            "index": 9,
+            "name": "type_widening",
+            "external_value": 1,
+            "v9_value": 0
+          }
+        ]
+      }
+    ]
+  },
+  "evidence": {
+    "manifest_path": "../vega-type-change-candidates-v3.json",
+    "manifest_sha256": "fd5c9933d6c111a9b30deaababa7884674a010ef3198aaa06d08f25a45084672",
+    "diagnostic_path": "conditional-predicate-full-feature-diagnostic-v1.json",
+    "diagnostic_sha256": "243812910aace638849b729ecadb18a3b9832a201ca9bfb361ac05f8353775ea",
+    "v9_dataset_path": "../../../generated/dcg-oracle-production-v9-structural-balanced.json",
+    "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "policy_packs_path": "../../../../data-contract-governance/contracts/policy-packs-v5-compositional.json",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "scope": {
+    "use": "traceability-only",
+    "accuracy_evidence": false,
+    "saturation_evidence": false,
+    "sparse_candidate_count": 2
+  },
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "calibration_changed": false
+}

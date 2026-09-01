@@ -1,0 +1,73 @@
+{
+  "format_version": "dcg-three-way-experiment-comparison-v1",
+  "comparison": "V6 error-directed CPU experiment versus V9 structural-balanced CPU experiment",
+  "controlled_configuration": {
+    "seeds": [20260826, 20260827, 20260828],
+    "epochs": 100,
+    "batch_size": 16,
+    "learning_rate": 0.05,
+    "split_ratios": [0.7, 0.15, 0.15],
+    "architecture": [76, 12, 6, 3],
+    "objective": "softmax_cross_entropy",
+    "execution_device": "cpu",
+    "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "reports": {
+    "v6": {
+      "path": "data/experiments/v6-error-directed-cpu-100e/three-way-experiment-report.json",
+      "report_sha256": "816919420abae3c63872b3b8fe1977dded01d451d45e0b73b3afd0a9babb061a",
+      "dataset_sha256": "a7930fd035adfeb91ab6aa8bde5fd7efd2dec97bd1dd37cf8ba35dfbbc46d702"
+    },
+    "v9": {
+      "path": "data/experiments/v9-multiclass-cpu-100e/three-way-experiment-report.json",
+      "report_sha256": "696c3ea4474a7e105f99011c152cdfcc125dc333c731d6b892bd136239130cdb",
+      "dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+      "persisted_models": 66
+    }
+  },
+  "directly_comparable_rows": [
+    {"protocol": "normal-family-split", "v6_mean_accuracy": 0.999055713, "v9_mean_accuracy": 0.998703461, "delta": -0.000352252},
+    {"protocol": "held-out-mutation:constraint_tightened", "v6_mean_accuracy": 0.991304348, "v9_mean_accuracy": 1.0, "delta": 0.008695652},
+    {"protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-0", "v6_mean_accuracy": 1.0, "v9_mean_accuracy": 1.0, "delta": 0.0},
+    {"protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-1", "v6_mean_accuracy": 0.969696970, "v9_mean_accuracy": 1.0, "delta": 0.030303030},
+    {"protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-2", "v6_mean_accuracy": 1.0, "v9_mean_accuracy": 1.0, "delta": 0.0},
+    {"protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-3", "v6_mean_accuracy": 1.0, "v9_mean_accuracy": 1.0, "delta": 0.0},
+    {"protocol": "same-mutation-different-policy", "v6_mean_accuracy": 0.995797842, "v9_mean_accuracy": 0.998368013, "delta": 0.002570171},
+    {"protocol": "held-out-policy:baseline", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 0.999184007, "delta": 0.002591162},
+    {"protocol": "held-out-policy:baseline-warning-peer", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 0.999184007, "delta": 0.002591162},
+    {"protocol": "held-out-policy:composition-enum-breaking-constraint-breaking", "v6_mean_accuracy": 0.998296422, "v9_mean_accuracy": 0.999184007, "delta": 0.000887584},
+    {"protocol": "held-out-policy:composition-enum-breaking-constraint-ignore", "v6_mean_accuracy": 0.994889267, "v9_mean_accuracy": 0.998776010, "delta": 0.003886742},
+    {"protocol": "held-out-policy:composition-enum-breaking-constraint-warning", "v6_mean_accuracy": 0.995457127, "v9_mean_accuracy": 0.997960016, "delta": 0.002502890},
+    {"protocol": "held-out-policy:composition-enum-ignore-constraint-breaking", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 1.0, "delta": 0.003407155},
+    {"protocol": "held-out-policy:composition-enum-ignore-constraint-ignore", "v6_mean_accuracy": 0.993753549, "v9_mean_accuracy": 0.999592003, "delta": 0.005838454},
+    {"protocol": "held-out-policy:composition-enum-ignore-constraint-warning", "v6_mean_accuracy": 0.994321408, "v9_mean_accuracy": 0.998368013, "delta": 0.004046605},
+    {"protocol": "held-out-policy:composition-enum-warning-constraint-breaking", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 0.999184007, "delta": 0.002591162},
+    {"protocol": "held-out-policy:composition-enum-warning-constraint-ignore", "v6_mean_accuracy": 0.993185690, "v9_mean_accuracy": 0.997552020, "delta": 0.004366330},
+    {"protocol": "held-out-policy:composition-enum-warning-constraint-warning", "v6_mean_accuracy": 0.993185690, "v9_mean_accuracy": 0.997552020, "delta": 0.004366330},
+    {"protocol": "held-out-policy:relaxed", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 1.0, "delta": 0.003407155},
+    {"protocol": "held-out-policy:relaxed-ignore-peer", "v6_mean_accuracy": 0.996592845, "v9_mean_accuracy": 1.0, "delta": 0.003407155},
+    {"protocol": "held-out-policy:strict", "v6_mean_accuracy": 0.998296422, "v9_mean_accuracy": 1.0, "delta": 0.001703578},
+    {"protocol": "held-out-policy:strict-breaking-peer", "v6_mean_accuracy": 0.998296422, "v9_mean_accuracy": 1.0, "delta": 0.001703578}
+  ],
+  "scope_changes": [
+    {
+      "protocol": "held-out-mutation:optional_field_added",
+      "v6": {"status": "scored", "mean_accuracy": 0.332756133},
+      "v9": {
+        "status": "structurally_unidentifiable",
+        "reason": "Full optional-field holdout removes every optional-addition shape from training; its V9 challenge is also SAFE-only."
+      },
+      "interpretation": "This is an intentional protocol-correctness change, not a performance regression."
+    },
+    {
+      "protocol": "held-out-mutation-variant:optional_field_added:root-open",
+      "v9": {"status": "traceability_only", "records": 2760, "labels": {"safe": 2760}}
+    },
+    {
+      "protocol": "held-out-mutation-variant:optional_field_added:root-closed",
+      "v9": {"status": "traceability_only", "records": 1800, "labels": {"safe": 1800}}
+    }
+  ],
+  "interpretation": "All 21 challenge rows that remained directly comparable improved or held steady. The normal family split decreased by 0.035 percentage points, which is negligible at this scale. V9 does not claim a score for optional-field addition because that would be a one-class or zero-support metric."
+}

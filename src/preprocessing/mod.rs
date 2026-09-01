@@ -57,6 +57,40 @@ impl StandardScaler {
         })
     }
 
+    /// Restores a persisted scaler after validating all inference-critical state.
+    pub fn from_statistics(
+        means: Vector,
+        standard_deviations: Vector,
+    ) -> Result<Self, DatasetError> {
+        if means.is_empty() || means.len() != standard_deviations.len() {
+            return Err(DatasetError::FeatureDimensionMismatch {
+                row: 0,
+                expected: means.len(),
+                actual: standard_deviations.len(),
+            });
+        }
+        for (column, (mean, scale)) in means.iter().zip(standard_deviations.iter()).enumerate() {
+            if !mean.is_finite() {
+                return Err(DatasetError::NonFiniteValue {
+                    row: 0,
+                    column,
+                    value: *mean,
+                });
+            }
+            if !scale.is_finite() || *scale <= 0.0 {
+                return Err(DatasetError::NonFiniteValue {
+                    row: 1,
+                    column,
+                    value: *scale,
+                });
+            }
+        }
+        Ok(Self {
+            means,
+            standard_deviations,
+        })
+    }
+
     /// Returns feature means.
     pub fn means(&self) -> &Vector {
         &self.means
@@ -75,6 +109,16 @@ impl StandardScaler {
                 expected: self.means.len(),
                 actual: features.len(),
             });
+        }
+
+        for (column, value) in features.iter().enumerate() {
+            if !value.is_finite() {
+                return Err(DatasetError::NonFiniteValue {
+                    row: 0,
+                    column,
+                    value: *value,
+                });
+            }
         }
 
         let values = features
@@ -178,5 +222,27 @@ mod tests {
         assert_eq!(normalized.features()[1][0], 0.0);
         assert_close(normalized.features()[2][0], 1.0 / (2.0_f64 / 3.0).sqrt());
         assert_eq!(normalized.features()[0][1], 0.0);
+    }
+
+    #[test]
+    fn restores_validated_scaler_without_refitting() {
+        let scaler = StandardScaler::fit(&dataset()).unwrap();
+        let restored = StandardScaler::from_statistics(
+            scaler.means().clone(),
+            scaler.standard_deviations().clone(),
+        )
+        .unwrap();
+        assert_eq!(
+            scaler
+                .transform_vector(&Vector::new(vec![3.0, 10.0]))
+                .unwrap(),
+            restored
+                .transform_vector(&Vector::new(vec![3.0, 10.0]))
+                .unwrap()
+        );
+        assert!(
+            StandardScaler::from_statistics(Vector::new(vec![0.0]), Vector::new(vec![0.0]))
+                .is_err()
+        );
     }
 }

@@ -1,11 +1,36 @@
 # Rust build artifacts
-/target
+/target/
+**/*.rs.bk
+*.profraw
+
+# Local coverage and benchmark output
+/coverage/
+/criterion/
 
 # Editor/OS files
 .DS_Store
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 
 # Environment files
 .env
+.env.*
+!.env.example
+
+# Local oracle and generated-data workspaces. Small reviewed evidence under
+# data/experiments, data/external, and data/models remains versionable.
+/data/oracle-staging/
+/data/generated/
+/data/logs/
+/data/external/**/source-repository/
+/data/external/**/independent-reproduction-workspace/
+/data/external/**/sources/
+
+# The deterministic compatibility engine is maintained as its own repository.
+/data-contract-governance/
+
+# Local modernization-extension state.
+/.github/java-upgrade/

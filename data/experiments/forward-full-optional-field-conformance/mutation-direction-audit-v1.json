@@ -1,0 +1,148 @@
+{
+  "format_version": "dcg-forward-full-optional-field-mutation-direction-audit-v1",
+  "purpose": "Resolve whether FORWARD oracle messages saying 'Field removed' indicate leaked removal mutations or the oracle's reversed FORWARD comparison of genuine base-to-candidate additions.",
+  "inspection_only": {
+    "jar_invoked": false,
+    "oracle_invoked": false,
+    "model_inference_invoked": false,
+    "calibration_changed": false
+  },
+  "method": {
+    "schema_evidence": "For every saved oracle-run directory, compare generated-contract/v1.json to generated-contract/v2.json recursively. Classify addition_only only when candidate properties contain added keys, base contains no removed keys, and deleting only those added properties makes candidate exactly equal to base after canonical object-key sorting.",
+    "optional_check": "Verify each added key is absent from candidate.required.",
+    "profile_check": "Verify open inputs do not set root additionalProperties=false and closed inputs do.",
+    "unique_pair_identity": "SHA-256 of canonical base JSON plus canonical candidate JSON.",
+    "report_evidence": "Read the already-persisted optional-open.json and optional-closed.json reports; do not rerun the JAR."
+  },
+  "composition": {
+    "open": {
+      "staged_invocations": 3000,
+      "unique_schema_pairs": 100,
+      "invocation_counts": {
+        "addition_only": 3000,
+        "removal_only": 0,
+        "mixed_add_remove": 0,
+        "other": 0
+      },
+      "unique_pair_counts": {
+        "addition_only": 100,
+        "removal_only": 0,
+        "mixed_add_remove": 0,
+        "other": 0
+      },
+      "added_field_invocations": {
+        "dcg_generated_optional_string": 750,
+        "dcg_generated_optional_integer": 750,
+        "dcg_generated_optional_boolean": 750,
+        "dcg_generated_optional_array": 750
+      },
+      "added_fields_listed_as_required": 0,
+      "root_profile_mismatches": 0
+    },
+    "closed": {
+      "staged_invocations": 3000,
+      "unique_schema_pairs": 100,
+      "invocation_counts": {
+        "addition_only": 3000,
+        "removal_only": 0,
+        "mixed_add_remove": 0,
+        "other": 0
+      },
+      "unique_pair_counts": {
+        "addition_only": 100,
+        "removal_only": 0,
+        "mixed_add_remove": 0,
+        "other": 0
+      },
+      "added_field_invocations": {
+        "dcg_generated_optional_string": 750,
+        "dcg_generated_optional_integer": 750,
+        "dcg_generated_optional_boolean": 750,
+        "dcg_generated_optional_array": 750
+      },
+      "added_fields_listed_as_required": 0,
+      "root_profile_mismatches": 0
+    }
+  },
+  "direction_explanation": {
+    "generator": "src/generation/mutation.rs clones base and inserts dcg_generated_optional_{string,integer,boolean,array} into candidate.properties without adding the key to required.",
+    "oracle": "DefaultCompatibilityEngine evaluates FORWARD by calling diff(candidate, base), then prefixes the resulting backward-rule messages with [FORWARD]. Therefore a property added from v1/base to v2/candidate is intentionally seen as removed in the candidate-to-base FORWARD diff.",
+    "source": "data-contract-governance/contract-core/src/main/java/com/ideas/contracts/core/DefaultCompatibilityEngine.java",
+    "relevant_lines": [34, 35, 36]
+  },
+  "representativeness": {
+    "family_id": "kb_1011_Normalized",
+    "classification": "representative",
+    "reason": "Its baseline/FORWARD rows cover the same four genuine base-to-candidate optional additions as every sampled family: string, integer, boolean, and array. The 'Field removed' text is the expected FORWARD diff rendering, not an actual generated removal."
+  },
+  "additional_concrete_traces": [
+    {
+      "field_variant": "integer",
+      "actual_mutation": "base-to-candidate optional field addition",
+      "open": {
+        "family_id": "kb_1011_Normalized",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_integer]\n"
+      },
+      "closed": {
+        "family_id": "o12092",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_integer]\n"
+      }
+    },
+    {
+      "field_variant": "boolean",
+      "actual_mutation": "base-to-candidate optional field addition",
+      "open": {
+        "family_id": "kb_1011_Normalized",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_boolean]\n"
+      },
+      "closed": {
+        "family_id": "o12092",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_boolean]\n"
+      }
+    },
+    {
+      "field_variant": "string",
+      "actual_mutation": "base-to-candidate optional field addition",
+      "open": {
+        "family_id": "kb_1011_Normalized",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_string]\n"
+      },
+      "closed": {
+        "family_id": "o12092",
+        "policy_pack": "baseline",
+        "compatibility_mode": "FORWARD",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_string]\n"
+      }
+    }
+  ],
+  "resolution": {
+    "choice": "a",
+    "generator_bug": false,
+    "bad_example_pull": false,
+    "clarification": "The cited trace was a genuine addition but was described without explaining the oracle's reversed FORWARD diff direction. Its wording was misleading in the report narrative, not evidence of a removal mutation.",
+    "no_go_stands": true,
+    "downstream_execution_authorized": false
+  }
+}

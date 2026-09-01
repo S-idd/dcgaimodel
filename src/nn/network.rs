@@ -26,6 +26,12 @@ pub enum NetworkError {
         activation: Activation,
     },
 
+    /// Softmax cross-entropy requires a normalized, non-negative target vector.
+    InvalidTargetDistribution { sum: f64 },
+
+    /// A softmax cross-entropy target contained an invalid probability.
+    InvalidTarget { value: f64 },
+
     /// Learning rate must be positive and finite.
     InvalidLearningRate { value: f64 },
 
@@ -63,6 +69,15 @@ impl fmt::Display for NetworkError {
                 "Activation {:?} at layer {} is not supported for this backpropagation path.",
                 activation, layer_index
             ),
+            NetworkError::InvalidTargetDistribution { sum } => {
+                write!(f, "Target probabilities must sum to 1, got {sum}")
+            }
+            NetworkError::InvalidTarget { value } => {
+                write!(
+                    f,
+                    "Target probability must be finite and in 0..=1, got {value}"
+                )
+            }
             NetworkError::InvalidLearningRate { value } => {
                 write!(f, "Learning rate must be positive and finite: {}", value)
             }
@@ -411,6 +426,101 @@ impl Network {
 
         layer_gradients.reverse();
 
+        Ok(NetworkGradients::new(layer_gradients))
+    }
+
+    /// Computes gradients for a Softmax output layer with Cross-Entropy loss.
+    ///
+    /// This uses the mathematically fused output derivative `prediction - target`.
+    /// Hidden layers use their ordinary activation derivatives. It intentionally
+    /// rejects any network whose final activation is not Softmax.
+    pub fn backpropagate_softmax_cross_entropy(
+        &self,
+        inputs: &Vector,
+        target: &Vector,
+    ) -> Result<NetworkGradients, NetworkError> {
+        let (prediction, trace) = self.forward_with_trace(inputs)?;
+        if prediction.len() != target.len() {
+            return Err(NetworkError::DimensionMismatch {
+                layer_index: self.len(),
+                expected: prediction.len(),
+                actual: target.len(),
+            });
+        }
+        let output_index = self.layers.len() - 1;
+        if self.layers[output_index].activation() != Activation::Softmax {
+            return Err(NetworkError::UnsupportedActivation {
+                layer_index: output_index,
+                activation: self.layers[output_index].activation(),
+            });
+        }
+        let target_sum = target.iter().sum::<f64>();
+        if target
+            .iter()
+            .any(|value| !value.is_finite() || !(0.0..=1.0).contains(value))
+        {
+            return Err(NetworkError::InvalidTarget {
+                value: target
+                    .iter()
+                    .copied()
+                    .find(|value| !value.is_finite() || !(0.0..=1.0).contains(value))
+                    .unwrap_or(f64::NAN),
+            });
+        }
+        if (target_sum - 1.0).abs() > 1e-9 {
+            return Err(NetworkError::InvalidTargetDistribution { sum: target_sum });
+        }
+
+        let mut upstream_gradients = prediction
+            .iter()
+            .zip(target.iter())
+            .map(|(predicted, expected)| predicted - expected)
+            .collect::<Vec<_>>();
+        let mut layer_gradients = Vec::with_capacity(self.len());
+
+        for layer_index in (0..self.layers.len()).rev() {
+            let network_layer = &self.layers[layer_index];
+            let layer_trace = &trace[layer_index];
+            let deltas = if layer_index == output_index {
+                upstream_gradients.clone()
+            } else {
+                upstream_gradients
+                    .iter()
+                    .zip(layer_trace.output.iter())
+                    .map(|(gradient, output)| {
+                        network_layer
+                            .activation()
+                            .derivative_from_output(*output)
+                            .map(|derivative| gradient * derivative)
+                            .ok_or(NetworkError::UnsupportedActivation {
+                                layer_index,
+                                activation: network_layer.activation(),
+                            })
+                    })
+                    .collect::<Result<Vec<_>, NetworkError>>()?
+            };
+            let weight_gradients = deltas
+                .iter()
+                .map(|delta| {
+                    Vector::new(
+                        layer_trace
+                            .input
+                            .iter()
+                            .map(|input| delta * input)
+                            .collect(),
+                    )
+                })
+                .collect();
+            let bias_gradients = Vector::new(deltas.clone());
+            upstream_gradients = vec![0.0; network_layer.input_size().unwrap_or(0)];
+            for (neuron, delta) in network_layer.layer().neurons().iter().zip(&deltas) {
+                for (input_index, weight) in neuron.weights().iter().enumerate() {
+                    upstream_gradients[input_index] += delta * weight;
+                }
+            }
+            layer_gradients.push(LayerGradient::new(weight_gradients, bias_gradients));
+        }
+        layer_gradients.reverse();
         Ok(NetworkGradients::new(layer_gradients))
     }
 
@@ -1080,6 +1190,27 @@ mod tests {
                 activation: Activation::Softmax
             })
         );
+    }
+
+    #[test]
+    fn softmax_cross_entropy_uses_fused_prediction_minus_target_gradient() {
+        let network = Network::new(vec![NetworkLayer::new(
+            dense_layer(vec![vec![0.0], vec![0.0], vec![0.0]], vec![0.0, 0.0, 0.0]),
+            Activation::Softmax,
+        )])
+        .unwrap();
+        let gradients = network
+            .backpropagate_softmax_cross_entropy(
+                &Vector::new(vec![2.0]),
+                &Vector::new(vec![1.0, 0.0, 0.0]),
+            )
+            .unwrap();
+        let layer = &gradients.layer_gradients()[0];
+        assert_close(layer.bias_gradients()[0], -2.0 / 3.0);
+        assert_close(layer.bias_gradients()[1], 1.0 / 3.0);
+        assert_close(layer.bias_gradients()[2], 1.0 / 3.0);
+        assert_close(layer.weight_gradients()[0][0], -4.0 / 3.0);
+        assert_close(layer.weight_gradients()[1][0], 2.0 / 3.0);
     }
 
     #[test]

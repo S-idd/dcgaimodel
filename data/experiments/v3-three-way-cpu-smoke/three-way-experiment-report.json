@@ -1,0 +1,823 @@
+{
+  "format_version": "dcg-three-way-experiment-v1",
+  "dataset_version": "dcg-oracle-production-v3-challenge-balanced",
+  "feature_version": "dcg-features-v3",
+  "input_provenance": {
+    "dataset_sha256": "45b3cf4703c51fd19ddb51f27d4156f1d3922e8634f7095a96eb23000d5de9d6",
+    "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "policy_packs_sha256": "83cf0b7c20fee50f7090529505d2981d0eec731ff40ec4c5f5b31fe016cc6bad"
+  },
+  "configuration": {
+    "seeds": [
+      20260826
+    ],
+    "epochs": 3,
+    "batch_size": 16,
+    "learning_rate": 0.05,
+    "split_ratios": [
+      0.7,
+      0.15,
+      0.15
+    ],
+    "architecture": [
+      39,
+      12,
+      6,
+      3
+    ],
+    "objective": "softmax_cross_entropy",
+    "execution_device": "cpu"
+  },
+  "seed_runs": [
+    {
+      "seed": 20260826,
+      "protocols": [
+        {
+          "protocol": "normal-family-split",
+          "status": "scored",
+          "reason": null,
+          "training_records": 8364,
+          "validation_records": 1776,
+          "evaluation_records": 1773,
+          "evaluation_labels": {
+            "breaking": 1086,
+            "safe": 621,
+            "warning": 66
+          },
+          "metrics": {
+            "accuracy": 0.961082910321489,
+            "confusion_matrix": [
+              [
+                618,
+                0,
+                3
+              ],
+              [
+                0,
+                0,
+                66
+              ],
+              [
+                0,
+                0,
+                1086
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-normal-family-split.json",
+          "training_loss": [
+            0.8202937474327817,
+            0.6154877294485757,
+            0.14607467042025807
+          ],
+          "validation_loss": [
+            0.7946167158199123,
+            0.24322192481814378,
+            0.08923492415541791
+          ]
+        },
+        {
+          "protocol": "held-out-policy:baseline",
+          "status": "scored",
+          "reason": null,
+          "training_records": 5576,
+          "validation_records": 1184,
+          "evaluation_records": 944,
+          "evaluation_labels": {
+            "breaking": 552,
+            "safe": 289,
+            "warning": 103
+          },
+          "metrics": {
+            "accuracy": 0.8845338983050848,
+            "confusion_matrix": [
+              [
+                288,
+                0,
+                1
+              ],
+              [
+                52,
+                0,
+                51
+              ],
+              [
+                5,
+                0,
+                547
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-policy-baseline.json",
+          "training_loss": [
+            0.7632075996763757,
+            0.6808095514135751,
+            0.3789841045174758
+          ],
+          "validation_loss": [
+            0.6983948725863305,
+            0.671796871643101,
+            0.042058207744233356
+          ]
+        },
+        {
+          "protocol": "held-out-policy:relaxed",
+          "status": "scored",
+          "reason": null,
+          "training_records": 5576,
+          "validation_records": 1182,
+          "evaluation_records": 944,
+          "evaluation_labels": {
+            "breaking": 552,
+            "safe": 392
+          },
+          "metrics": {
+            "accuracy": 0.885593220338983,
+            "confusion_matrix": [
+              [
+                288,
+                0,
+                104
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                4,
+                0,
+                548
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-policy-relaxed.json",
+          "training_loss": [
+            0.848756573510931,
+            0.8116012976892191,
+            0.6164945833843711
+          ],
+          "validation_loss": [
+            0.8206908475592102,
+            0.8151777101279907,
+            0.2999977588859834
+          ]
+        },
+        {
+          "protocol": "held-out-policy:strict",
+          "status": "scored",
+          "reason": null,
+          "training_records": 5576,
+          "validation_records": 1184,
+          "evaluation_records": 944,
+          "evaluation_labels": {
+            "breaking": 655,
+            "safe": 289
+          },
+          "metrics": {
+            "accuracy": 0.8845338983050848,
+            "confusion_matrix": [
+              [
+                288,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                108,
+                0,
+                547
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-policy-strict.json",
+          "training_loss": [
+            0.8779317251643244,
+            0.8022978591430914,
+            0.2700500386374575
+          ],
+          "validation_loss": [
+            0.851880965316513,
+            0.5567129700623774,
+            0.1523796304350659
+          ]
+        },
+        {
+          "protocol": "held-out-mutation:conditional_restriction_added",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 219,
+          "evaluation_labels": {
+            "breaking": 219
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation:constraint_tightened",
+          "status": "scored",
+          "reason": null,
+          "training_records": 7947,
+          "validation_records": 1686,
+          "evaluation_records": 150,
+          "evaluation_labels": {
+            "breaking": 147,
+            "safe": 3
+          },
+          "metrics": {
+            "accuracy": 0.98,
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                3
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                147
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-mutation-constraint-tightened.json",
+          "training_loss": [
+            0.8354254208327396,
+            0.5981001690590498,
+            0.12630501776595734
+          ],
+          "validation_loss": [
+            0.8047727390986477,
+            0.20472546530117053,
+            0.07659134929900539
+          ]
+        },
+        {
+          "protocol": "held-out-mutation:enum_value_added",
+          "status": "structurally_unidentifiable",
+          "reason": "Full ENUM_VALUE_ADDED holdout removes every observed policy-dependent example from training; use its held-out structural-variant protocols for scored generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 312,
+          "evaluation_labels": {
+            "breaking": 106,
+            "safe": 103,
+            "warning": 103
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-0",
+          "status": "scored",
+          "reason": null,
+          "training_records": 8022,
+          "validation_records": 1704,
+          "evaluation_records": 108,
+          "evaluation_labels": {
+            "breaking": 36,
+            "safe": 36,
+            "warning": 36
+          },
+          "metrics": {
+            "accuracy": 0.6574074074074074,
+            "confusion_matrix": [
+              [
+                35,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                36
+              ],
+              [
+                0,
+                0,
+                36
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-mutation-variant-enum-value-added-add-type-preserving-enum-value-0.json",
+          "training_loss": [
+            0.7932322625708937,
+            0.5875974673482193,
+            0.13025558600581782
+          ],
+          "validation_loss": [
+            0.7577616412717185,
+            0.23132623828766555,
+            0.09118610951296917
+          ]
+        },
+        {
+          "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-1",
+          "status": "scored",
+          "reason": null,
+          "training_records": 8061,
+          "validation_records": 1713,
+          "evaluation_records": 111,
+          "evaluation_labels": {
+            "breaking": 39,
+            "safe": 36,
+            "warning": 36
+          },
+          "metrics": {
+            "accuracy": 0.6666666666666666,
+            "confusion_matrix": [
+              [
+                36,
+                0,
+                0
+              ],
+              [
+                2,
+                0,
+                34
+              ],
+              [
+                1,
+                0,
+                38
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-mutation-variant-enum-value-added-add-type-preserving-enum-value-1.json",
+          "training_loss": [
+            0.7983345164830618,
+            0.6029381802280591,
+            0.14897734112989883
+          ],
+          "validation_loss": [
+            0.7589956093915528,
+            0.22797053132861747,
+            0.09808911079539787
+          ]
+        },
+        {
+          "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-2",
+          "status": "scored",
+          "reason": null,
+          "training_records": 8070,
+          "validation_records": 1716,
+          "evaluation_records": 93,
+          "evaluation_labels": {
+            "breaking": 31,
+            "safe": 31,
+            "warning": 31
+          },
+          "metrics": {
+            "accuracy": 0.6666666666666666,
+            "confusion_matrix": [
+              [
+                31,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                31
+              ],
+              [
+                0,
+                0,
+                31
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-mutation-variant-enum-value-added-add-type-preserving-enum-value-2.json",
+          "training_loss": [
+            0.7977015241766326,
+            0.6053213220599113,
+            0.14807480365233272
+          ],
+          "validation_loss": [
+            0.7644194529834676,
+            0.2478047675658905,
+            0.12064446895054375
+          ]
+        },
+        {
+          "protocol": "held-out-mutation:enum_value_removed",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 123,
+          "evaluation_labels": {
+            "breaking": 123
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation:field_removed",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 219,
+          "evaluation_labels": {
+            "breaking": 219
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation:field_type_changed",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 153,
+          "evaluation_labels": {
+            "breaking": 153
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation:optional_field_added",
+          "status": "scored",
+          "reason": null,
+          "training_records": 5739,
+          "validation_records": 1224,
+          "evaluation_records": 876,
+          "evaluation_labels": {
+            "breaking": 12,
+            "safe": 864
+          },
+          "metrics": {
+            "accuracy": 0.0136986301369863,
+            "confusion_matrix": [
+              [
+                0,
+                0,
+                864
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                12
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-held-out-mutation-optional-field-added.json",
+          "training_loss": [
+            0.4789359209634805,
+            0.4145465212074407,
+            0.3413996345407189
+          ],
+          "validation_loss": [
+            0.4160949983610338,
+            0.39566209725046536,
+            0.2592263026600914
+          ]
+        },
+        {
+          "protocol": "held-out-mutation:required_field_added",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 183,
+          "evaluation_labels": {
+            "breaking": 183
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "held-out-mutation:schema_restriction_added",
+          "status": "traceability_only",
+          "reason": "A one-class challenge cannot measure three-way generalization.",
+          "training_records": 11913,
+          "validation_records": null,
+          "evaluation_records": 597,
+          "evaluation_labels": {
+            "breaking": 597
+          },
+          "metrics": null,
+          "model_artifact": null,
+          "training_loss": [],
+          "validation_loss": []
+        },
+        {
+          "protocol": "same-mutation-different-policy",
+          "status": "scored",
+          "reason": null,
+          "training_records": 8364,
+          "validation_records": 1776,
+          "evaluation_records": 2832,
+          "evaluation_labels": {
+            "breaking": 1759,
+            "safe": 970,
+            "warning": 103
+          },
+          "metrics": {
+            "accuracy": 0.9576271186440678,
+            "confusion_matrix": [
+              [
+                966,
+                0,
+                4
+              ],
+              [
+                4,
+                0,
+                99
+              ],
+              [
+                13,
+                0,
+                1746
+              ]
+            ]
+          },
+          "model_artifact": "models/seed-20260826-normal-family-split.json",
+          "training_loss": [
+            0.8202937474327817,
+            0.6154877294485757,
+            0.14607467042025807
+          ],
+          "validation_loss": [
+            0.7946167158199123,
+            0.24322192481814378,
+            0.08923492415541791
+          ]
+        }
+      ]
+    }
+  ],
+  "aggregate_protocols": [
+    {
+      "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-0",
+      "scored_runs": 1,
+      "mean_accuracy": 0.6574074074074074,
+      "minimum_accuracy": 0.6574074074074074,
+      "maximum_accuracy": 0.6574074074074074,
+      "summed_confusion_matrix": [
+        [
+          35,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          36
+        ],
+        [
+          0,
+          0,
+          36
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-1",
+      "scored_runs": 1,
+      "mean_accuracy": 0.6666666666666666,
+      "minimum_accuracy": 0.6666666666666666,
+      "maximum_accuracy": 0.6666666666666666,
+      "summed_confusion_matrix": [
+        [
+          36,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          34
+        ],
+        [
+          1,
+          0,
+          38
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-2",
+      "scored_runs": 1,
+      "mean_accuracy": 0.6666666666666666,
+      "minimum_accuracy": 0.6666666666666666,
+      "maximum_accuracy": 0.6666666666666666,
+      "summed_confusion_matrix": [
+        [
+          31,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          31
+        ],
+        [
+          0,
+          0,
+          31
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-mutation:constraint_tightened",
+      "scored_runs": 1,
+      "mean_accuracy": 0.98,
+      "minimum_accuracy": 0.98,
+      "maximum_accuracy": 0.98,
+      "summed_confusion_matrix": [
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          147
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-mutation:optional_field_added",
+      "scored_runs": 1,
+      "mean_accuracy": 0.0136986301369863,
+      "minimum_accuracy": 0.0136986301369863,
+      "maximum_accuracy": 0.0136986301369863,
+      "summed_confusion_matrix": [
+        [
+          0,
+          0,
+          864
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          12
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-policy:baseline",
+      "scored_runs": 1,
+      "mean_accuracy": 0.8845338983050848,
+      "minimum_accuracy": 0.8845338983050848,
+      "maximum_accuracy": 0.8845338983050848,
+      "summed_confusion_matrix": [
+        [
+          288,
+          0,
+          1
+        ],
+        [
+          52,
+          0,
+          51
+        ],
+        [
+          5,
+          0,
+          547
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-policy:relaxed",
+      "scored_runs": 1,
+      "mean_accuracy": 0.885593220338983,
+      "minimum_accuracy": 0.885593220338983,
+      "maximum_accuracy": 0.885593220338983,
+      "summed_confusion_matrix": [
+        [
+          288,
+          0,
+          104
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          548
+        ]
+      ]
+    },
+    {
+      "protocol": "held-out-policy:strict",
+      "scored_runs": 1,
+      "mean_accuracy": 0.8845338983050848,
+      "minimum_accuracy": 0.8845338983050848,
+      "maximum_accuracy": 0.8845338983050848,
+      "summed_confusion_matrix": [
+        [
+          288,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          108,
+          0,
+          547
+        ]
+      ]
+    },
+    {
+      "protocol": "normal-family-split",
+      "scored_runs": 1,
+      "mean_accuracy": 0.961082910321489,
+      "minimum_accuracy": 0.961082910321489,
+      "maximum_accuracy": 0.961082910321489,
+      "summed_confusion_matrix": [
+        [
+          618,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          66
+        ],
+        [
+          0,
+          0,
+          1086
+        ]
+      ]
+    },
+    {
+      "protocol": "same-mutation-different-policy",
+      "scored_runs": 1,
+      "mean_accuracy": 0.9576271186440678,
+      "minimum_accuracy": 0.9576271186440678,
+      "maximum_accuracy": 0.9576271186440678,
+      "summed_confusion_matrix": [
+        [
+          966,
+          0,
+          4
+        ],
+        [
+          4,
+          0,
+          99
+        ],
+        [
+          13,
+          0,
+          1746
+        ]
+      ]
+    }
+  ]
+}

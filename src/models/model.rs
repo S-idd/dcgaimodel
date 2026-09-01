@@ -1,9 +1,10 @@
+use super::CompatibilityLabel;
 use crate::activations::Activation;
 use crate::dataset::Dataset;
 use crate::linalg::{LinalgError, Vector};
 use crate::nn::{Layer, Network, NetworkError, NetworkLayer, Optimizer};
 use crate::prediction::{ModelPrediction, PredictionError, PredictionKind, Predictor};
-use crate::training::{Trainer, TrainerError, TrainingConfig, TrainingHistory};
+use crate::training::{Trainer, TrainerError, TrainingConfig, TrainingHistory, TrainingObjective};
 use std::error::Error;
 use std::fmt;
 
@@ -130,6 +131,21 @@ pub struct DcgModel {
     threshold: f64,
 }
 
+/// A three-output DCG compatibility classifier trained with Softmax + Cross-Entropy.
+#[derive(Debug, Clone)]
+pub struct ThreeWayCompatibilityModel {
+    network: Network,
+}
+
+/// Probabilities and selected canonical compatibility category.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ThreeWayPrediction {
+    /// Probabilities in stable SAFE, WARNING, BREAKING order.
+    pub probabilities: Vector,
+    /// The highest-probability category.
+    pub label: CompatibilityLabel,
+}
+
 impl DcgModel {
     /// Wraps a single-output network for a DCG prediction task.
     pub fn new(kind: PredictionKind, network: Network, threshold: f64) -> Result<Self, ModelError> {
@@ -191,6 +207,96 @@ impl DcgModel {
         self.network = trainer.network().clone();
         Ok(history)
     }
+
+    /// Trains with optional forward-only validation loss tracking.
+    pub fn train_with_validation<O: Optimizer>(
+        &mut self,
+        dataset: &Dataset,
+        validation_dataset: Option<&Dataset>,
+        optimizer: O,
+        config: TrainingConfig,
+    ) -> Result<TrainingHistory, ModelError> {
+        let mut trainer = Trainer::new(self.network.clone(), optimizer, config);
+        let history = trainer.train_with_validation(dataset, validation_dataset)?;
+        self.network = trainer.network().clone();
+        Ok(history)
+    }
+}
+
+impl ThreeWayCompatibilityModel {
+    /// Builds a deterministic three-class network with a Softmax output head.
+    pub fn with_default_network(config: ModelConfig) -> Result<Self, ModelError> {
+        let network = build_three_way_network(&config)?;
+        Self::new(network)
+    }
+
+    /// Validates a three-output Softmax network.
+    pub fn new(network: Network) -> Result<Self, ModelError> {
+        if network.output_size() != 3 {
+            return Err(ModelError::OutputDimensionMismatch {
+                expected: 3,
+                actual: network.output_size(),
+            });
+        }
+        if network.layers().last().map(NetworkLayer::activation) != Some(Activation::Softmax) {
+            return Err(ModelError::Network(NetworkError::UnsupportedActivation {
+                layer_index: network.len() - 1,
+                activation: network
+                    .layers()
+                    .last()
+                    .map(NetworkLayer::activation)
+                    .unwrap_or(Activation::Linear),
+            }));
+        }
+        Ok(Self { network })
+    }
+
+    /// Returns the trained generic network for artifact or diagnostic use.
+    pub fn network(&self) -> &Network {
+        &self.network
+    }
+
+    /// Trains using fused Softmax + Cross-Entropy gradients.
+    pub fn train_with_validation<O: Optimizer>(
+        &mut self,
+        dataset: &Dataset,
+        validation_dataset: Option<&Dataset>,
+        optimizer: O,
+        config: TrainingConfig,
+    ) -> Result<TrainingHistory, ModelError> {
+        let mut trainer = Trainer::with_objective(
+            self.network.clone(),
+            optimizer,
+            config,
+            TrainingObjective::SoftmaxCrossEntropy,
+        );
+        let history = trainer.train_with_validation(dataset, validation_dataset)?;
+        self.network = trainer.network().clone();
+        Ok(history)
+    }
+
+    /// Returns normalized class probabilities and the argmax class.
+    pub fn predict(&self, features: &Vector) -> Result<ThreeWayPrediction, ModelError> {
+        let probabilities = self.network.forward(features)?;
+        let (index, _) = probabilities
+            .iter()
+            .enumerate()
+            .max_by(|(_, left), (_, right)| left.total_cmp(right))
+            .ok_or(ModelError::OutputDimensionMismatch {
+                expected: 3,
+                actual: 0,
+            })?;
+        let label = match index {
+            0 => CompatibilityLabel::Safe,
+            1 => CompatibilityLabel::Warning,
+            2 => CompatibilityLabel::Breaking,
+            _ => unreachable!("a three-output network has exactly three positions"),
+        };
+        Ok(ThreeWayPrediction {
+            probabilities,
+            label,
+        })
+    }
 }
 
 fn build_network(config: &ModelConfig) -> Result<Network, ModelError> {
@@ -204,6 +310,26 @@ fn build_network(config: &ModelConfig) -> Result<Network, ModelError> {
         .map(|(layer_index, sizes)| {
             let activation = if layer_index + 1 == dimensions.len() - 1 {
                 Activation::Sigmoid
+            } else {
+                Activation::Relu
+            };
+            deterministic_layer(sizes[0], sizes[1], layer_index, activation)
+        })
+        .collect::<Result<Vec<_>, ModelError>>()?;
+    Ok(Network::new(layers)?)
+}
+
+fn build_three_way_network(config: &ModelConfig) -> Result<Network, ModelError> {
+    let mut dimensions = Vec::with_capacity(config.hidden_layer_sizes.len() + 2);
+    dimensions.push(config.input_size);
+    dimensions.extend(config.hidden_layer_sizes.iter().copied());
+    dimensions.push(3);
+    let layers = dimensions
+        .windows(2)
+        .enumerate()
+        .map(|(layer_index, sizes)| {
+            let activation = if layer_index + 1 == dimensions.len() - 1 {
+                Activation::Softmax
             } else {
                 Activation::Relu
             };

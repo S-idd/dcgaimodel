@@ -1,0 +1,452 @@
+{
+  "format_version": "dcg-external-feature-diagnostic-v1",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "record_id": "stripe.openapi.v2348-to-v2349.card",
+  "source": "stripe/openapi",
+  "source_path": "openapi/spec3.json#/components/schemas/card",
+  "mutation_id": "FIELD_REMOVED",
+  "policy_pack": "baseline",
+  "full_v6_feature_count": 76,
+  "structural_coordinate_count": 49,
+  "structural_coordinates": [
+    {
+      "index": 0,
+      "name": "field_count",
+      "value": 31.0
+    },
+    {
+      "index": 1,
+      "name": "fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 2,
+      "name": "fields_removed",
+      "value": 1.0
+    },
+    {
+      "index": 3,
+      "name": "fields_changed",
+      "value": 0.0
+    },
+    {
+      "index": 4,
+      "name": "schema_depth",
+      "value": 6.0
+    },
+    {
+      "index": 5,
+      "name": "required_field_count",
+      "value": 7.0
+    },
+    {
+      "index": 6,
+      "name": "required_fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 7,
+      "name": "required_fields_removed",
+      "value": 0.0
+    },
+    {
+      "index": 8,
+      "name": "type_changes",
+      "value": 0.0
+    },
+    {
+      "index": 9,
+      "name": "type_widening",
+      "value": 0.0
+    },
+    {
+      "index": 10,
+      "name": "type_narrowing",
+      "value": 0.0
+    },
+    {
+      "index": 11,
+      "name": "enum_values_added",
+      "value": 0.0
+    },
+    {
+      "index": 12,
+      "name": "enum_values_removed",
+      "value": 0.0
+    },
+    {
+      "index": 13,
+      "name": "enum_definitions_added",
+      "value": 0.0
+    },
+    {
+      "index": 14,
+      "name": "enum_definitions_removed",
+      "value": 0.0
+    },
+    {
+      "index": 15,
+      "name": "constraint_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 16,
+      "name": "constraint_relaxed",
+      "value": 0.0
+    },
+    {
+      "index": 17,
+      "name": "conditional_changed",
+      "value": 0.0
+    },
+    {
+      "index": 18,
+      "name": "one_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 19,
+      "name": "any_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 20,
+      "name": "all_of_changed",
+      "value": 0.0
+    },
+    {
+      "index": 21,
+      "name": "not_changed",
+      "value": 0.0
+    },
+    {
+      "index": 22,
+      "name": "additional_properties_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 23,
+      "name": "additional_properties_relaxed",
+      "value": 0.0
+    },
+    {
+      "index": 48,
+      "name": "root_fields_added_string",
+      "value": 0.0
+    },
+    {
+      "index": 49,
+      "name": "root_fields_added_numeric",
+      "value": 0.0
+    },
+    {
+      "index": 50,
+      "name": "root_fields_added_boolean",
+      "value": 0.0
+    },
+    {
+      "index": 51,
+      "name": "root_fields_added_array",
+      "value": 0.0
+    },
+    {
+      "index": 52,
+      "name": "root_fields_added_object",
+      "value": 0.0
+    },
+    {
+      "index": 53,
+      "name": "root_fields_added_other",
+      "value": 0.0
+    },
+    {
+      "index": 54,
+      "name": "root_additional_properties_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 55,
+      "name": "root_property_names_changed",
+      "value": 0.0
+    },
+    {
+      "index": 56,
+      "name": "root_dependent_required_changed",
+      "value": 0.0
+    },
+    {
+      "index": 57,
+      "name": "root_dependent_schemas_changed",
+      "value": 0.0
+    },
+    {
+      "index": 58,
+      "name": "root_schema_applicators_changed",
+      "value": 0.0
+    },
+    {
+      "index": 62,
+      "name": "root_object_closed_before",
+      "value": 0.0
+    },
+    {
+      "index": 63,
+      "name": "root_object_closed_after",
+      "value": 0.0
+    },
+    {
+      "index": 64,
+      "name": "root_optional_fields_added",
+      "value": 0.0
+    },
+    {
+      "index": 65,
+      "name": "root_optional_fields_added_to_closed_object",
+      "value": 0.0
+    },
+    {
+      "index": 66,
+      "name": "constraint_numeric_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 67,
+      "name": "constraint_string_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 68,
+      "name": "constraint_array_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 69,
+      "name": "constraint_object_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 70,
+      "name": "constraint_lower_bound_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 71,
+      "name": "constraint_upper_bound_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 72,
+      "name": "constraint_pattern_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 73,
+      "name": "constraint_multiple_of_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 74,
+      "name": "constraint_unique_items_tightened",
+      "value": 0.0
+    },
+    {
+      "index": 75,
+      "name": "constraint_compound_tightened",
+      "value": 0.0
+    }
+  ],
+  "nonzero_v6_features": [
+    {
+      "index": 0,
+      "name": "field_count",
+      "value": 31.0
+    },
+    {
+      "index": 2,
+      "name": "fields_removed",
+      "value": 1.0
+    },
+    {
+      "index": 4,
+      "name": "schema_depth",
+      "value": 6.0
+    },
+    {
+      "index": 5,
+      "name": "required_field_count",
+      "value": 7.0
+    },
+    {
+      "index": 26,
+      "name": "policy_field_removed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 29,
+      "name": "policy_field_type_changed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 32,
+      "name": "policy_required_field_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 35,
+      "name": "policy_enum_value_removed_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 37,
+      "name": "policy_enum_value_added_warning",
+      "value": 1.0
+    },
+    {
+      "index": 41,
+      "name": "policy_constraint_tightened_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 44,
+      "name": "policy_conditional_restriction_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 47,
+      "name": "policy_schema_restriction_added_breaking",
+      "value": 1.0
+    },
+    {
+      "index": 61,
+      "name": "active_rule_action_breaking",
+      "value": 1.0
+    }
+  ],
+  "exact_full_v6_feature_match_count": 0,
+  "nearest_v9_structural_distance": 2,
+  "nearest_v9_record_count": 1485,
+  "nearest_v9_records": [
+    {
+      "record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:baseline",
+      "source": "jsonschemabench",
+      "family_id": "kb_1007_Normalized",
+      "policy_pack": "baseline",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "40eba282c52dfcfe3e76a94bdffd5af6972b5c6b2560fcccde4aced152baaeb1",
+      "structural_coordinate_distance": 2,
+      "differing_structural_coordinates": [
+        {
+          "index": 0,
+          "name": "field_count",
+          "external_value": 31.0,
+          "v9_value": 3.0
+        },
+        {
+          "index": 5,
+          "name": "required_field_count",
+          "external_value": 7.0,
+          "v9_value": 1.0
+        }
+      ]
+    },
+    {
+      "record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:baseline-warning-peer",
+      "source": "jsonschemabench",
+      "family_id": "kb_1007_Normalized",
+      "policy_pack": "baseline-warning-peer",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "f84ce8b185640de72056d2389541044065736d8e28523e54f837f7e64133f9d6",
+      "structural_coordinate_distance": 2,
+      "differing_structural_coordinates": [
+        {
+          "index": 0,
+          "name": "field_count",
+          "external_value": 31.0,
+          "v9_value": 3.0
+        },
+        {
+          "index": 5,
+          "name": "required_field_count",
+          "external_value": 7.0,
+          "v9_value": 1.0
+        }
+      ]
+    },
+    {
+      "record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:composition-enum-breaking-constraint-breaking",
+      "source": "jsonschemabench",
+      "family_id": "kb_1007_Normalized",
+      "policy_pack": "composition-enum-breaking-constraint-breaking",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "e1e622ce13266f9652db35c152841010962af0b8de4520e1ebefd8fb901af95b",
+      "structural_coordinate_distance": 2,
+      "differing_structural_coordinates": [
+        {
+          "index": 0,
+          "name": "field_count",
+          "external_value": 31.0,
+          "v9_value": 3.0
+        },
+        {
+          "index": 5,
+          "name": "required_field_count",
+          "external_value": 7.0,
+          "v9_value": 1.0
+        }
+      ]
+    },
+    {
+      "record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:composition-enum-breaking-constraint-ignore",
+      "source": "jsonschemabench",
+      "family_id": "kb_1007_Normalized",
+      "policy_pack": "composition-enum-breaking-constraint-ignore",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "34f22a9219abe0de62627f80f2e996cba03487f5b047bf63817cc71195d1117e",
+      "structural_coordinate_distance": 2,
+      "differing_structural_coordinates": [
+        {
+          "index": 0,
+          "name": "field_count",
+          "external_value": 31.0,
+          "v9_value": 3.0
+        },
+        {
+          "index": 5,
+          "name": "required_field_count",
+          "external_value": 7.0,
+          "v9_value": 1.0
+        }
+      ]
+    },
+    {
+      "record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:composition-enum-breaking-constraint-warning",
+      "source": "jsonschemabench",
+      "family_id": "kb_1007_Normalized",
+      "policy_pack": "composition-enum-breaking-constraint-warning",
+      "declared_mutation": "field_removed",
+      "mutation_variant": "remove-first-root-property",
+      "pair_fingerprint": "e94a69754fb4d9652a3d3100266e2d4059d0f63d2b65c9099bfd0ebb5050e72d",
+      "structural_coordinate_distance": 2,
+      "differing_structural_coordinates": [
+        {
+          "index": 0,
+          "name": "field_count",
+          "external_value": 31.0,
+          "v9_value": 3.0
+        },
+        {
+          "index": 5,
+          "name": "required_field_count",
+          "external_value": 7.0,
+          "v9_value": 1.0
+        }
+      ]
+    }
+  ]
+}

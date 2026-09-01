@@ -1,0 +1,35 @@
+{
+  "format_version": "dcg-vega-canonical-provenance-freeze-v1",
+  "status": "frozen",
+  "scope": "Vega TYPE_CHANGED pre-screen provenance only; this does not authorize oracle labelling, model inference, calibration, or a new external corpus.",
+  "canonical_artifacts": [
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-prescreen-v2.json",
+      "sha256": "6b3edf9667716fe6898913c776a60ca43230fbb5282774153d0a9512ec91ba97"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-candidates-v4.json",
+      "sha256": "3fc4791f480c0987f376b98954ae34f6fb91f19ec76c5d5874c6ca4213888fea"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/vega-type-change-overlap-projection-v2.json",
+      "sha256": "d35013e34750828f0de060ac059e360367c04e3596ce60a5e93f09127faee250"
+    }
+  ],
+  "superseded_archived_artifacts": [
+    {
+      "path": "data/external/vega-schema-type-change-v1/provenance-bug-archive-v1/vega-type-change-prescreen-v1.json",
+      "sha256": "b898db4af830e04c4c91de9ee069eb06a71e4acb7941b9aa96504d01981b56db"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/provenance-bug-archive-v1/vega-type-change-candidates-v3.json",
+      "sha256": "fd5c9933d6c111a9b30deaababa7884674a010ef3198aaa06d08f25a45084672"
+    },
+    {
+      "path": "data/external/vega-schema-type-change-v1/provenance-bug-archive-v1/vega-type-change-overlap-projection-v1.json",
+      "sha256": "3755f0829c28c21380683a86bac846d06dd8974dc3b2170b854f58fb38cc82d2"
+    }
+  ],
+  "archive_policy": "The superseded v1 artifacts remain retained only for provenance-bug auditability. No current or future Vega sourcing, candidate selection, projection, trace, or evaluation path may consume them.",
+  "correction_evidence": "data/external/vega-schema-type-change-v1/provenance-integrity-correction-v2.json"
+}

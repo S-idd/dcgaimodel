@@ -1,0 +1,76 @@
+{
+  "format_version": "dcg-vega-type-change-independent-reproduction-v1",
+  "fresh_clone": {
+    "method": "network git clone with no cached repository state",
+    "source_url": "https://github.com/vega/schema.git",
+    "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+    "path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/source-repository"
+  },
+  "reference_inputs": {
+    "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "comparisons": [
+    {
+      "artifact": "pre-screen",
+      "persisted_path": "data/external/vega-schema-type-change-v1/vega-type-change-prescreen-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/vega-type-change-prescreen-v1.json",
+      "persisted_sha256": "b898db4af830e04c4c91de9ee069eb06a71e4acb7941b9aa96504d01981b56db",
+      "reproduced_sha256": "b898db4af830e04c4c91de9ee069eb06a71e4acb7941b9aa96504d01981b56db",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "candidate-manifest",
+      "persisted_path": "data/external/vega-schema-type-change-v1/vega-type-change-candidates-v3.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/vega-type-change-candidates-v3.json",
+      "persisted_sha256": "fd5c9933d6c111a9b30deaababa7884674a010ef3198aaa06d08f25a45084672",
+      "reproduced_sha256": "fd5c9933d6c111a9b30deaababa7884674a010ef3198aaa06d08f25a45084672",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "conditional-predicate-diagnostic",
+      "persisted_path": "data/external/vega-schema-type-change-v1/diagnostics/conditional-predicate-feature-diagnostic-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/diagnostics/conditional-predicate-feature-diagnostic-v1.json",
+      "persisted_sha256": "14bc235e50371b0354644ed772ae60f78717ca98a72dafa15daab15b0fddd003",
+      "reproduced_sha256": "14bc235e50371b0354644ed772ae60f78717ca98a72dafa15daab15b0fddd003",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "conditional-selection-diagnostic",
+      "persisted_path": "data/external/vega-schema-type-change-v1/diagnostics/conditional-selection-feature-diagnostic-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/diagnostics/conditional-selection-feature-diagnostic-v1.json",
+      "persisted_sha256": "6f71b11fec469a1d12e5e1d5e601302e44c4d7c16393a0dae4d3d1abf024da34",
+      "reproduced_sha256": "6f71b11fec469a1d12e5e1d5e601302e44c4d7c16393a0dae4d3d1abf024da34",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "conditional-predicate-full-trace",
+      "persisted_path": "data/external/vega-schema-type-change-v1/traces/conditional-predicate-raw-trace-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/traces/conditional-predicate-raw-trace-v1.json",
+      "persisted_sha256": "6d4badcce941a8b0990b0f97a1fbf356495b8934e979b79f131eaac1c1808a53",
+      "reproduced_sha256": "6d4badcce941a8b0990b0f97a1fbf356495b8934e979b79f131eaac1c1808a53",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "conditional-selection-full-trace",
+      "persisted_path": "data/external/vega-schema-type-change-v1/traces/conditional-selection-raw-trace-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/traces/conditional-selection-raw-trace-v1.json",
+      "persisted_sha256": "aac5405310b4149214ea4fc4b084d7e1d0e5f7f1ef959314e4a0d9b40db15807",
+      "reproduced_sha256": "aac5405310b4149214ea4fc4b084d7e1d0e5f7f1ef959314e4a0d9b40db15807",
+      "bit_for_bit_match": true
+    },
+    {
+      "artifact": "overlap-projection",
+      "persisted_path": "data/external/vega-schema-type-change-v1/vega-type-change-overlap-projection-v1.json",
+      "reproduced_path": "data/external/vega-schema-type-change-v1/independent-reproduction-workspace/data/external/vega-schema-type-change-v1/vega-type-change-overlap-projection-v1.json",
+      "persisted_sha256": "3755f0829c28c21380683a86bac846d06dd8974dc3b2170b854f58fb38cc82d2",
+      "reproduced_sha256": "3755f0829c28c21380683a86bac846d06dd8974dc3b2170b854f58fb38cc82d2",
+      "bit_for_bit_match": true
+    }
+  ],
+  "all_artifacts_match_bit_for_bit": true,
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "calibration_changed": false
+}

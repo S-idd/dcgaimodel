@@ -1,0 +1,76 @@
+{
+  "format_version": "dcg-vega-type-change-overlap-projection-v2",
+  "artifact_kind": "no-oracle-v6-overlap-projection",
+  "source": "vega/schema",
+  "source_kind": "public-version-history",
+  "source_url": "https://github.com/vega/schema",
+  "source_license": "BSD-3-Clause",
+  "manifest_path": "vega-type-change-candidates-v4.json",
+  "manifest_sha256": "3fc4791f480c0987f376b98954ae34f6fb91f19ec76c5d5874c6ca4213888fea",
+  "v9_dataset_path": "../../generated/dcg-oracle-production-v9-structural-balanced.json",
+  "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+  "policy_packs_path": "../../../data-contract-governance/contracts/policy-packs-v5-compositional.json",
+  "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+  "rejection_threshold": {
+    "metric": "policy-free V6 structural coordinate distance",
+    "reject_when_distance_lte": 1
+  },
+  "summary": {
+    "candidate_count": 2,
+    "accepted_count": 0,
+    "rejected_count": 2,
+    "type_changed_accepted_count": 0,
+    "type_changed_rejected_count": 2,
+    "outcome": "NO_NON_OVERLAPPING_TYPE_CHANGED_CANDIDATES"
+  },
+  "records": [
+    {
+      "record_id": "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalPredicate<ValueDef>",
+      "mutation_id": "TYPE_CHANGED",
+      "nearest_v9_structural_distance": 1,
+      "exact_full_v6_feature_match_count": 0,
+      "nearest_v9_record_count": 75,
+      "accepted": false,
+      "decision": "REJECT_NEAR_STRUCTURAL_OVERLAP",
+      "nearest_mutation_variants": [
+        "change-first-supported-root-type"
+      ],
+      "nearest_example_differences": [
+        {
+          "index": 9,
+          "name": "type_widening",
+          "external_value": 1,
+          "v9_value": 0
+        }
+      ],
+      "diagnostic_path": "diagnostics-v2/conditional-predicate-feature-diagnostic-v2.json",
+      "diagnostic_sha256": "14bc235e50371b0354644ed772ae60f78717ca98a72dafa15daab15b0fddd003"
+    },
+    {
+      "record_id": "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalSelection<ValueDef>",
+      "mutation_id": "TYPE_CHANGED",
+      "nearest_v9_structural_distance": 1,
+      "exact_full_v6_feature_match_count": 0,
+      "nearest_v9_record_count": 75,
+      "accepted": false,
+      "decision": "REJECT_NEAR_STRUCTURAL_OVERLAP",
+      "nearest_mutation_variants": [
+        "change-first-supported-root-type"
+      ],
+      "nearest_example_differences": [
+        {
+          "index": 9,
+          "name": "type_widening",
+          "external_value": 1,
+          "v9_value": 0
+        }
+      ],
+      "diagnostic_path": "diagnostics-v2/conditional-selection-feature-diagnostic-v2.json",
+      "diagnostic_sha256": "6f71b11fec469a1d12e5e1d5e601302e44c4d7c16393a0dae4d3d1abf024da34"
+    }
+  ],
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false,
+  "calibration_changed": false
+}

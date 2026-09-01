@@ -1,0 +1,639 @@
+{
+  "format_version": "dcg-external-manifest-preflight-report-v1",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "manifest_sha256": "af2b244bb1ed9914e6a9ab28a06e968eb71e21b8062ca868e668fc74b470f7d3",
+  "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+  "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+  "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+  "max_structural_coordinate_distance": 1,
+  "passed": false,
+  "total_records": 46,
+  "accepted_records": 16,
+  "rejected_records": 30,
+  "records": [
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.balance_transaction",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.balance_transaction",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "3717a99fc927435b1b0c6cdb9031b7bbc7dc319fdd82bcc2a224dd6a78444d8a",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.dispute",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.dispute",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "aec95a6b4bb3f8ca3792c7c1818d7819874073c8e05d184918cd4eef03706026",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.dispute_enhanced_eligibility",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.dispute_enhanced_eligibility",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "cc1d0eaa8dc4169ba732cd8aab83a1da5b7cdd685075433b85e55e73ed076699",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.dispute_enhanced_evidence",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.dispute_enhanced_evidence",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "3f212b34f2ff6c3e73ff5f7237d6cb7f532a9cd7a43114bb61a35ae24bf2ea49",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.financial_connections.account",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.financial_connections.account",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "e8d320aa3690b48c155743249d1317854208fd7216013164588f3b4dbf8155da",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.invoices_payment_settings",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.invoices_payment_settings",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "5c8d63cb5e448b1b4c7151dc48a894b734b62d7a0532f1cc966eb94c72aa6984",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_intent_payment_method_options",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_intent_payment_method_options",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "1492f18dc5bdabceb20c39e21365680764c3bbf2711398655325353452765108",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_bizum",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_bizum",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "719eca5aa64e841e351b1d493b51d998daf24cff35e3bae6044853245fccbacc",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_blik",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_blik",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "7595f076151e03250e9a5156e72a2c9f6264b95a737f02a86463a8f3f402b8cc",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_details_bizum",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_details_bizum",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "80523f1ff266287847ecaea030582e093047fd849f303c172caeab4000f9ba1f",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_details_card",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_details_card",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "73a7f03cea2507d4c487fcaafe7b42a93e65794f3a391bbab187ce798d451cf4",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_details_payment_record_bizum",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_details_payment_record_bizum",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "68fb7086922f7bc433df783bf859bd15ff149b56d783f338697c3c900b483ccc",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_details_pix",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_details_pix",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "c17834bf657ab5ef4c5a39c4110f9657fa93f2f04b1741fbea59351fa9d0caa6",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_options_satispay",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_options_satispay",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "5b8e7f5c8fad3972cad6d1fa1f449683b5ded6a44981c6d540033dd43b45ec40",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.payment_method_pix",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_pix",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "354c8ee7fb10925102c22d523fb1f6a239942367178a9c1967e702de2092bd21",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.setup_attempt_payment_method_details",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "53ebf797df0aa98bf0921e3413ff673b3709913a1f0f144c7fe92853721ceb55",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 4,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details_pix",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.setup_attempt_payment_method_details_pix",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "caa9aaa46bf6584662da633df52220033eeb17453540d15dc30a8967c40784b0",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.subscriptions_resource_payment_settings",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.subscriptions_resource_payment_settings",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "e69544a7869ca5cebab1b6e0864adfd2b215d57c2b87da42773d017f43f51b9e",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2323-to-v2324.verification_session_redaction",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.verification_session_redaction",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "3e05cb77dd92859034f486a251a5e2192cbdd313b9bfb706e359c0ce41fdc940",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.bank_connections_resource_link_account_session_filters",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.bank_connections_resource_link_account_session_filters",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "8dbfe31f2a042b7aac6dd8bbde2af1c4d8377f175e465e01c72ce44ec4112e74",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.card",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.card",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_REMOVED",
+      "pair_fingerprint": "8ac5daeb68341ef6f1405084148ce8ff8b9269bd35ae213bbc45760e7a2ebaa7",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.checkout_payco_payment_method_options",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.checkout_payco_payment_method_options",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "3e16de969f0c48ccad69b94701d2be5637a9b921c5754f100d7454d7279c49d0",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.checkout_samsung_pay_payment_method_options",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.checkout_samsung_pay_payment_method_options",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "e39eab6dcc4995dfcd8bc6f4950654328f57e72319139ac7bcd215f5861c4be1",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.funding_instructions_bank_transfer_financial_address",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.funding_instructions_bank_transfer_financial_address",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "37fe1e911b3207a67f3a33dac4877451802744bb5456dac3e2dc29e64562a734",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.invoices_payment_settings",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.invoices_payment_settings",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "a24e38ef8b6e4d4f92f2986057820e0721c8037155bda0faff04fc0538a30f88",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.invoices_resource_invoice_tax_id",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.invoices_resource_invoice_tax_id",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "0edb63f0187f0c833975e2f82cff49890699e3f853d2355a4fa264bebaf08ba1",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.issuing_authorization_request",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.issuing_authorization_request",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "5b853f6f9bd6412b13269e6ce1c5ca529e134f5e2850eb394d3e958401f5e329",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_flows_private_payment_methods_payco_payment_method_options",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_flows_private_payment_methods_payco_payment_method_options",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "f0a29b3bc4c5ca629f6e60b7275820b290e14698c388183693931e9311ace29c",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_flows_private_payment_methods_samsung_pay_payment_method_options",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_flows_private_payment_methods_samsung_pay_payment_method_options",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "d0f2f9a8280b6ae5dac46b769826f3dce2e6606b4abb699f43f39fb1bcf07be0",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_intent",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_intent",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "3395aa909f613aceac1b1ea83d8ddfaafcf5db62323e3b626ae634766a43748c",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_intent_next_action",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_intent_next_action",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "pair_fingerprint": "d371881b7fe160ab130ae3139fda4e30a070a33c42884de8f2bcae61b43753aa",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_method_details_fpx",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_details_fpx",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "db77838e0d1cfc9fa2573aca08c27cd6ac240e6e39bd9be8e8af66ded39e492f",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_method_fpx",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_method_fpx",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "567efc484428c1e610861b083786c1a96bcb1dde4f27fb98e4df484c064939af",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payment_pages_checkout_session_tax_id",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payment_pages_checkout_session_tax_id",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "9d1e903823864a4efb6aff36f837b5831a3731dbc7db39aaa5393a9e87bea558",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.payments_primitives_payment_records_resource_payment_method_card_details_resource_three_d_secure",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.payments_primitives_payment_records_resource_payment_method_card_details_resource_three_d_secure",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "bdc9d65e5e739bdc24881bfd0662ee4b9513071537009922da4de9f3ec6f12d5",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.setup_intent",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.setup_intent",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "f72b504f429d247ffffd8efed2901e0e2530833771a595b589e6da9c9b9b3cf6",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.setup_intent_next_action",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.setup_intent_next_action",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "pair_fingerprint": "460b4d607e6e001e0cb18085be37c87f5f506533bfe4420c984b84500777cbee",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 3,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.subscription_schedule_phase_configuration",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.subscription_schedule_phase_configuration",
+      "policy_pack": "baseline",
+      "mutation_id": "FIELD_ADDED",
+      "pair_fingerprint": "10f90fdd9916a93d5c2cc5d0fec6c8000eba68a3cb19c61c28c81f208dcbac26",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.subscriptions_resource_payment_settings",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.subscriptions_resource_payment_settings",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "f0c0447bcab8dd862f9cb94a1f76c1ed677712807d708e7714b734f3778d8f08",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.tax_id",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.tax_id",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "bfa70bb3290f8068652f289aefb322bf35d7b84d6a96b7cc39784d8bffe06eae",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.tax_product_resource_customer_details_resource_tax_id",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.tax_product_resource_customer_details_resource_tax_id",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "aba1e2a63a258e3a11849c95c21bb597711d67faae463374475c4c7ac3e1007f",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.tax_product_resource_line_item_tax_rate_details",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.tax_product_resource_line_item_tax_rate_details",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "f76f76c1a698c10299a5166ec21512356f9a10b66fc66d109a8be526f143723f",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.tax_product_resource_tax_rate_details",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.tax_product_resource_tax_rate_details",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "be0bf3e70e3b3383b7f9d8a1a056b5ecb2005ce095f95d1ba0bbbe295733b8db",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.tax_rate",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.tax_rate",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "816e41362c9038b60f7ed3a5e4f5d2e5b1af713f82129986f57b564482367d32",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.three_d_secure_details",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.three_d_secure_details",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "1d3122da11d0d213e01f311e22de9ea8a820e09ab3c1fa23a96853d1beaa1300",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 1,
+      "accepted": false,
+      "rejection_reasons": [
+        "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+      ]
+    },
+    {
+      "record_id": "stripe.openapi.v2348-to-v2349.three_d_secure_details_charge",
+      "source": "stripe/openapi",
+      "family_id": "stripe.openapi.three_d_secure_details_charge",
+      "policy_pack": "baseline",
+      "mutation_id": "ENUM_CHANGED",
+      "pair_fingerprint": "e0fe3fdc7cf97a539583f12ffc0baf4c7b63184ff433748c57beae03aa735931",
+      "exact_model_feature_overlap": true,
+      "nearest_policy_free_structural_distance": 0,
+      "accepted": false,
+      "rejection_reasons": [
+        "full V6 model-input feature vector is already present in V9",
+        "nearest V9 policy-free structural feature distance 0 is within configured rejection threshold 1"
+      ]
+    }
+  ]
+}

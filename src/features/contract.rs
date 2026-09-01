@@ -1,5 +1,29 @@
 use crate::linalg::Vector;
 
+/// Stable identifier for the ordered DCG feature schema.
+pub const DCG_FEATURE_VERSION: &str = "dcg-features-v1";
+/// Number of values emitted by the DCG feature extractor.
+pub const DCG_FEATURE_COUNT: usize = 8;
+/// Stable feature names in the exact order consumed by models and artifacts.
+pub const DCG_FEATURE_NAMES: [&str; DCG_FEATURE_COUNT] = [
+    "field_count",
+    "fields_added",
+    "fields_removed",
+    "type_changes",
+    "compatibility_score",
+    "semantic_version_ordinal",
+    "breaking_change_count",
+    "dependent_consumer_count",
+];
+
+/// Returns the canonical schema version and stable ordered feature names.
+///
+/// Ordering is part of model compatibility: values from a different schema
+/// must never be supplied to a persisted `dcg-features-v1` model.
+pub const fn feature_schema() -> (&'static str, &'static [&'static str; DCG_FEATURE_COUNT]) {
+    (DCG_FEATURE_VERSION, &DCG_FEATURE_NAMES)
+}
+
 /// The compatibility assessment associated with a schema change.
 ///
 /// Feature encoding is deterministic: `Compatible` is `0.0`, `Unknown` is
@@ -129,6 +153,11 @@ impl ContractFeatures {
 
     /// Returns the number of values emitted by [`Self::to_vector`].
     pub const fn feature_count() -> usize {
-        8
+        DCG_FEATURE_COUNT
+    }
+
+    /// Returns the version of the schema emitted by [`Self::to_vector`].
+    pub const fn feature_version() -> &'static str {
+        DCG_FEATURE_VERSION
     }
 }

@@ -1,0 +1,78 @@
+{
+  "format_version": "dcg-forward-full-optional-field-label-variation-decision-v1",
+  "scope": {
+    "directions": ["FORWARD", "FULL"],
+    "mutation_family": "optional_field_added",
+    "root_object_profiles": ["open", "closed"],
+    "backward_v9_relationship": "separate; no BACKWARD V9 corpus, model, scaler, or report is an input to this decision"
+  },
+  "pinned_inputs": {
+    "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "evidence_thresholds": {
+    "min_independent_families": 10,
+    "min_policies": 15,
+    "min_oracle_checks": 150
+  },
+  "conformance_reports": [
+    {
+      "profile": "open",
+      "path": "data/experiments/forward-full-optional-field-conformance/optional-open.json",
+      "sha256": "90241430414c9a84bd5bdab16440f86f3945511b44f83f68dd20ce9a779c25f3",
+      "runs": 3000,
+      "accepted_families": 22,
+      "by_mode": {
+        "FORWARD": { "breaking": 1320, "rejected": 180 },
+        "FULL": { "breaking": 1320, "rejected": 180 }
+      }
+    },
+    {
+      "profile": "closed",
+      "path": "data/experiments/forward-full-optional-field-conformance/optional-closed.json",
+      "sha256": "a192714adfae4ebad2ed210b2f506d4767fc2d308f78f65deb5b1f75af52dae4",
+      "runs": 3000,
+      "accepted_families": 20,
+      "by_mode": {
+        "FORWARD": { "breaking": 1200, "rejected": 300 },
+        "FULL": { "breaking": 1200, "rejected": 300 }
+      }
+    }
+  ],
+  "label_variation_check": {
+    "meaningful": false,
+    "accepted_labels_by_direction": {
+      "FORWARD": ["breaking"],
+      "FULL": ["breaking"]
+    },
+    "decision": "NO_GO",
+    "reason": "Open and closed optional-field additions are label-pure BREAKING under both requested directions and all accepted policy checks. Rejected invocations are retained as runtime rejections and are not labels. A label-pure three-way corpus would not be a meaningful evaluation benchmark."
+  },
+  "concrete_oracle_traces": [
+    {
+      "profile": "open",
+      "family_id": "kb_1011_Normalized",
+      "policy_pack": "baseline",
+      "compatibility_mode": "FORWARD",
+      "exit_code": 1,
+      "outcome": "breaking",
+      "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_string]\n"
+    },
+    {
+      "profile": "closed",
+      "family_id": "o12092",
+      "policy_pack": "baseline",
+      "compatibility_mode": "FULL",
+      "exit_code": 1,
+      "outcome": "breaking",
+      "stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Field removed: dcg_generated_optional_boolean]\n"
+    }
+  ],
+  "downstream_actions": {
+    "family_isolated_corpus_generated": false,
+    "v9_contamination_gate_reused": "not run because the required label-variation go/no-go failed before corpus generation; if a future conformance passes, reuse audit_challenge_near_duplicates (src/models/experiment.rs) for family/pair/exact-feature/near-structural isolation and the established V9 preflight gate for V9 identity checks",
+    "benchmark_ready_true_reported": false,
+    "three_seed_evaluation_run": false,
+    "calibration_changed": false
+  }
+}

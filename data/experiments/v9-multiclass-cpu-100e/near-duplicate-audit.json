@@ -1,0 +1,290 @@
+{
+  "format_version": "dcg-challenge-near-duplicate-audit-v1",
+  "dataset_version": "dcg-oracle-production-v9-structural-balanced",
+  "feature_version": "dcg-features-v6",
+  "limitation": "The portable prepared dataset does not retain raw source schemas. Exact pair fingerprints and family IDs detect identity leakage; feature overlap and coordinate distance describe only the model-visible V6 representation, not semantic equivalence of schema text.",
+  "protocols": [
+    {
+      "protocol": "held-out-mutation-variant:enum_value_added:add-type-preserving-enum-value-0",
+      "training_records": 54540,
+      "challenge_records": 420,
+      "family_leakage": false,
+      "pair_fingerprint_leakage": false,
+      "exact_model_feature_overlap": {
+        "challenge_records_with_match": 285,
+        "challenge_families_with_match": 19,
+        "distinct_training_feature_signatures": 19512
+      },
+      "exact_policy_free_structural_overlap": {
+        "challenge_records_with_match": 285,
+        "challenge_families_with_match": 19,
+        "distinct_training_feature_signatures": 2168
+      },
+      "nearest_structural_coordinate_distance": {
+        "0": 285,
+        "1": 105,
+        "2": 30
+      },
+      "challenge_records_within_one_structural_coordinate": 390,
+      "samples": [
+        {
+          "challenge_record_id": "kb_137_Normalized:enum_value_added:add-type-preserving-enum-value-0:baseline",
+          "challenge_family_id": "kb_137_Normalized",
+          "training_record_id": "kb_90_Normalized:enum_value_added:add-type-preserving-enum-value-1:baseline",
+          "training_family_id": "kb_90_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_137_Normalized:enum_value_added:add-type-preserving-enum-value-0:baseline-warning-peer",
+          "challenge_family_id": "kb_137_Normalized",
+          "training_record_id": "kb_90_Normalized:enum_value_added:add-type-preserving-enum-value-1:baseline",
+          "training_family_id": "kb_90_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_137_Normalized:enum_value_added:add-type-preserving-enum-value-0:composition-enum-breaking-constraint-breaking",
+          "challenge_family_id": "kb_137_Normalized",
+          "training_record_id": "kb_90_Normalized:enum_value_added:add-type-preserving-enum-value-1:composition-enum-breaking-constraint-breaking",
+          "training_family_id": "kb_90_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_137_Normalized:enum_value_added:add-type-preserving-enum-value-0:composition-enum-breaking-constraint-ignore",
+          "challenge_family_id": "kb_137_Normalized",
+          "training_record_id": "kb_90_Normalized:enum_value_added:add-type-preserving-enum-value-1:composition-enum-breaking-constraint-ignore",
+          "training_family_id": "kb_90_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_137_Normalized:enum_value_added:add-type-preserving-enum-value-0:composition-enum-breaking-constraint-warning",
+          "challenge_family_id": "kb_137_Normalized",
+          "training_record_id": "kb_90_Normalized:enum_value_added:add-type-preserving-enum-value-1:composition-enum-breaking-constraint-warning",
+          "training_family_id": "kb_90_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        }
+      ]
+    },
+    {
+      "protocol": "held-out-mutation:constraint_tightened",
+      "training_records": 52605,
+      "challenge_records": 780,
+      "family_leakage": false,
+      "pair_fingerprint_leakage": false,
+      "exact_model_feature_overlap": {
+        "challenge_records_with_match": 0,
+        "challenge_families_with_match": 0,
+        "distinct_training_feature_signatures": 18207
+      },
+      "exact_policy_free_structural_overlap": {
+        "challenge_records_with_match": 0,
+        "challenge_families_with_match": 0,
+        "distinct_training_feature_signatures": 2023
+      },
+      "nearest_structural_coordinate_distance": {
+        "4": 330,
+        "5": 390,
+        "6": 60
+      },
+      "challenge_records_within_one_structural_coordinate": 0,
+      "samples": [
+        {
+          "challenge_record_id": "o17654:constraint_tightened:tighten-string-min-length-0:baseline",
+          "challenge_family_id": "o17654",
+          "training_record_id": "o82257:enum_value_removed:remove-last-enum-value:baseline",
+          "training_family_id": "o82257",
+          "exact_model_feature_match": false,
+          "exact_policy_free_structural_match": false,
+          "structural_coordinate_distance": 4
+        },
+        {
+          "challenge_record_id": "o17654:constraint_tightened:tighten-string-min-length-0:baseline-warning-peer",
+          "challenge_family_id": "o17654",
+          "training_record_id": "o82257:enum_value_removed:remove-last-enum-value:baseline",
+          "training_family_id": "o82257",
+          "exact_model_feature_match": false,
+          "exact_policy_free_structural_match": false,
+          "structural_coordinate_distance": 4
+        },
+        {
+          "challenge_record_id": "o17654:constraint_tightened:tighten-string-min-length-0:composition-enum-breaking-constraint-breaking",
+          "challenge_family_id": "o17654",
+          "training_record_id": "o82257:enum_value_removed:remove-last-enum-value:baseline",
+          "training_family_id": "o82257",
+          "exact_model_feature_match": false,
+          "exact_policy_free_structural_match": false,
+          "structural_coordinate_distance": 4
+        },
+        {
+          "challenge_record_id": "o17654:constraint_tightened:tighten-string-min-length-0:composition-enum-breaking-constraint-ignore",
+          "challenge_family_id": "o17654",
+          "training_record_id": "o82257:enum_value_removed:remove-last-enum-value:baseline",
+          "training_family_id": "o82257",
+          "exact_model_feature_match": false,
+          "exact_policy_free_structural_match": false,
+          "structural_coordinate_distance": 4
+        },
+        {
+          "challenge_record_id": "o17654:constraint_tightened:tighten-string-min-length-0:composition-enum-breaking-constraint-warning",
+          "challenge_family_id": "o17654",
+          "training_record_id": "o82257:enum_value_removed:remove-last-enum-value:baseline",
+          "training_family_id": "o82257",
+          "exact_model_feature_match": false,
+          "exact_policy_free_structural_match": false,
+          "structural_coordinate_distance": 4
+        }
+      ]
+    },
+    {
+      "protocol": "held-out-policy:composition-enum-ignore-constraint-breaking",
+      "training_records": 52794,
+      "challenge_records": 817,
+      "family_leakage": false,
+      "pair_fingerprint_leakage": false,
+      "exact_model_feature_overlap": {
+        "challenge_records_with_match": 435,
+        "challenge_families_with_match": 43,
+        "distinct_training_feature_signatures": 19989
+      },
+      "exact_policy_free_structural_overlap": {
+        "challenge_records_with_match": 435,
+        "challenge_families_with_match": 43,
+        "distinct_training_feature_signatures": 2221
+      },
+      "nearest_structural_coordinate_distance": {
+        "0": 435,
+        "1": 324,
+        "2": 56,
+        "3": 2
+      },
+      "challenge_records_within_one_structural_coordinate": 759,
+      "samples": [
+        {
+          "challenge_record_id": "kb_1007_Normalized:conditional_restriction_added:root-if-then-required:composition-enum-ignore-constraint-breaking",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:conditional_restriction_added:root-if-then-required:relaxed",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:enum_value_added:add-type-preserving-enum-value-2:composition-enum-ignore-constraint-breaking",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:enum_value_added:add-type-preserving-enum-value-0:relaxed",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:composition-enum-ignore-constraint-breaking",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:field_removed:remove-first-root-property:relaxed",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:optional_field_added:optional-array-field:composition-enum-ignore-constraint-breaking",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:optional_field_added:optional-array-field:relaxed",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:optional_field_added:optional-boolean-field:composition-enum-ignore-constraint-breaking",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:optional_field_added:optional-boolean-field:relaxed",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        }
+      ]
+    },
+    {
+      "protocol": "held-out-policy:relaxed",
+      "training_records": 52794,
+      "challenge_records": 817,
+      "family_leakage": false,
+      "pair_fingerprint_leakage": false,
+      "exact_model_feature_overlap": {
+        "challenge_records_with_match": 435,
+        "challenge_families_with_match": 43,
+        "distinct_training_feature_signatures": 19989
+      },
+      "exact_policy_free_structural_overlap": {
+        "challenge_records_with_match": 435,
+        "challenge_families_with_match": 43,
+        "distinct_training_feature_signatures": 2221
+      },
+      "nearest_structural_coordinate_distance": {
+        "0": 435,
+        "1": 324,
+        "2": 56,
+        "3": 2
+      },
+      "challenge_records_within_one_structural_coordinate": 759,
+      "samples": [
+        {
+          "challenge_record_id": "kb_1007_Normalized:conditional_restriction_added:root-if-then-required:relaxed",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:conditional_restriction_added:root-if-then-required:composition-enum-ignore-constraint-breaking",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:enum_value_added:add-type-preserving-enum-value-2:relaxed",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:enum_value_added:add-type-preserving-enum-value-0:composition-enum-ignore-constraint-breaking",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:field_removed:remove-first-root-property:relaxed",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:field_removed:remove-first-root-property:composition-enum-ignore-constraint-breaking",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:optional_field_added:optional-array-field:relaxed",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:optional_field_added:optional-array-field:composition-enum-ignore-constraint-breaking",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        },
+        {
+          "challenge_record_id": "kb_1007_Normalized:optional_field_added:optional-boolean-field:relaxed",
+          "challenge_family_id": "kb_1007_Normalized",
+          "training_record_id": "kb_163_Normalized:optional_field_added:optional-boolean-field:composition-enum-ignore-constraint-breaking",
+          "training_family_id": "kb_163_Normalized",
+          "exact_model_feature_match": true,
+          "exact_policy_free_structural_match": true,
+          "structural_coordinate_distance": 0
+        }
+      ]
+    }
+  ]
+}

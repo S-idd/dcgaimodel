@@ -1,0 +1,297 @@
+{
+  "format_version": "dcg-external-transition-manifest-v3",
+  "summary": {
+    "total_transitions": 2,
+    "mutation_id_counts": {
+      "TYPE_CHANGED": 2
+    },
+    "limitations": [
+      "Pre-screen TYPE_CHANGED candidates only; no compatibility labels or model inference are present.",
+      "Candidates require no-oracle V6 overlap projection before any external evaluation extraction decision."
+    ],
+    "preserved_source_files": [
+      {
+        "revision": "v1.3.1",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "d87aa71629763c3460006bb8c918635ed2eb1504",
+        "source_path": "vega-lite/v1.3.1.json",
+        "audit_copy_path": "source-repository/vega-lite/v1.3.1.json"
+      },
+      {
+        "revision": "v2.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "8504e4176b5a865729ff697fe2e7fe7d9fb363b1",
+        "source_path": "vega-lite/v2.0.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v2.0.0.json"
+      },
+      {
+        "revision": "v2.7.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+        "source_path": "vega-lite/v2.7.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v2.7.0.json"
+      },
+      {
+        "revision": "v3.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+        "source_path": "vega-lite/v3.0.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v3.0.0.json"
+      },
+      {
+        "revision": "v3.4.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "a5e60f818e891a9ec99ce74e60aec39a66be303e",
+        "source_path": "vega-lite/v3.4.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v3.4.0.json"
+      },
+      {
+        "revision": "v4.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "e686132d5d2e0e39275820ebb42a243c257ee710",
+        "source_path": "vega-lite/v4.0.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v4.0.0.json"
+      },
+      {
+        "revision": "v4.17.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "dc73fa4aaa0cab7ab95c7e7ba09b16e64a8c7d29",
+        "source_path": "vega-lite/v4.17.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v4.17.0.json"
+      },
+      {
+        "revision": "v5.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "fe351b1f59f7e75ec1d4f94756aded5248a5cb08",
+        "source_path": "vega-lite/v5.0.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v5.0.0.json"
+      },
+      {
+        "revision": "v5.23.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "121af838594cd76b988c42c7fe3a3b98c317b570",
+        "source_path": "vega-lite/v5.23.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v5.23.0.json"
+      },
+      {
+        "revision": "v6.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "fbc41a68bc0ef76de8fb755c28859628fbdbf9cc",
+        "source_path": "vega-lite/v6.0.0.json",
+        "audit_copy_path": "source-repository/vega-lite/v6.0.0.json"
+      },
+      {
+        "revision": "v2.6.5",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "dd552abe1bb3f5a421e910dd0fad20f1142af206",
+        "source_path": "vega/v2.6.5.json",
+        "audit_copy_path": "source-repository/vega/v2.6.5.json"
+      },
+      {
+        "revision": "v3.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "5260f5ae2dd69433e8e6e1b1cb75de12edd28a31",
+        "source_path": "vega/v3.0.0.json",
+        "audit_copy_path": "source-repository/vega/v3.0.0.json"
+      },
+      {
+        "revision": "v3.3.1",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "354fc9965c80b98a7f1d6247ac9edae4e8e14d30",
+        "source_path": "vega/v3.3.1.json",
+        "audit_copy_path": "source-repository/vega/v3.3.1.json"
+      },
+      {
+        "revision": "v4.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "38ff3f56eae6ece4456035602bf2130af3cc353c",
+        "source_path": "vega/v4.0.0.json",
+        "audit_copy_path": "source-repository/vega/v4.0.0.json"
+      },
+      {
+        "revision": "v4.4.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "a03cdeafb20ba9717e9c00a0defae50615c10362",
+        "source_path": "vega/v4.4.0.json",
+        "audit_copy_path": "source-repository/vega/v4.4.0.json"
+      },
+      {
+        "revision": "v5.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "3a2f0f8440b4f7afac0cf0e6356b4f192c73ffa2",
+        "source_path": "vega/v5.0.0.json",
+        "audit_copy_path": "source-repository/vega/v5.0.0.json"
+      },
+      {
+        "revision": "v5.33.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "2d1f05ea51827884881eadb7c0e1cbba57064978",
+        "source_path": "vega/v5.33.0.json",
+        "audit_copy_path": "source-repository/vega/v5.33.0.json"
+      },
+      {
+        "revision": "v6.0.0",
+        "commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+        "blob_sha1": "2d1f05ea51827884881eadb7c0e1cbba57064978",
+        "source_path": "vega/v6.0.0.json",
+        "audit_copy_path": "source-repository/vega/v6.0.0.json"
+      }
+    ],
+    "traceability_only": {
+      "status": "traceability-only",
+      "accuracy_evidence": false,
+      "clean_record_count": 2,
+      "clean_record_ids": [
+        "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalPredicate<ValueDef>",
+        "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalSelection<ValueDef>"
+      ],
+      "rejected_record_count": 0,
+      "rejection_skew": {
+        "TYPE_CHANGED": {
+          "selected": 2,
+          "clean": 2,
+          "rejected": 0,
+          "rejection_rate": 0
+        }
+      },
+      "overlap_characterization": "Candidate-only manifest; the separate no-oracle V6 projection determines overlap status.",
+      "preflight_report_path": "type-change-v6-overlap-projection-v1.json",
+      "original_preflight_report_path": "not-applicable",
+      "limitations": [
+        "These candidates are not accuracy evidence and carry no oracle labels."
+      ]
+    }
+  },
+  "transitions": [
+    {
+      "record_id": "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalPredicate<ValueDef>",
+      "source": "vega/schema",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/vega/schema",
+      "base_revision": "v2.7.0",
+      "candidate_revision": "v3.0.0",
+      "base_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "candidate_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+      "candidate_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+      "source_license": "BSD-3-Clause",
+      "source_path": "vega-lite/v2.7.0.json->vega-lite/v3.0.0.json#/definitions/ConditionalPredicate<ValueDef>",
+      "family_id": "vega.schema.vega-lite.ConditionalPredicate<ValueDef>",
+      "contract_id": "vega.schema.vega-lite.ConditionalPredicate<ValueDef>",
+      "old_version": "v2.7.0",
+      "new_version": "v3.0.0",
+      "policy_pack": "baseline",
+      "mutation_id": "TYPE_CHANGED",
+      "external_use": "traceability-only",
+      "base_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "test": {
+            "$ref": "#/definitions/LogicalOperand<Predicate>"
+          },
+          "value": {
+            "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+            "type": [
+              "number",
+              "string",
+              "boolean"
+            ]
+          }
+        },
+        "required": [
+          "test",
+          "value"
+        ],
+        "type": "object"
+      },
+      "candidate_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "test": {
+            "$ref": "#/definitions/LogicalOperand<Predicate>"
+          },
+          "value": {
+            "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "test",
+          "value"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "record_id": "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalSelection<ValueDef>",
+      "source": "vega/schema",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/vega/schema",
+      "base_revision": "v2.7.0",
+      "candidate_revision": "v3.0.0",
+      "base_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "candidate_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+      "candidate_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+      "source_license": "BSD-3-Clause",
+      "source_path": "vega-lite/v2.7.0.json->vega-lite/v3.0.0.json#/definitions/ConditionalSelection<ValueDef>",
+      "family_id": "vega.schema.vega-lite.ConditionalSelection<ValueDef>",
+      "contract_id": "vega.schema.vega-lite.ConditionalSelection<ValueDef>",
+      "old_version": "v2.7.0",
+      "new_version": "v3.0.0",
+      "policy_pack": "baseline",
+      "mutation_id": "TYPE_CHANGED",
+      "external_use": "traceability-only",
+      "base_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "selection": {
+            "$ref": "#/definitions/SelectionOperand",
+            "description": "A [selection name](https://vega.github.io/vega-lite/docs/selection.html), or a series of [composed selections](https://vega.github.io/vega-lite/docs/selection.html#compose)."
+          },
+          "value": {
+            "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+            "type": [
+              "number",
+              "string",
+              "boolean"
+            ]
+          }
+        },
+        "required": [
+          "selection",
+          "value"
+        ],
+        "type": "object"
+      },
+      "candidate_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "selection": {
+            "$ref": "#/definitions/SelectionOperand",
+            "description": "A [selection name](https://vega.github.io/vega-lite/docs/selection.html), or a series of [composed selections](https://vega.github.io/vega-lite/docs/selection.html#compose)."
+          },
+          "value": {
+            "description": "A constant value in visual domain (e.g., `\"red\"` / \"#0099ff\" for color, values between `0` to `1` for opacity).",
+            "type": [
+              "number",
+              "string",
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "selection",
+          "value"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

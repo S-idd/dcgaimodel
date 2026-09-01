@@ -1,0 +1,310 @@
+{
+  "format_version": "dcg-vega-type-change-prescreen-v1",
+  "artifact_kind": "pre-screen-only",
+  "source_provenance": {
+    "source": "vega/schema",
+    "source_kind": "public-version-history",
+    "source_url": "https://github.com/vega/schema",
+    "source_license": "BSD-3-Clause",
+    "license_path": "LICENSE",
+    "repository_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+    "repository_path": "data/external/vega-schema-type-change-v1/source-repository",
+    "versioning_documentation": "README.md",
+    "migration_guide_url": "https://vega.github.io/vega/docs/porting-guide/"
+  },
+  "current_external_type_changed_coverage": {
+    "stripe": 0,
+    "kubernetes": 0
+  },
+  "selection": {
+    "objective": "single-operation TYPE_CHANGED candidates across major schema-format boundaries",
+    "pair_count": 9,
+    "candidate_count": 2,
+    "exclusions": [
+      "whole component add/remove",
+      "METADATA_ONLY",
+      "COMPOUND",
+      "UNMAPPED_SINGLE_CHANGE"
+    ]
+  },
+  "pairs": [
+    {
+      "library": "vega",
+      "pair_id": "vega:v2.6.5.json->v3.0.0.json",
+      "base_revision": "v2.6.5",
+      "candidate_revision": "v3.0.0",
+      "base_source_path": "vega/v2.6.5.json",
+      "candidate_source_path": "vega/v3.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "dd552abe1bb3f5a421e910dd0fad20f1142af206",
+      "candidate_blob_sha1": "5260f5ae2dd69433e8e6e1b1cb75de12edd28a31",
+      "base_sha256": "86e560b96f051e55bd089d5e60542305eaa54d24010c8148463d81e4e1f46fbf",
+      "candidate_sha256": "245a65fa2615fc0c62641f2e6aab8b497bf484c06dee1f5fe0822ff446a9ca3b",
+      "raw_diff_lines": {
+        "added": 7093,
+        "removed": 4734
+      },
+      "selection_basis": "documented Vega 2 to Vega 3 format migration",
+      "changed_component_count": 1,
+      "whole_component_added_count": 0,
+      "whole_component_removed_count": 0,
+      "classification_counts": {
+        "COMPOUND": 1
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega",
+      "pair_id": "vega:v3.3.1.json->v4.0.0.json",
+      "base_revision": "v3.3.1",
+      "candidate_revision": "v4.0.0",
+      "base_source_path": "vega/v3.3.1.json",
+      "candidate_source_path": "vega/v4.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "354fc9965c80b98a7f1d6247ac9edae4e8e14d30",
+      "candidate_blob_sha1": "38ff3f56eae6ece4456035602bf2130af3cc353c",
+      "base_sha256": "eab7db8c89522c3e57b48fa858e9bcbabea3c5c6723aaee00536b5fc9a6229af",
+      "candidate_sha256": "f25bdf4e25fdcfc6caca1a03fed6e811c86096241e7bb2997ccf4b5500db6906",
+      "raw_diff_lines": {
+        "added": 2719,
+        "removed": 1640
+      },
+      "selection_basis": "Vega major-version boundary",
+      "changed_component_count": 1,
+      "whole_component_added_count": 0,
+      "whole_component_removed_count": 0,
+      "classification_counts": {
+        "COMPOUND": 1
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega",
+      "pair_id": "vega:v4.4.0.json->v5.0.0.json",
+      "base_revision": "v4.4.0",
+      "candidate_revision": "v5.0.0",
+      "base_source_path": "vega/v4.4.0.json",
+      "candidate_source_path": "vega/v5.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "a03cdeafb20ba9717e9c00a0defae50615c10362",
+      "candidate_blob_sha1": "3a2f0f8440b4f7afac0cf0e6356b4f192c73ffa2",
+      "base_sha256": "75038f9882f42e1be05c999241a0d2cbf56edd42447720773825832122551d5d",
+      "candidate_sha256": "37605629dbd98a77e98de55e7fb1b259b7e27f1ca823f69632e82845a03dc70a",
+      "raw_diff_lines": {
+        "added": 7870,
+        "removed": 5352
+      },
+      "selection_basis": "Vega major-version boundary",
+      "changed_component_count": 1,
+      "whole_component_added_count": 0,
+      "whole_component_removed_count": 0,
+      "classification_counts": {
+        "COMPOUND": 1
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega",
+      "pair_id": "vega:v5.33.0.json->v6.0.0.json",
+      "base_revision": "v5.33.0",
+      "candidate_revision": "v6.0.0",
+      "base_source_path": "vega/v5.33.0.json",
+      "candidate_source_path": "vega/v6.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "2d1f05ea51827884881eadb7c0e1cbba57064978",
+      "candidate_blob_sha1": "2d1f05ea51827884881eadb7c0e1cbba57064978",
+      "base_sha256": "173a2d512cf0d8bc841bc90ce574f0526f710e4762820e6ca68bf86e35595920",
+      "candidate_sha256": "173a2d512cf0d8bc841bc90ce574f0526f710e4762820e6ca68bf86e35595920",
+      "raw_diff_lines": {
+        "added": 0,
+        "removed": 0
+      },
+      "selection_basis": "Vega major-version boundary",
+      "changed_component_count": 0,
+      "whole_component_added_count": 0,
+      "whole_component_removed_count": 0,
+      "classification_counts": {},
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega-lite",
+      "pair_id": "vega-lite:v1.3.1.json->v2.0.0.json",
+      "base_revision": "v1.3.1",
+      "candidate_revision": "v2.0.0",
+      "base_source_path": "vega-lite/v1.3.1.json",
+      "candidate_source_path": "vega-lite/v2.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "d87aa71629763c3460006bb8c918635ed2eb1504",
+      "candidate_blob_sha1": "8504e4176b5a865729ff697fe2e7fe7d9fb363b1",
+      "base_sha256": "27fc172577bd7ff900ef773e1cc9e9b5b27f762420b651de4a9ac99b846e5ec7",
+      "candidate_sha256": "c800856012c82425c96e4b088d1bd0903e1a441ea13aecca046b178c35fc6a57",
+      "raw_diff_lines": {
+        "added": 7213,
+        "removed": 2198
+      },
+      "selection_basis": "Vega-Lite major-version boundary",
+      "changed_component_count": 36,
+      "whole_component_added_count": 134,
+      "whole_component_removed_count": 17,
+      "classification_counts": {
+        "UNMAPPED_SINGLE_CHANGE": 4,
+        "COMPOUND": 22,
+        "METADATA_ONLY": 10
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega-lite",
+      "pair_id": "vega-lite:v2.7.0.json->v3.0.0.json",
+      "base_revision": "v2.7.0",
+      "candidate_revision": "v3.0.0",
+      "base_source_path": "vega-lite/v2.7.0.json",
+      "candidate_source_path": "vega-lite/v3.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "9b47986f7cb047472b5b07e0d0b51c2440d984c8",
+      "candidate_blob_sha1": "d225b3ff9d1b815dcf5ad0c0a1722334765e0fdb",
+      "base_sha256": "c4de2346e4bd494785ba9d861458bea0562d6bd732c63e3253aeb75d29bca20c",
+      "candidate_sha256": "2ca53eb054992413504e2230f78012b1090c0e7b281389e9c97ced6c9738e4ef",
+      "raw_diff_lines": {
+        "added": 8070,
+        "removed": 3999
+      },
+      "selection_basis": "Vega-Lite major-version boundary",
+      "changed_component_count": 89,
+      "whole_component_added_count": 133,
+      "whole_component_removed_count": 37,
+      "classification_counts": {
+        "METADATA_ONLY": 8,
+        "UNMAPPED_SINGLE_CHANGE": 25,
+        "COMPOUND": 54,
+        "TYPE_CHANGED": 2
+      },
+      "type_changed_candidate_count": 2,
+      "type_changed_candidates": [
+        {
+          "component": "ConditionalPredicate<ValueDef>",
+          "semantic_path": "properties/value/type",
+          "base_type": [
+            "number",
+            "string",
+            "boolean"
+          ],
+          "candidate_type": [
+            "number",
+            "string",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "component": "ConditionalSelection<ValueDef>",
+          "semantic_path": "properties/value/type",
+          "base_type": [
+            "number",
+            "string",
+            "boolean"
+          ],
+          "candidate_type": [
+            "number",
+            "string",
+            "boolean",
+            "null"
+          ]
+        }
+      ]
+    },
+    {
+      "library": "vega-lite",
+      "pair_id": "vega-lite:v3.4.0.json->v4.0.0.json",
+      "base_revision": "v3.4.0",
+      "candidate_revision": "v4.0.0",
+      "base_source_path": "vega-lite/v3.4.0.json",
+      "candidate_source_path": "vega-lite/v4.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "a5e60f818e891a9ec99ce74e60aec39a66be303e",
+      "candidate_blob_sha1": "e686132d5d2e0e39275820ebb42a243c257ee710",
+      "base_sha256": "6b4aff91d150fbc2f60498f66c468dbc520343d903426e3cf36a1e2b7ff27c44",
+      "candidate_sha256": "ac5dd06e7e904627170d3f1c2004797be889af39961b69b037aee6706571084b",
+      "raw_diff_lines": {
+        "added": 5745,
+        "removed": 2411
+      },
+      "selection_basis": "Vega-Lite major-version boundary",
+      "changed_component_count": 109,
+      "whole_component_added_count": 91,
+      "whole_component_removed_count": 16,
+      "classification_counts": {
+        "UNMAPPED_SINGLE_CHANGE": 18,
+        "METADATA_ONLY": 37,
+        "COMPOUND": 54
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega-lite",
+      "pair_id": "vega-lite:v4.17.0.json->v5.0.0.json",
+      "base_revision": "v4.17.0",
+      "candidate_revision": "v5.0.0",
+      "base_source_path": "vega-lite/v4.17.0.json",
+      "candidate_source_path": "vega-lite/v5.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "dc73fa4aaa0cab7ab95c7e7ba09b16e64a8c7d29",
+      "candidate_blob_sha1": "fe351b1f59f7e75ec1d4f94756aded5248a5cb08",
+      "base_sha256": "21f0a6a0283874474541d6f1f8871286c7e6bf26d8ee2ea984c73f31dcd1c23e",
+      "candidate_sha256": "7fcea13e9c0413cae756d6b7a4b86fe44cabdcb00596b57fc03805f3a1c0852a",
+      "raw_diff_lines": {
+        "added": 2440,
+        "removed": 4232
+      },
+      "selection_basis": "Vega-Lite major-version boundary",
+      "changed_component_count": 110,
+      "whole_component_added_count": 27,
+      "whole_component_removed_count": 40,
+      "classification_counts": {
+        "UNMAPPED_SINGLE_CHANGE": 37,
+        "COMPOUND": 60,
+        "METADATA_ONLY": 13
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    },
+    {
+      "library": "vega-lite",
+      "pair_id": "vega-lite:v5.23.0.json->v6.0.0.json",
+      "base_revision": "v5.23.0",
+      "candidate_revision": "v6.0.0",
+      "base_source_path": "vega-lite/v5.23.0.json",
+      "candidate_source_path": "vega-lite/v6.0.0.json",
+      "source_snapshot_commit": "8feea15c3a84d4261887f5c7e0cbb74909f1c8a2",
+      "base_blob_sha1": "121af838594cd76b988c42c7fe3a3b98c317b570",
+      "candidate_blob_sha1": "fbc41a68bc0ef76de8fb755c28859628fbdbf9cc",
+      "base_sha256": "1aeeda8aa44dcce60f6b6fb7d8b650487e3e389a8284a2040e590be9a4c7610e",
+      "candidate_sha256": "42be778f8bc04c50e1c3679c94104aead0640e3c11b3c0c0ee66b2d09a601d85",
+      "raw_diff_lines": {
+        "added": 97,
+        "removed": 154
+      },
+      "selection_basis": "Vega-Lite major-version boundary",
+      "changed_component_count": 30,
+      "whole_component_added_count": 2,
+      "whole_component_removed_count": 0,
+      "classification_counts": {
+        "COMPOUND": 12,
+        "METADATA_ONLY": 17,
+        "UNMAPPED_SINGLE_CHANGE": 1
+      },
+      "type_changed_candidate_count": 0,
+      "type_changed_candidates": []
+    }
+  ],
+  "candidate_manifest_path": "vega-type-change-candidates-v3.json",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false
+}

@@ -8,23 +8,42 @@ const MAX_EXACT_INTEGER: usize = 9_007_199_254_740_991;
 /// Errors returned while validating or extracting DCG features.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FeatureError {
+    /// A JSON Schema source document could not be parsed for V2 extraction.
+    SchemaJson { message: String },
+    /// An approved policy-pack document could not be parsed or resolved.
+    PolicyContext { message: String },
     /// A contract name was missing or whitespace-only.
     InvalidContract { reason: &'static str },
     /// A count cannot be represented exactly as an `f64` feature.
     UnsupportedMetadata { field: &'static str, value: usize },
     /// A produced feature was not finite.
     NonFiniteFeature { field: &'static str, value: f64 },
+    /// A numeric feature vector did not contain the canonical number of values.
+    FeatureCountMismatch { expected: usize, actual: usize },
+    /// A numeric feature violates the canonical DCG feature schema.
+    InvalidFeatureValue { field: &'static str, value: f64 },
 }
 
 impl fmt::Display for FeatureError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::SchemaJson { message } => write!(f, "Invalid JSON Schema: {message}"),
+            Self::PolicyContext { message } => write!(f, "Invalid policy context: {message}"),
             Self::InvalidContract { reason } => write!(f, "Invalid contract: {reason}"),
             Self::UnsupportedMetadata { field, value } => {
                 write!(f, "Unsupported value for {field}: {value}")
             }
             Self::NonFiniteFeature { field, value } => {
                 write!(f, "Non-finite feature {field}: {value}")
+            }
+            Self::FeatureCountMismatch { expected, actual } => {
+                write!(
+                    f,
+                    "Feature count mismatch: expected {expected}, got {actual}"
+                )
+            }
+            Self::InvalidFeatureValue { field, value } => {
+                write!(f, "Invalid value for feature {field}: {value}")
             }
         }
     }
@@ -100,11 +119,53 @@ impl ContractFeatureExtractor {
 
         Ok(features)
     }
+
+    /// Validates a canonical raw DCG feature vector before preprocessing or inference.
+    ///
+    /// Count-like values and semantic-version ordinals are non-negative. The
+    /// compatibility score is exactly `0.0`, `0.5`, or `1.0`; all values must
+    /// be finite. Missing values are unsupported and must be rejected rather
+    /// than inferred or silently imputed.
+    pub fn validate_feature_vector(features: &Vector) -> Result<(), FeatureError> {
+        use crate::features::{DCG_FEATURE_COUNT, DCG_FEATURE_NAMES};
+
+        if features.len() != DCG_FEATURE_COUNT {
+            return Err(FeatureError::FeatureCountMismatch {
+                expected: DCG_FEATURE_COUNT,
+                actual: features.len(),
+            });
+        }
+        for (index, value) in features.iter().enumerate() {
+            let field = DCG_FEATURE_NAMES[index];
+            if !value.is_finite() {
+                return Err(FeatureError::NonFiniteFeature {
+                    field,
+                    value: *value,
+                });
+            }
+            if index == 4 {
+                if !(*value == 0.0 || *value == 0.5 || *value == 1.0) {
+                    return Err(FeatureError::InvalidFeatureValue {
+                        field,
+                        value: *value,
+                    });
+                }
+            } else if *value < 0.0 {
+                return Err(FeatureError::InvalidFeatureValue {
+                    field,
+                    value: *value,
+                });
+            }
+        }
+        Ok(())
+    }
 }
 
 impl FeatureExtractor<ContractChange> for ContractFeatureExtractor {
     fn extract(&self, input: &ContractChange) -> Result<Vector, FeatureError> {
-        Ok(self.extract_features(input)?.to_vector())
+        let features = self.extract_features(input)?.to_vector();
+        Self::validate_feature_vector(&features)?;
+        Ok(features)
     }
 }
 
@@ -169,5 +230,37 @@ mod tests {
             SemanticVersion::new(1, 2, 3).as_feature_value(),
             1_002_003.0
         );
+    }
+
+    #[test]
+    fn validates_the_canonical_feature_schema() {
+        assert_eq!(
+            ContractFeatureExtractor::validate_feature_vector(&Vector::new(vec![
+                1.0, 0.0, 0.0, 0.0, 0.25, 1.0, 0.0, 0.0,
+            ])),
+            Err(FeatureError::InvalidFeatureValue {
+                field: "compatibility_score",
+                value: 0.25,
+            })
+        );
+        assert!(matches!(
+            ContractFeatureExtractor::validate_feature_vector(&Vector::new(vec![
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            ])),
+            Err(FeatureError::FeatureCountMismatch { .. })
+        ));
+        assert!(matches!(
+            ContractFeatureExtractor::validate_feature_vector(&Vector::new(vec![
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                f64::NAN,
+                0.0,
+                0.0,
+            ])),
+            Err(FeatureError::NonFiniteFeature { .. })
+        ));
     }
 }

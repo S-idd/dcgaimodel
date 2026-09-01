@@ -3,6 +3,7 @@ pub mod api;
 pub mod dataset;
 pub mod evaluation;
 pub mod features;
+pub mod generation;
 pub mod inference;
 pub mod linalg;
 pub mod losses;

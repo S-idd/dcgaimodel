@@ -1,0 +1,58 @@
+{
+  "format_version": "dcg-external-structural-saturation-finding-v1",
+  "finding": "simple-optional-root-property-removal-is-saturated-by-v9",
+  "mutation_id": "FIELD_REMOVED",
+  "mutation_variant": "remove-first-root-property",
+  "status": "public-sourcing-closed-for-this-structural-pattern",
+  "scope": {
+    "included": [
+      "a single simple or optional property removed from the root object"
+    ],
+    "excluded_and_untested": [
+      "nested-property removal",
+      "required-property removal",
+      "property removal combined with another semantic structural change",
+      "FIELD_REMOVED as a mutation family beyond the included root-level pattern"
+    ]
+  },
+  "evidence": [
+    {
+      "source": "stripe/openapi",
+      "record_id": "stripe.openapi.v2348-to-v2349.card",
+      "transition": "v2348-to-v2349",
+      "semantic_path": "/properties/iin",
+      "nearest_policy_free_v6_distance": 2,
+      "nearest_v9_records": 1485,
+      "colliding_v9_families": 99,
+      "colliding_v9_structural_shapes": 15,
+      "nearest_v9_policy_packs": 15,
+      "nearest_mutation_variants": [
+        "remove-first-root-property"
+      ],
+      "diagnostic_path": "stripe-openapi-v3/field-removed-card-feature-diagnostic-v1.json",
+      "diagnostic_sha256": "baddec5d7b8f2edcadb0160ecfb682ab70bc38b2b03403a4d9a1059177ff2882"
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.diagnostic.v1.24.0-to-v1.25.0.io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta",
+      "transition": "v1.24.0-to-v1.25.0",
+      "semantic_path": "/properties/clusterName",
+      "nearest_policy_free_v6_distance": 0,
+      "exact_full_v6_feature_matches": 12,
+      "nearest_v9_records": 60,
+      "nearest_mutation_variants": [
+        "remove-first-root-property"
+      ],
+      "diagnostic_path": "kubernetes-openapi-v1/field-removed-object-meta-feature-diagnostic-v1.json",
+      "diagnostic_sha256": "3d3022218f956138db15aaf1835be66fa81ae028d39261b366eca0d6b538547c"
+    }
+  ],
+  "v9_dataset": {
+    "path": "../generated/dcg-oracle-production-v9-structural-balanced.json",
+    "sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3"
+  },
+  "decision": "Do not spend further public-source effort on additional single simple or optional root-property removals. Reopen FIELD_REMOVED sourcing only for a structurally distinct, explicitly declared variant from the excluded-and-untested list.",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "labels_produced": false
+}
