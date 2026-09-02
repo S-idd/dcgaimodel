@@ -1,0 +1,100 @@
+{
+  "format_version": "dcg-backward-v10-reconstruction-checkpoint-v1",
+  "status": "REPRODUCIBLE_CANDIDATE_ARCHIVED_EQUIVALENCE_NOT_RUN",
+  "identity_boundary": {
+    "historical_backward_v9": {
+      "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+      "binary_available": false,
+      "state": "FROZEN_HISTORICAL",
+      "new_oracle_execution_allowed": false,
+      "dataset_path": "data/generated/dcg-oracle-production-v9-structural-balanced.json",
+      "dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3"
+    },
+    "backward_v10_candidate": {
+      "path": "data/oracle-binaries/backward-v10/contract-cli-c00da951bac88d2b.jar",
+      "sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+      "bytes": 22960982,
+      "source_repository": "https://github.com/S-idd/data-contract-governance",
+      "source_commit": "35dfa8858199da668893ce8fb5dd0e8cf7f6434f",
+      "source_commit_time": "2026-08-22T17:51:04+05:30",
+      "accepted_for_equivalence_audit": true,
+      "accepted_as_behaviorally_equivalent": false
+    },
+    "permanent_rule": "The c00da951... binary is BACKWARD V10 only. It must never be called V9, substituted for 809b25e6...677dc, or treated as interchangeable with that lost identity in documentation, scripts, datasets, models, or reports, even if a later behavioral audit reports a complete match."
+  },
+  "reproducible_build": {
+    "jdk": "Oracle Java 21.0.10+8-LTS-217 arm64",
+    "maven": "Apache Maven Wrapper 3.6.3",
+    "timezone": "UTC",
+    "locale": "C",
+    "source_date_epoch": 1787401264,
+    "output_timestamp": "2026-08-22T12:21:04Z",
+    "build_command": "env JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home SOURCE_DATE_EPOCH=1787401264 TZ=UTC LC_ALL=C ./mvnw --batch-mode --no-transfer-progress -Dmaven.repo.local=<independent-cache> -pl contract-cli -am clean package -DskipTests",
+    "build_overlay": {
+      "path": "data/oracle-binaries/backward-v10/reproducible-build-overlay-v1.patch",
+      "sha256": "9485abef0644a7fbf750d24b5a353ff748ce66e9b4b55d041a5f51799e30b8f0",
+      "runtime_code_changed": false,
+      "changes": [
+        "Set project.build.outputTimestamp to the source commit time in UTC.",
+        "Use maven-jar-plugin 3.4.2 for contract-core so pom.properties does not embed wall-clock time."
+      ]
+    },
+    "initial_unfixed_attempt": {
+      "build_a_sha256": "f6c7640e6c608bfe2e0a06082bd36f65dcae6fd3349023f3f3dda9a730809642",
+      "build_b_sha256": "1af375f5f4e8b542e27c5443b802687c331e090bd2c823c90a0540e8c5cac0e4",
+      "matched": false,
+      "cause": "The historical parent used maven-jar-plugin 2.4 for contract-core. Its META-INF/maven/com.ideas.contracts/contract-core/pom.properties embedded each build's wall-clock timestamp; extracted payloads differed only in that file."
+    },
+    "independent_proof": {
+      "worktrees": 2,
+      "separate_maven_dependency_caches": true,
+      "build_c_sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+      "build_d_sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+      "byte_for_byte_cmp_exit_code": 0,
+      "matched": true
+    }
+  },
+  "behavioral_equivalence_audit": {
+    "started": false,
+    "match_determination_made": false,
+    "blocked_until_this_reproducibility_checkpoint_was_complete": true,
+    "shared_code_risk_review": {
+      "comparison": "35dfa8858199da668893ce8fb5dd0e8cf7f6434f..da93082e1ac6617ddf8355704e78b34c426b8523",
+      "default_schema_differ_changed": false,
+      "backward_dispatch_branch_changed": false,
+      "evaluate_backward_changed": false,
+      "plausible_shared_risk_found": true,
+      "risk": "PolicyPack.severity is shared by BACKWARD and was changed during the FORWARD/FULL work: an omitted rule changed from an unconditional BREAKING fallback to the baseline rule default. A partial policy pack can therefore distinguish the pre-FORWARD implementation from the later track JAR even though BACKWARD dispatch and evaluateBackward are unchanged."
+    },
+    "required_negative_controls_for_future_run": [
+      {
+        "id": "partial-policy-omitted-enum-added",
+        "purpose": "Prove the audit detects the shared PolicyPack.severity fallback change.",
+        "case": "BACKWARD ENUM_VALUE_ADDED under a deliberately partial policy pack that omits ENUM_VALUE_ADDED.",
+        "pre_forward_expected": "BREAKING",
+        "later_shared-resolver_expected": "baseline fallback WARNING"
+      },
+      {
+        "id": "optional-addition-open-closed-backward",
+        "purpose": "Detect accidental leakage of FORWARD optional-addition logic into BACKWARD.",
+        "case": "Root and nested optional additions with additionalProperties true, false, and absent, evaluated only in BACKWARD.",
+        "pre_forward_expected": "SAFE for the addition itself"
+      },
+      {
+        "id": "genuine-addition-removal-attribution",
+        "purpose": "Exercise the diff lists later filtered and recombined by evaluateForward while proving the direct BACKWARD path remains exact.",
+        "case": "Root and nested optional/required removals plus a genuine required addition.",
+        "pre_forward_expected": "FIELD_REMOVED for removals and REQUIRED_FIELD_ADDED for the required addition"
+      },
+      {
+        "id": "nested-array-diff-paths",
+        "purpose": "Exercise shared diff construction even though DefaultSchemaDiffer was not changed.",
+        "case": "Nested object and array-item field/type/constraint changes under BACKWARD with exact path attribution."
+      }
+    ]
+  },
+  "forward_full_track": {
+    "oracle_jar_sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "relationship": "Separate track-scoped identity; neither V9 nor BACKWARD V10."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "format_version": "dcg-benchmark-ready-enforcement-test-v1",
+  "runner": "src/models/experiment.rs::run_binary_three_seed_experiment",
+  "runner_check": [
+    "dataset",
+    "    .require_benchmark_ready()",
+    "    .map_err(|reason| format!(\"binary three-seed experiment refused: {reason}\"))?;"
+  ],
+  "validated_field_check": [
+    "match self.benchmark_ready {",
+    "    Some(true) => Ok(()),",
+    "    Some(false) => Err(\"benchmark_ready=false; the corpus failed its persisted readiness gate and cannot be evaluated\".to_owned()),",
+    "    None => Err(\"benchmark_ready is missing; evaluate only a corpus stamped after its readiness audit\".to_owned()),",
+    "}"
+  ],
+  "test": "models::experiment::tests::runner_rejects_false_or_missing_benchmark_ready_before_training",
+  "assertions": [
+    "assert!(error.contains(\"benchmark_ready is missing\"), \"{error}\");",
+    "assert!(error.contains(\"benchmark_ready=false\"), \"{error}\");",
+    "assert!(!output.exists(), \"readiness refusal must precede output creation\");"
+  ],
+  "command": "cargo test runner_rejects_false_or_missing_benchmark_ready_before_training -- --nocapture",
+  "result": {
+    "passed": true,
+    "tests_run": 1,
+    "tests_failed": 0
+  },
+  "full_suite": {
+    "command": "cargo test",
+    "library_tests_passed": 298,
+    "integration_tests_passed": 3,
+    "failed": 0,
+    "ignored_oracle_integration_tests": 2
+  },
+  "ordering_proof": "The runner calls require_benchmark_ready before filtering the standard corpus, creating the model directory, training, or writing artifacts. The test additionally proves the output path remains absent for missing and false values."
+}

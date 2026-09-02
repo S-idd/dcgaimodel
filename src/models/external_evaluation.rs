@@ -12,7 +12,9 @@ use crate::features::{
     SchemaChangeFeatureV6Extractor,
 };
 use crate::generation::{
-    GeneratedPair, OracleConfig, OracleOutcome, PinnedOracle, canonical_pair_fingerprint,
+    BACKWARD_V10_JAR_SHA256, GeneratedPair, HISTORICAL_V9_DATASET_SHA256, HISTORICAL_V9_JAR_SHA256,
+    OracleConfig, OracleOutcome, PINNED_POLICY_PACKS_SHA256, PinnedOracle,
+    canonical_pair_fingerprint,
 };
 use crate::linalg::Vector;
 use serde::{Deserialize, Serialize};
@@ -25,7 +27,12 @@ use std::path::{Path, PathBuf};
 /// Required format identifier for external transition manifests.
 pub const EXTERNAL_TRANSITION_MANIFEST_FORMAT_VERSION: &str = "dcg-external-transition-manifest-v3";
 /// Stable report format for frozen external evaluation evidence.
-pub const EXTERNAL_EVALUATION_REPORT_FORMAT_VERSION: &str = "dcg-external-evaluation-report-v3";
+pub const EXTERNAL_EVALUATION_REPORT_FORMAT_VERSION: &str = "dcg-external-evaluation-report-v4";
+/// SHA-256 of the only currently approved V9-training/BACKWARD-V10-execution
+/// equivalence audit. New execution identities require a separately reviewed
+/// audit and an explicit registry entry; a caller-supplied claim is not trust.
+pub const BACKWARD_V10_EQUIVALENCE_AUDIT_SHA256: &str =
+    "c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793";
 
 /// Declared origin class for independently sourced evaluation transitions.
 /// Internal seed or conformance fixtures are intentionally not an option.
@@ -62,6 +69,9 @@ pub struct ExternalEvaluationConfig {
     pub model_path: PathBuf,
     pub oracle_config: OracleConfig,
     pub oracle_workspace: PathBuf,
+    /// Required audit proving that the model's training oracle and the
+    /// execution oracle are an approved behavioral pairing.
+    pub oracle_equivalence_audit_path: Option<PathBuf>,
     /// Reject a record when its nearest policy-free structural V6 vector in V9
     /// differs in at most this many coordinates. The recommended default is 1.
     pub max_structural_coordinate_distance: usize,
@@ -152,6 +162,7 @@ pub struct ExternalManifestPreflightReport {
     pub model_inference_invoked: bool,
     pub manifest_sha256: String,
     pub v9_dataset_sha256: String,
+    pub training_oracle_jar_sha256: String,
     pub oracle_jar_sha256: String,
     pub policy_packs_sha256: String,
     pub max_structural_coordinate_distance: usize,
@@ -185,6 +196,8 @@ pub struct ExternalEvaluationReport {
     pub frozen_inference_only: bool,
     pub max_structural_coordinate_distance: usize,
     pub v9_reference: ExternalV9Reference,
+    /// Required for every report that contains model-scored records.
+    pub dual_provenance: ExternalDualProvenance,
     pub manifest_sha256: String,
     /// Manifest-native explanation of excluded traceability evidence. This is
     /// copied into the report so consumers need not consult an audit sidecar.
@@ -212,9 +225,112 @@ pub struct ExternalV9Reference {
     pub model_sha256: String,
     pub model_version: String,
     pub feature_version: String,
-    pub oracle_jar_sha256: String,
+    pub training_oracle_jar_sha256: String,
     pub policy_packs_sha256: String,
 }
+
+/// Immutable training/execution identity pairing required before inference.
+/// These are deliberately separate identities even when an audit reports a
+/// complete behavioral match.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ExternalDualProvenance {
+    pub training_dataset_sha256: String,
+    pub training_oracle_jar_sha256: String,
+    pub execution_oracle_jar_sha256: String,
+    pub policy_packs_sha256: String,
+    pub equivalence_audit_path: String,
+    pub equivalence_audit_sha256: String,
+    pub equivalence_audit_result: String,
+    pub identity_interchangeable: bool,
+}
+
+impl ExternalEvaluationReport {
+    /// Final production/promotion guard. A report cannot leave the runner as
+    /// model-scored evidence unless both training and execution identities are
+    /// present and resolve to a registered audited pairing.
+    pub fn require_scored_dual_provenance(&self) -> Result<(), String> {
+        let provenance = &self.dual_provenance;
+        for (field, value) in [
+            (
+                "training_dataset_sha256",
+                provenance.training_dataset_sha256.as_str(),
+            ),
+            (
+                "training_oracle_jar_sha256",
+                provenance.training_oracle_jar_sha256.as_str(),
+            ),
+            (
+                "execution_oracle_jar_sha256",
+                provenance.execution_oracle_jar_sha256.as_str(),
+            ),
+            (
+                "policy_packs_sha256",
+                provenance.policy_packs_sha256.as_str(),
+            ),
+            (
+                "equivalence_audit_sha256",
+                provenance.equivalence_audit_sha256.as_str(),
+            ),
+            (
+                "equivalence_audit_path",
+                provenance.equivalence_audit_path.as_str(),
+            ),
+        ] {
+            if value.trim().is_empty() {
+                return Err(format!(
+                    "dual-provenance gate rejected external report: {field} is missing"
+                ));
+            }
+        }
+        require_approved_pairing(
+            &provenance.training_dataset_sha256,
+            &provenance.training_oracle_jar_sha256,
+            &provenance.execution_oracle_jar_sha256,
+            &provenance.policy_packs_sha256,
+            Some(&provenance.equivalence_audit_sha256),
+        )?;
+        if self.v9_reference.v9_dataset_sha256 != provenance.training_dataset_sha256
+            || self.v9_reference.training_oracle_jar_sha256 != provenance.training_oracle_jar_sha256
+            || self.v9_reference.policy_packs_sha256 != provenance.policy_packs_sha256
+        {
+            return Err(
+                "dual-provenance gate rejected external report: V9 model reference and dual-provenance identities are inconsistent"
+                    .to_owned(),
+            );
+        }
+        if provenance.equivalence_audit_result != "COMPLETE_PRESERVED_V9_MATCH" {
+            return Err(
+                "dual-provenance gate rejected external report: equivalence audit is not a complete preserved-V9 match"
+                    .to_owned(),
+            );
+        }
+        if provenance.identity_interchangeable {
+            return Err(
+                "dual-provenance gate rejected external report: distinct oracle identities must not be marked interchangeable"
+                    .to_owned(),
+            );
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+struct ApprovedExternalOraclePairing {
+    training_dataset_sha256: &'static str,
+    training_oracle_jar_sha256: &'static str,
+    execution_oracle_jar_sha256: &'static str,
+    policy_packs_sha256: &'static str,
+    equivalence_audit_sha256: &'static str,
+}
+
+const APPROVED_EXTERNAL_ORACLE_PAIRINGS: &[ApprovedExternalOraclePairing] =
+    &[ApprovedExternalOraclePairing {
+        training_dataset_sha256: HISTORICAL_V9_DATASET_SHA256,
+        training_oracle_jar_sha256: HISTORICAL_V9_JAR_SHA256,
+        execution_oracle_jar_sha256: BACKWARD_V10_JAR_SHA256,
+        policy_packs_sha256: PINNED_POLICY_PACKS_SHA256,
+        equivalence_audit_sha256: BACKWARD_V10_EQUIVALENCE_AUDIT_SHA256,
+    }];
 
 /// One transition's oracle evidence, overlap decision, and optional frozen
 /// model prediction. Schema text is intentionally not copied into this report.
@@ -381,7 +497,13 @@ pub fn evaluate_external_transitions(
 
     let oracle = PinnedOracle::new(config.oracle_config.clone())
         .map_err(|error| format!("could not initialize pinned oracle: {error}"))?;
-    verify_v9_oracle_identity(&v9_dataset, &model, &oracle)?;
+    let dual_provenance = verify_external_dual_provenance(
+        &v9_dataset,
+        &v9_dataset_sha256,
+        &model,
+        &oracle,
+        config.oracle_equivalence_audit_path.as_deref(),
+    )?;
 
     let v9_sources = v9_dataset
         .records()
@@ -490,6 +612,18 @@ pub fn evaluate_external_transitions(
             oracle.jar_sha256(),
         )
         .map_err(|error| format!("could not fingerprint {}: {error}", transition.record_id))?;
+        let training_pair_fingerprint = canonical_pair_fingerprint(
+            &base_schema,
+            &candidate_schema,
+            &transition.policy_pack,
+            &dual_provenance.training_oracle_jar_sha256,
+        )
+        .map_err(|error| {
+            format!(
+                "could not calculate training-identity fingerprint for {}: {error}",
+                transition.record_id
+            )
+        })?;
         let actual_label = oracle_label(run.outcome);
         let oracle_evidence = ExternalOracleEvidence {
             outcome: run.outcome.as_str().to_owned(),
@@ -563,7 +697,7 @@ pub fn evaluate_external_transitions(
         if v9_families.contains(transition.family_id.as_str()) {
             rejection_reasons.push("family identifier is already present in V9".to_owned());
         }
-        if v9_pairs.contains(pair_fingerprint.as_str()) {
+        if v9_pairs.contains(training_pair_fingerprint.as_str()) {
             rejection_reasons
                 .push("canonical oracle pair fingerprint is already present in V9".to_owned());
         }
@@ -671,7 +805,7 @@ pub fn evaluate_external_transitions(
         .iter()
         .filter(|record| record.status == "rejected_overlap")
         .count();
-    Ok(ExternalEvaluationReport {
+    let report = ExternalEvaluationReport {
         format_version: EXTERNAL_EVALUATION_REPORT_FORMAT_VERSION.to_owned(),
         mode: "BACKWARD".to_owned(),
         frozen_inference_only: true,
@@ -683,9 +817,10 @@ pub fn evaluate_external_transitions(
             model_sha256,
             model_version: model.model_version().to_owned(),
             feature_version: model.feature_version().to_owned(),
-            oracle_jar_sha256: oracle.jar_sha256().to_owned(),
+            training_oracle_jar_sha256: model.input_provenance().oracle_jar_sha256.clone(),
             policy_packs_sha256: oracle.policy_packs_sha256().to_owned(),
         },
+        dual_provenance,
         manifest_sha256,
         traceability: manifest.summary.traceability_only,
         total_manifest_records: records.len(),
@@ -699,7 +834,9 @@ pub fn evaluate_external_transitions(
         by_policy_pack: finish_strata(metrics.by_policy_pack),
         by_mutation_policy_pack: finish_strata(metrics.by_mutation_policy_pack),
         records,
-    })
+    };
+    report.require_scored_dual_provenance()?;
+    Ok(report)
 }
 
 /// Validates an external manifest against V9 without invoking Java, applying
@@ -746,6 +883,19 @@ pub fn preflight_external_manifest(
         .map(|generation| generation.pair_fingerprint.as_str())
         .filter(|fingerprint| !fingerprint.is_empty())
         .collect::<BTreeSet<_>>();
+    let v9_oracle_hashes = v9_dataset
+        .records()
+        .iter()
+        .filter_map(|record| record.generation.as_ref())
+        .map(|generation| generation.oracle_jar_sha256.as_str())
+        .collect::<BTreeSet<_>>();
+    let [training_oracle_jar_sha256] = v9_oracle_hashes.iter().copied().collect::<Vec<_>>()[..]
+    else {
+        return Err(
+            "external manifest preflight requires exactly one V9 training oracle identity"
+                .to_owned(),
+        );
+    };
     let v9_full_features = v9_dataset
         .records()
         .iter()
@@ -805,6 +955,18 @@ pub fn preflight_external_manifest(
             &jar_sha256,
         )
         .map_err(|error| format!("could not fingerprint {}: {error}", transition.record_id))?;
+        let training_pair_fingerprint = canonical_pair_fingerprint(
+            &base_schema,
+            &candidate_schema,
+            &transition.policy_pack,
+            training_oracle_jar_sha256,
+        )
+        .map_err(|error| {
+            format!(
+                "could not calculate V9-training fingerprint for {}: {error}",
+                transition.record_id
+            )
+        })?;
         let features = extractor
             .extract(
                 &base_schema,
@@ -834,7 +996,7 @@ pub fn preflight_external_manifest(
         if v9_families.contains(transition.family_id.as_str()) {
             rejection_reasons.push("family identifier is already present in V9".to_owned());
         }
-        if v9_pairs.contains(pair_fingerprint.as_str()) {
+        if v9_pairs.contains(training_pair_fingerprint.as_str()) {
             rejection_reasons
                 .push("canonical pair fingerprint is already present in V9".to_owned());
         }
@@ -872,6 +1034,7 @@ pub fn preflight_external_manifest(
         model_inference_invoked: false,
         manifest_sha256,
         v9_dataset_sha256,
+        training_oracle_jar_sha256: training_oracle_jar_sha256.to_owned(),
         oracle_jar_sha256: jar_sha256,
         policy_packs_sha256,
         max_structural_coordinate_distance: config.max_structural_coordinate_distance,
@@ -1229,19 +1392,13 @@ fn verify_frozen_model(
     Ok(())
 }
 
-fn verify_v9_oracle_identity(
+fn verify_external_dual_provenance(
     v9_dataset: &PreparedDcgDataset,
+    v9_dataset_sha256: &str,
     model: &ThreeWayModelArtifact,
     oracle: &PinnedOracle,
-) -> Result<(), String> {
-    if model.input_provenance().oracle_jar_sha256 != oracle.jar_sha256() {
-        return Err("frozen model JAR SHA-256 differs from supplied oracle JAR".to_owned());
-    }
-    if model.input_provenance().policy_packs_sha256 != oracle.policy_packs_sha256() {
-        return Err(
-            "frozen model policy-pack SHA-256 differs from supplied policy-pack file".to_owned(),
-        );
-    }
+    equivalence_audit_path: Option<&Path>,
+) -> Result<ExternalDualProvenance, String> {
     let dataset_jar_hashes = v9_dataset
         .records()
         .iter()
@@ -1254,10 +1411,193 @@ fn verify_v9_oracle_identity(
         .filter_map(|record| record.generation.as_ref())
         .map(|generation| generation.policy_packs_sha256.as_str())
         .collect::<BTreeSet<_>>();
-    if dataset_jar_hashes != BTreeSet::from([oracle.jar_sha256()])
-        || dataset_policy_hashes != BTreeSet::from([oracle.policy_packs_sha256()])
+    let [training_oracle_jar_sha256] = dataset_jar_hashes.iter().copied().collect::<Vec<_>>()[..]
+    else {
+        return Err(
+            "dual-provenance gate requires exactly one training oracle identity in the V9 dataset"
+                .to_owned(),
+        );
+    };
+    let [training_policy_packs_sha256] =
+        dataset_policy_hashes.iter().copied().collect::<Vec<_>>()[..]
+    else {
+        return Err(
+            "dual-provenance gate requires exactly one policy identity in the V9 dataset"
+                .to_owned(),
+        );
+    };
+    if model.input_provenance().dataset_sha256 != v9_dataset_sha256 {
+        return Err(
+            "dual-provenance gate rejected model: training dataset SHA-256 is missing or inconsistent"
+                .to_owned(),
+        );
+    }
+    if model.input_provenance().oracle_jar_sha256 != training_oracle_jar_sha256 {
+        return Err(
+            "dual-provenance gate rejected model: training oracle SHA-256 is missing or inconsistent"
+                .to_owned(),
+        );
+    }
+    if model.input_provenance().policy_packs_sha256 != training_policy_packs_sha256
+        || oracle.policy_packs_sha256() != training_policy_packs_sha256
     {
-        return Err("supplied V9 dataset does not share the frozen oracle identities".to_owned());
+        return Err(
+            "dual-provenance gate rejected model: training/execution policy-pack identities differ"
+                .to_owned(),
+        );
+    }
+    let audit_path = equivalence_audit_path.ok_or_else(|| {
+        "dual-provenance gate requires --oracle-equivalence-audit before any model-scored external evaluation"
+            .to_owned()
+    })?;
+    let audit_bytes = fs::read(audit_path).map_err(|error| {
+        format!(
+            "dual-provenance gate could not read equivalence audit {}: {error}",
+            audit_path.display()
+        )
+    })?;
+    let audit_sha256 = sha256_bytes(&audit_bytes);
+    require_approved_pairing(
+        v9_dataset_sha256,
+        training_oracle_jar_sha256,
+        oracle.jar_sha256(),
+        oracle.policy_packs_sha256(),
+        Some(&audit_sha256),
+    )?;
+    let audit = serde_json::from_slice::<Value>(&audit_bytes)
+        .map_err(|error| format!("dual-provenance gate received invalid audit JSON: {error}"))?;
+    validate_equivalence_audit_contents(
+        &audit,
+        v9_dataset_sha256,
+        training_oracle_jar_sha256,
+        oracle.jar_sha256(),
+        oracle.policy_packs_sha256(),
+        v9_dataset.len(),
+    )?;
+    Ok(ExternalDualProvenance {
+        training_dataset_sha256: v9_dataset_sha256.to_owned(),
+        training_oracle_jar_sha256: training_oracle_jar_sha256.to_owned(),
+        execution_oracle_jar_sha256: oracle.jar_sha256().to_owned(),
+        policy_packs_sha256: oracle.policy_packs_sha256().to_owned(),
+        equivalence_audit_path: audit_path.to_string_lossy().into_owned(),
+        equivalence_audit_sha256: audit_sha256,
+        equivalence_audit_result: "COMPLETE_PRESERVED_V9_MATCH".to_owned(),
+        identity_interchangeable: false,
+    })
+}
+
+fn require_approved_pairing(
+    training_dataset_sha256: &str,
+    training_oracle_jar_sha256: &str,
+    execution_oracle_jar_sha256: &str,
+    policy_packs_sha256: &str,
+    equivalence_audit_sha256: Option<&str>,
+) -> Result<(), String> {
+    let audit_sha256 = equivalence_audit_sha256.filter(|value| !value.trim().is_empty()).ok_or_else(
+        || {
+            "dual-provenance gate rejected external evaluation: equivalence audit SHA-256 is missing"
+                .to_owned()
+        },
+    )?;
+    if APPROVED_EXTERNAL_ORACLE_PAIRINGS.iter().any(|pairing| {
+        pairing.training_dataset_sha256 == training_dataset_sha256
+            && pairing.training_oracle_jar_sha256 == training_oracle_jar_sha256
+            && pairing.execution_oracle_jar_sha256 == execution_oracle_jar_sha256
+            && pairing.policy_packs_sha256 == policy_packs_sha256
+            && pairing.equivalence_audit_sha256 == audit_sha256
+    }) {
+        return Ok(());
+    }
+    Err(format!(
+        "dual-provenance gate rejected unaudited pairing: training_dataset={training_dataset_sha256}, training_oracle={training_oracle_jar_sha256}, execution_oracle={execution_oracle_jar_sha256}, policy_packs={policy_packs_sha256}, equivalence_audit={audit_sha256}"
+    ))
+}
+
+fn validate_equivalence_audit_contents(
+    audit: &Value,
+    training_dataset_sha256: &str,
+    training_oracle_jar_sha256: &str,
+    execution_oracle_jar_sha256: &str,
+    policy_packs_sha256: &str,
+    training_record_count: usize,
+) -> Result<(), String> {
+    for (pointer, expected) in [
+        ("/format_version", "dcg-backward-v10-equivalence-audit-v1"),
+        ("/status", "COMPLETE"),
+        (
+            "/identity_boundary/historical_v9_jar_sha256",
+            training_oracle_jar_sha256,
+        ),
+        (
+            "/identity_boundary/backward_v10_jar_sha256",
+            execution_oracle_jar_sha256,
+        ),
+        ("/inputs/v9_dataset_sha256", training_dataset_sha256),
+        ("/inputs/v10_jar_sha256", execution_oracle_jar_sha256),
+        ("/inputs/policy_packs_sha256", policy_packs_sha256),
+        (
+            "/conclusion/behavioral_result",
+            "COMPLETE_PRESERVED_V9_MATCH",
+        ),
+    ] {
+        let actual = audit
+            .pointer(pointer)
+            .and_then(Value::as_str)
+            .ok_or_else(|| {
+                format!("dual-provenance gate rejected audit: required value {pointer} is missing")
+            })?;
+        if actual != expected {
+            return Err(format!(
+                "dual-provenance gate rejected audit: {pointer} expected {expected}, got {actual}"
+            ));
+        }
+    }
+    for pointer in [
+        "/conclusion/all_preserved_v9_outcomes_match",
+        "/conclusion/all_preserved_v9_stdout_match",
+        "/conclusion/negative_controls_passed",
+    ] {
+        if audit.pointer(pointer).and_then(Value::as_bool) != Some(true) {
+            return Err(format!(
+                "dual-provenance gate rejected audit: {pointer} must be true"
+            ));
+        }
+    }
+    if audit
+        .pointer("/conclusion/identity_interchangeable")
+        .and_then(Value::as_bool)
+        != Some(false)
+    {
+        return Err(
+            "dual-provenance gate rejected audit: distinct identities must remain non-interchangeable"
+                .to_owned(),
+        );
+    }
+    for pointer in [
+        "/reconstruction/records",
+        "/reconstruction/historical_pair_fingerprints_verified",
+        "/preserved_v9_replay/invocations",
+        "/preserved_v9_replay/outcome_matches",
+        "/preserved_v9_replay/exact_stdout_matches",
+    ] {
+        if audit.pointer(pointer).and_then(Value::as_u64) != Some(training_record_count as u64) {
+            return Err(format!(
+                "dual-provenance gate rejected audit: {pointer} does not cover all {training_record_count} training records"
+            ));
+        }
+    }
+    for pointer in [
+        "/reconstruction/historical_pair_fingerprint_failures",
+        "/preserved_v9_replay/rejected",
+        "/preserved_v9_replay/outcome_mismatches",
+        "/preserved_v9_replay/exact_stdout_mismatches",
+        "/preserved_v9_replay/stderr_nonempty",
+    ] {
+        if audit.pointer(pointer).and_then(Value::as_u64) != Some(0) {
+            return Err(format!(
+                "dual-provenance gate rejected audit: {pointer} must be zero"
+            ));
+        }
     }
     Ok(())
 }
@@ -1483,6 +1823,59 @@ fn finish_strata(
 mod tests {
     use super::*;
 
+    fn valid_dual_provenance() -> ExternalDualProvenance {
+        ExternalDualProvenance {
+            training_dataset_sha256: HISTORICAL_V9_DATASET_SHA256.to_owned(),
+            training_oracle_jar_sha256: HISTORICAL_V9_JAR_SHA256.to_owned(),
+            execution_oracle_jar_sha256: BACKWARD_V10_JAR_SHA256.to_owned(),
+            policy_packs_sha256: PINNED_POLICY_PACKS_SHA256.to_owned(),
+            equivalence_audit_path:
+                "data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json".to_owned(),
+            equivalence_audit_sha256: BACKWARD_V10_EQUIVALENCE_AUDIT_SHA256.to_owned(),
+            equivalence_audit_result: "COMPLETE_PRESERVED_V9_MATCH".to_owned(),
+            identity_interchangeable: false,
+        }
+    }
+
+    fn report_with_dual_provenance(
+        dual_provenance: ExternalDualProvenance,
+    ) -> ExternalEvaluationReport {
+        ExternalEvaluationReport {
+            format_version: EXTERNAL_EVALUATION_REPORT_FORMAT_VERSION.to_owned(),
+            mode: "BACKWARD".to_owned(),
+            frozen_inference_only: true,
+            max_structural_coordinate_distance: 1,
+            v9_reference: ExternalV9Reference {
+                v9_dataset_path: "v9.json".to_owned(),
+                v9_dataset_sha256: HISTORICAL_V9_DATASET_SHA256.to_owned(),
+                model_path: "model.json".to_owned(),
+                model_sha256: "model-sha256".to_owned(),
+                model_version: "normal-family-split".to_owned(),
+                feature_version: DCG_FEATURE_V6_VERSION.to_owned(),
+                training_oracle_jar_sha256: HISTORICAL_V9_JAR_SHA256.to_owned(),
+                policy_packs_sha256: PINNED_POLICY_PACKS_SHA256.to_owned(),
+            },
+            dual_provenance,
+            manifest_sha256: "manifest-sha256".to_owned(),
+            traceability: test_traceability_metadata(Vec::new()),
+            total_manifest_records: 1,
+            scored_records: 1,
+            traceability_excluded_records: 0,
+            manifest_overlap_excluded_records: 0,
+            oracle_rejected_records: 0,
+            overlap_rejected_records: 0,
+            overall: ExternalMetricReport {
+                records: 1,
+                accuracy: Some(1.0),
+                confusion_matrix: [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
+            },
+            by_mutation: BTreeMap::new(),
+            by_policy_pack: BTreeMap::new(),
+            by_mutation_policy_pack: BTreeMap::new(),
+            records: Vec::new(),
+        }
+    }
+
     fn test_traceability_metadata(clean_record_ids: Vec<String>) -> ExternalTraceabilityMetadata {
         ExternalTraceabilityMetadata {
             status: "traceability-only".to_owned(),
@@ -1512,6 +1905,69 @@ mod tests {
         assert_eq!(
             policy_free_structural_signature(&Vector::new(first)).unwrap(),
             policy_free_structural_signature(&Vector::new(second)).unwrap()
+        );
+    }
+
+    #[test]
+    fn scored_report_rejects_missing_training_or_execution_hash() {
+        let mut missing_training = valid_dual_provenance();
+        missing_training.training_dataset_sha256.clear();
+        let error = report_with_dual_provenance(missing_training)
+            .require_scored_dual_provenance()
+            .expect_err("missing training hash must reject scored output");
+        assert!(error.contains("training_dataset_sha256 is missing"));
+
+        let mut missing_execution = valid_dual_provenance();
+        missing_execution.execution_oracle_jar_sha256.clear();
+        let error = report_with_dual_provenance(missing_execution)
+            .require_scored_dual_provenance()
+            .expect_err("missing execution hash must reject scored output");
+        assert!(error.contains("execution_oracle_jar_sha256 is missing"));
+    }
+
+    #[test]
+    fn runner_pairing_gate_rejects_missing_audit_or_unaudited_oracle() {
+        let missing_audit = require_approved_pairing(
+            HISTORICAL_V9_DATASET_SHA256,
+            HISTORICAL_V9_JAR_SHA256,
+            BACKWARD_V10_JAR_SHA256,
+            PINNED_POLICY_PACKS_SHA256,
+            None,
+        )
+        .expect_err("a model-scored run without an audit must fail before inference");
+        assert!(missing_audit.contains("equivalence audit SHA-256 is missing"));
+
+        let unaudited = require_approved_pairing(
+            HISTORICAL_V9_DATASET_SHA256,
+            HISTORICAL_V9_JAR_SHA256,
+            "unaudited-oracle-sha256",
+            PINNED_POLICY_PACKS_SHA256,
+            Some(BACKWARD_V10_EQUIVALENCE_AUDIT_SHA256),
+        )
+        .expect_err("an unregistered execution oracle must fail before inference");
+        assert!(unaudited.contains("rejected unaudited pairing"));
+        assert!(unaudited.contains("unaudited-oracle-sha256"));
+    }
+
+    #[test]
+    fn approved_v9_training_to_backward_v10_execution_pair_passes() {
+        report_with_dual_provenance(valid_dual_provenance())
+            .require_scored_dual_provenance()
+            .expect("the audited V9-to-BACKWARD-V10 pairing should pass");
+    }
+
+    #[test]
+    fn scored_report_rejects_distinct_oracles_marked_interchangeable() {
+        let mut provenance = valid_dual_provenance();
+        provenance.identity_interchangeable = true;
+
+        let error = report_with_dual_provenance(provenance)
+            .require_scored_dual_provenance()
+            .expect_err("BACKWARD V10 must never be represented as interchangeable with V9");
+
+        assert_eq!(
+            error,
+            "dual-provenance gate rejected external report: distinct oracle identities must not be marked interchangeable"
         );
     }
 

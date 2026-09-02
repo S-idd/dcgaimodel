@@ -1,0 +1,473 @@
+{
+  "format_version": "dcg-external-three-seed-aggregate-v1",
+  "report_scope": "Raw frozen-model scoring evidence for all accepted, non-contaminated, non-traceability-only Stripe, Kubernetes, and Vega transitions available in the persisted source audits.",
+  "accuracy_evidence": false,
+  "matrix_axes": {
+    "rows": [
+      "SAFE",
+      "WARNING",
+      "BREAKING"
+    ],
+    "columns": [
+      "SAFE",
+      "WARNING",
+      "BREAKING"
+    ]
+  },
+  "sparse_stratum_rule": {
+    "applied": true,
+    "statement": "A stratum with only one observed oracle class or too few independent transitions is traceability-only. Seed repetitions are invocations, not independent transitions.",
+    "this_report": "Every observed stratum has two independent transitions and is therefore sparse; no observed stratum is one-class, although WARNING has zero support. Zero-record strata are also traceability-only."
+  },
+  "dual_provenance": {
+    "training_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "training_oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "execution_oracle_jar_sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+    "equivalence_audit_path": "data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json",
+    "equivalence_audit_sha256": "c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793",
+    "equivalence_audit_result": "COMPLETE_PRESERVED_V9_MATCH",
+    "identity_interchangeable": false
+  },
+  "frozen_seed_models": [
+    {
+      "seed": 20260826,
+      "path": "data/experiments/v9-multiclass-cpu-100e/models/seed-20260826-normal-family-split.json",
+      "sha256": "5da2fedbee5d1b3c84c79cb75e2cd10c0b3462066b66571570e93fb7ccd84988",
+      "raw_report_path": "seed-20260826-report-v3.json",
+      "raw_report_sha256": "c907642d832e855d6f720f49ccd759ef237c370e9fbdd483336579e549460eb0"
+    },
+    {
+      "seed": 20260827,
+      "path": "data/experiments/v9-multiclass-cpu-100e/models/seed-20260827-normal-family-split.json",
+      "sha256": "bd464322c272b8ec1d5ab88605022d4a48e3738b63ab1791a4c7e56f37222ac8",
+      "raw_report_path": "seed-20260827-report-v3.json",
+      "raw_report_sha256": "9b3a9d84667e710cc64d4aeb5fb9f9e28fe139c0781d69cad921f53c558183dd"
+    },
+    {
+      "seed": 20260828,
+      "path": "data/experiments/v9-multiclass-cpu-100e/models/seed-20260828-normal-family-split.json",
+      "sha256": "24ec9e4e758370093c228af34e3b05ac65820b3fd413ca80a269206ce1edd2c0",
+      "raw_report_path": "seed-20260828-report-v3.json",
+      "raw_report_sha256": "9548e0bcee475eb5b0525acfae2734529980edb997868017aab4ce558e0ca832"
+    }
+  ],
+  "source_eligibility": {
+    "total_candidates": 58,
+    "eligible_independent_transitions": 2,
+    "excluded_candidates": 56,
+    "stripe": {
+      "source_manifest_path": "data/external/stripe-openapi-v3/stripe-openapi-external-manifest-v3.json",
+      "source_manifest_sha256": "be66872fcb14034807faad297b81b1a932bc98e87e4a8538e9615d1a40a522ce",
+      "total": 46,
+      "eligible": 0,
+      "overlap_rejected": 30,
+      "traceability_only": 16,
+      "traceability_only_ids": [
+        "stripe.openapi.v2323-to-v2324.dispute",
+        "stripe.openapi.v2323-to-v2324.dispute_enhanced_eligibility",
+        "stripe.openapi.v2323-to-v2324.dispute_enhanced_evidence",
+        "stripe.openapi.v2323-to-v2324.financial_connections.account",
+        "stripe.openapi.v2323-to-v2324.payment_intent_payment_method_options",
+        "stripe.openapi.v2323-to-v2324.payment_method_bizum",
+        "stripe.openapi.v2323-to-v2324.payment_method_blik",
+        "stripe.openapi.v2323-to-v2324.payment_method_pix",
+        "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details",
+        "stripe.openapi.v2323-to-v2324.setup_attempt_payment_method_details_pix",
+        "stripe.openapi.v2348-to-v2349.card",
+        "stripe.openapi.v2348-to-v2349.funding_instructions_bank_transfer_financial_address",
+        "stripe.openapi.v2348-to-v2349.payment_intent_next_action",
+        "stripe.openapi.v2348-to-v2349.setup_intent_next_action",
+        "stripe.openapi.v2348-to-v2349.tax_product_resource_tax_rate_details",
+        "stripe.openapi.v2348-to-v2349.tax_rate"
+      ],
+      "exclusion_reason": "All Stripe rows are manifest-enforced exclusions: 30 V9-overlap rejections and 16 traceability-only rows."
+    },
+    "kubernetes": {
+      "source_prescreen_path": "data/external/kubernetes-openapi-v1/kubernetes-removal-biased-prescreen-v1.json",
+      "source_prescreen_sha256": "699d8ed09d3eeebd9f2676ad6da98bbd68d32548310e04770744dc9aeeb3229c",
+      "total": 10,
+      "eligible": 2,
+      "overlap_rejected": 8,
+      "rejected_field_removed": 7,
+      "rejected_other": [
+        {
+          "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.core.v1.ContainerImage",
+          "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+          "rejection_reasons": [
+            "nearest V9 policy-free structural feature distance 1 is within configured rejection threshold 1"
+          ]
+        }
+      ],
+      "eligible_ids": [
+        "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+        "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule"
+      ],
+      "scored_manifest_path": "data/external/kubernetes-openapi-v1/scored-accepted-v1/kubernetes-accepted-external-manifest-v3.json",
+      "scored_manifest_sha256": "cf0eafd53c47d9000b020063273e6327d7d8b783d1f51606c1dce68f1f8e195e",
+      "final_preflight_path": "data/external/kubernetes-openapi-v1/scored-accepted-v1/preflight-backward-v10-v3.json",
+      "final_preflight_sha256": "3b47d7eb6e846308beaeb00d0fe448ed2b31c9a2b0a53571a320a519ecd90bcd",
+      "final_preflight": {
+        "passed": true,
+        "accepted": 2,
+        "rejected": 0,
+        "nearest_policy_free_structural_distance": [
+          2,
+          2
+        ]
+      },
+      "schema_materialization": "Only the two already-selected exact-commit component pairs were materialized. Unchanged external refs were closed symmetrically in base and candidate for validator acceptance; the target required-array diffs and distance-2 V6 projection were unchanged."
+    },
+    "vega": {
+      "candidate_manifest_path": "data/external/vega-schema-type-change-v1/vega-type-change-candidates-v4.json",
+      "candidate_manifest_sha256": "3fc4791f480c0987f376b98954ae34f6fb91f19ec76c5d5874c6ca4213888fea",
+      "overlap_projection_path": "data/external/vega-schema-type-change-v1/vega-type-change-overlap-projection-v2.json",
+      "overlap_projection_sha256": "d35013e34750828f0de060ac059e360367c04e3596ce60a5e93f09127faee250",
+      "total": 2,
+      "eligible": 0,
+      "overlap_rejected": 2,
+      "rejected_ids": [
+        "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalPredicate<ValueDef>",
+        "vega.schema.vega-lite.v2.7.0-to-v3.0.0.ConditionalSelection<ValueDef>"
+      ],
+      "exclusion_reason": "Both corrected TYPE_CHANGED candidates are rejected at policy-free structural distance 1."
+    }
+  },
+  "invocation_counts": {
+    "eligible_independent_transitions": 2,
+    "seeds": 3,
+    "scored_seed_invocations": 6,
+    "oracle_rejections": 0,
+    "post_oracle_overlap_rejections": 0
+  },
+  "matrices": {
+    "overall": {
+      "status": "traceability-only",
+      "accuracy_evidence": false,
+      "seed_invocations": 6,
+      "independent_transitions": 2,
+      "observed_oracle_classes": [
+        "breaking",
+        "safe"
+      ],
+      "reported_accuracy": null,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "reason": "Only two independent accepted transitions exist in this stratum. Repeating each across three frozen seeds does not add independent support, so the stratum remains sparse traceability evidence."
+    },
+    "by_mutation": {
+      "CONSTRAINT_OR_RESTRICTION_CHANGED": {
+        "status": "traceability-only",
+        "accuracy_evidence": false,
+        "seed_invocations": 6,
+        "independent_transitions": 2,
+        "observed_oracle_classes": [
+          "breaking",
+          "safe"
+        ],
+        "reported_accuracy": null,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "reason": "Only two independent accepted transitions exist in this stratum. Repeating each across three frozen seeds does not add independent support, so the stratum remains sparse traceability evidence."
+      }
+    },
+    "by_policy_pack": {
+      "baseline": {
+        "status": "traceability-only",
+        "accuracy_evidence": false,
+        "seed_invocations": 6,
+        "independent_transitions": 2,
+        "observed_oracle_classes": [
+          "breaking",
+          "safe"
+        ],
+        "reported_accuracy": null,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "reason": "Only two independent accepted transitions exist in this stratum. Repeating each across three frozen seeds does not add independent support, so the stratum remains sparse traceability evidence."
+      }
+    },
+    "by_mutation_policy": {
+      "CONSTRAINT_OR_RESTRICTION_CHANGED|baseline": {
+        "status": "traceability-only",
+        "accuracy_evidence": false,
+        "seed_invocations": 6,
+        "independent_transitions": 2,
+        "observed_oracle_classes": [
+          "breaking",
+          "safe"
+        ],
+        "reported_accuracy": null,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "reason": "Only two independent accepted transitions exist in this stratum. Repeating each across three frozen seeds does not add independent support, so the stratum remains sparse traceability evidence."
+      }
+    }
+  },
+  "zero_record_strata": {
+    "mutation": [
+      "ENUM_CHANGED",
+      "FIELD_ADDED",
+      "FIELD_REMOVED",
+      "TYPE_CHANGED"
+    ],
+    "mutation_policy": [
+      "ENUM_CHANGED|baseline",
+      "FIELD_ADDED|baseline",
+      "FIELD_REMOVED|baseline",
+      "TYPE_CHANGED|baseline"
+    ],
+    "policy_pack": [
+      "baseline-warning-peer",
+      "composition-enum-breaking-constraint-breaking",
+      "composition-enum-breaking-constraint-ignore",
+      "composition-enum-breaking-constraint-warning",
+      "composition-enum-ignore-constraint-breaking",
+      "composition-enum-ignore-constraint-ignore",
+      "composition-enum-ignore-constraint-warning",
+      "composition-enum-warning-constraint-breaking",
+      "composition-enum-warning-constraint-ignore",
+      "composition-enum-warning-constraint-warning",
+      "relaxed",
+      "relaxed-ignore-peer",
+      "strict",
+      "strict-breaking-peer"
+    ],
+    "status": "traceability-only",
+    "accuracy_evidence": false,
+    "reported_accuracy": null,
+    "reason": "No eligible external transition carried these strata; no confusion matrix entries exist."
+  },
+  "invocation_traces": [
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260826,
+      "model_sha256": "5da2fedbee5d1b3c84c79cb75e2cd10c0b3462066b66571570e93fb7ccd84988",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "breaking",
+      "predicted_probabilities": [
+        1.0385339572379604E-18,
+        7.650228867581715E-8,
+        0.9999999234977114
+      ],
+      "oracle_outcome": "breaking",
+      "oracle_exit_code": 1,
+      "oracle_stdout": "Schema compatibility: FAIL\nBreaking changes: [Required field added: pathType]\n",
+      "pair_fingerprint": "95e533b7820b34728133dafff1f539d927ee08094291d6051b9cdeee70db1253",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260826,
+      "model_sha256": "5da2fedbee5d1b3c84c79cb75e2cd10c0b3462066b66571570e93fb7ccd84988",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "safe",
+      "predicted_probabilities": [
+        7.589185454828001E-10,
+        0.00020581902501317514,
+        0.9997941802160683
+      ],
+      "oracle_outcome": "safe",
+      "oracle_exit_code": 0,
+      "oracle_stdout": "Schema compatibility: PASS\n",
+      "pair_fingerprint": "afd6baa18e9733384df4ca6809e3a9c8704428860246c80b1f63c3aa0fda13c1",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260827,
+      "model_sha256": "bd464322c272b8ec1d5ab88605022d4a48e3738b63ab1791a4c7e56f37222ac8",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "breaking",
+      "predicted_probabilities": [
+        1.9487386288854015E-16,
+        1.589467147324576E-11,
+        0.9999999999841052
+      ],
+      "oracle_outcome": "breaking",
+      "oracle_exit_code": 1,
+      "oracle_stdout": "Schema compatibility: FAIL\nBreaking changes: [Required field added: pathType]\n",
+      "pair_fingerprint": "95e533b7820b34728133dafff1f539d927ee08094291d6051b9cdeee70db1253",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260827,
+      "model_sha256": "bd464322c272b8ec1d5ab88605022d4a48e3738b63ab1791a4c7e56f37222ac8",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "safe",
+      "predicted_probabilities": [
+        2.423308612187665E-7,
+        0.000017561210176603592,
+        0.999982196458962
+      ],
+      "oracle_outcome": "safe",
+      "oracle_exit_code": 0,
+      "oracle_stdout": "Schema compatibility: PASS\n",
+      "pair_fingerprint": "afd6baa18e9733384df4ca6809e3a9c8704428860246c80b1f63c3aa0fda13c1",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260828,
+      "model_sha256": "24ec9e4e758370093c228af34e3b05ac65820b3fd413ca80a269206ce1edd2c0",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "breaking",
+      "predicted_probabilities": [
+        5.644572606447664E-14,
+        1.7581876222725855E-7,
+        0.9999998241811814
+      ],
+      "oracle_outcome": "breaking",
+      "oracle_exit_code": 1,
+      "oracle_stdout": "Schema compatibility: FAIL\nBreaking changes: [Required field added: pathType]\n",
+      "pair_fingerprint": "95e533b7820b34728133dafff1f539d927ee08094291d6051b9cdeee70db1253",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    },
+    {
+      "source": "kubernetes/kubernetes",
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "policy_pack": "baseline",
+      "seed": 20260828,
+      "model_sha256": "24ec9e4e758370093c228af34e3b05ac65820b3fd413ca80a269206ce1edd2c0",
+      "status": "scored",
+      "predicted_label": "breaking",
+      "oracle_label": "safe",
+      "predicted_probabilities": [
+        0.000003999401814089935,
+        0.0054451462719157405,
+        0.9945508543262702
+      ],
+      "oracle_outcome": "safe",
+      "oracle_exit_code": 0,
+      "oracle_stdout": "Schema compatibility: PASS\n",
+      "pair_fingerprint": "afd6baa18e9733384df4ca6809e3a9c8704428860246c80b1f63c3aa0fda13c1",
+      "nearest_policy_free_structural_distance": 2,
+      "exact_model_feature_overlap": false
+    }
+  ],
+  "validation_attempts": [
+    {
+      "stage": "component-only",
+      "result": "oracle-rejected",
+      "reason": "unresolved local $ref targets",
+      "raw_report_paths": [
+        "seed-20260826-report.json",
+        "seed-20260827-report.json",
+        "seed-20260828-report.json"
+      ]
+    },
+    {
+      "stage": "empty-schema ref closure",
+      "result": "oracle-rejected",
+      "reason": "referencing properties lacked validator-required type-bearing keyword",
+      "raw_report_paths": [
+        "seed-20260826-report-v2.json",
+        "seed-20260827-report-v2.json",
+        "seed-20260828-report-v2.json"
+      ]
+    },
+    {
+      "stage": "symmetric type-bearing ref closure",
+      "result": "scored",
+      "reason": "all target diffs retained distance 2 and passed oracle validation",
+      "raw_report_paths": [
+        "seed-20260826-report-v3.json",
+        "seed-20260827-report-v3.json",
+        "seed-20260828-report-v3.json"
+      ]
+    }
+  ],
+  "modifications": {
+    "jar": false,
+    "engine": false,
+    "calibration": false,
+    "new_candidate_sourcing": false
+  }
+}

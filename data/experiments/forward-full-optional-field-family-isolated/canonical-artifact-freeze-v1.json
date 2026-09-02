@@ -1,0 +1,92 @@
+{
+  "format_version": "dcg-forward-full-optional-canonical-artifact-freeze-v1",
+  "track": "FORWARD/FULL optional-field addition; separate from BACKWARD V9",
+  "canonical": [
+    {
+      "role": "required-addition gap origin audit",
+      "path": "data/experiments/forward-removal-mechanism-audit/required-addition-gap-origin-audit-v1.json",
+      "sha256": "e58f89d12fbaa382c2e1e2debe98580c7321d3072d5623fd4d14c4c11ec448c6"
+    },
+    {
+      "role": "source-profile prescreen",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/source-profile-prescreen-v1.json",
+      "sha256": "985df3795e80da94b281c11b4b7b56568801d40a262e956fcfd6d5a71e85785b"
+    },
+    {
+      "role": "clean isolation manifest",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/optional-addition-isolation-manifest-v4.json",
+      "sha256": "e5a94b08026ae320f7565cc4ca50166da935e99c61938eec675a21e2b102e799"
+    },
+    {
+      "role": "passed V9 contamination report",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v4.json",
+      "sha256": "b762fe9456d8f5543cb74b279b65a348930aa378625240eace6f84242f8154cd"
+    },
+    {
+      "role": "invocation-level corpus-generation evidence",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/generation-evidence-v4.json",
+      "sha256": "3d2b2547e11b67ac296d8c059c4ecd2a8c1447d951e02ff036535b6f253f2f9f"
+    },
+    {
+      "role": "unstamped generated corpus",
+      "path": "data/generated/dcg-forward-full-optional-field-family-isolated-v1.json",
+      "sha256": "2612663e6e5fa4d8aabef7c59b801ef174fe169634c308fe462920fd303bd8f7"
+    },
+    {
+      "role": "runner-enforcement test evidence",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/benchmark-ready-enforcement-test-v1.json",
+      "sha256": "f99f582d3c2ff9e39efd87afaff46ac2e49362e8853becb4314e048f38977887"
+    },
+    {
+      "role": "readiness decision",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/benchmark-readiness-v1.json",
+      "sha256": "52beb74935a25c42e05e17a0ce6024aca9dff42156bed51750303710444497fe"
+    },
+    {
+      "role": "runner-ready corpus",
+      "path": "data/generated/dcg-forward-full-optional-field-family-isolated-benchmark-ready-v1.json",
+      "sha256": "f4f24ca9d09a4417be7c43d7e02d060c186e47fbe0b76439f1b565cd6f7e0d48"
+    },
+    {
+      "role": "binary three-seed evaluation report",
+      "path": "data/experiments/forward-full-optional-field-family-isolated/binary-three-seed-v1/binary-three-seed-experiment-report.json",
+      "sha256": "63dccfd5b37c64a2fcb80224f12d5324c29a83812f887395e6ffaee0764b2c73"
+    }
+  ],
+  "model_artifacts": [
+    {
+      "seed": 20260826,
+      "path": "data/experiments/forward-full-optional-field-family-isolated/binary-three-seed-v1/models/seed-20260826-binary-breaking.json",
+      "sha256": "c58bfecfb39a610c0f45dbfaa6259b004b02e7dc4a5da16010b3e037f988543c"
+    },
+    {
+      "seed": 20260827,
+      "path": "data/experiments/forward-full-optional-field-family-isolated/binary-three-seed-v1/models/seed-20260827-binary-breaking.json",
+      "sha256": "ad454e9317d42c288fd87ae72c4c641f427b5d8e292e38472323b5ab0873aa6f"
+    },
+    {
+      "seed": 20260828,
+      "path": "data/experiments/forward-full-optional-field-family-isolated/binary-three-seed-v1/models/seed-20260828-binary-breaking.json",
+      "sha256": "51873e0c8fe28086f2bac064b5bd321e05e1267ce910dba5ff1668467439b14e"
+    }
+  ],
+  "frozen_inputs": {
+    "oracle_jar_sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+    "v9_reference_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "audit_policy_fixture_used": false
+  },
+  "superseded_attempts": {
+    "canonical_inputs": false,
+    "paths": [
+      "data/experiments/forward-full-optional-field-family-isolated/optional-addition-isolation-manifest-v1.json",
+      "data/experiments/forward-full-optional-field-family-isolated/optional-addition-isolation-manifest-v2.json",
+      "data/experiments/forward-full-optional-field-family-isolated/optional-addition-isolation-manifest-v3.json",
+      "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v1.json",
+      "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v2.json",
+      "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v3.json",
+      "data/experiments/forward-full-optional-field-family-isolated/generation-evidence-v3.json"
+    ],
+    "note": "Retained only to show fail-closed behavior: v1 rejected distance-one array variants before JAR use; v2 exposed unresolved source-fragment references; v3 rejected a lint-invalid reference projection before compatibility evaluation. None is a corpus, readiness input, or evaluation input."
+  }
+}

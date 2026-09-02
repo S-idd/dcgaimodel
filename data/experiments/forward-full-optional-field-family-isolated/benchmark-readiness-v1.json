@@ -1,0 +1,55 @@
+{
+  "benchmark_ready": true,
+  "format_version": "dcg-forward-full-optional-benchmark-readiness-v1",
+  "frozen_identity": {
+    "audit_fixture_used": false,
+    "oracle_jar_sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "generalization": {
+    "challenge_families": 1,
+    "complete_policy_counterfactual_pairs": 4,
+    "family_leakage": false,
+    "pair_leakage": false,
+    "ready": true,
+    "reasons": [],
+    "shortcut_risks": [],
+    "standard_families": 3
+  },
+  "input_corpus": "data/generated/dcg-forward-full-optional-field-family-isolated-v1.json",
+  "input_corpus_sha256": "2612663e6e5fa4d8aabef7c59b801ef174fe169634c308fe462920fd303bd8f7",
+  "isolation": {
+    "accepted_records": 420,
+    "passed": true,
+    "rejected_records": 0,
+    "reused_gate": "src/models/external_evaluation.rs::preflight_external_manifest",
+    "total_records": 420
+  },
+  "isolation_report": "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v4.json",
+  "isolation_report_sha256": "b762fe9456d8f5543cb74b279b65a348930aa378625240eace6f84242f8154cd",
+  "output_corpus": "data/generated/dcg-forward-full-optional-field-family-isolated-benchmark-ready-v1.json",
+  "runner_gate_verified_in_process": true,
+  "training_targets": {
+    "binary_breaking": {
+      "partition_families": [
+        1,
+        1,
+        1
+      ],
+      "partition_records": [
+        240,
+        180,
+        180
+      ],
+      "ready": true,
+      "reasons": []
+    },
+    "three_way_compatibility": {
+      "note": "The pinned policy file produces no WARNING optional-addition rows. The scientifically valid three-seed evaluation target for this isolated corpus is binary BREAKING/non-breaking; three-class training remains refused.",
+      "ready": false,
+      "reasons": [
+        "one or more SAFE/WARNING/BREAKING classes are missing from standard records"
+      ]
+    }
+  }
+}

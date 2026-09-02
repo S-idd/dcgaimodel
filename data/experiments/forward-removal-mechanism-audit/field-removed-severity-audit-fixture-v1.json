@@ -1,0 +1,23 @@
+{
+  "defaultPack": "field-removed-breaking-audit",
+  "packs": {
+    "field-removed-breaking-audit": {
+      "description": "AUDIT ONLY: proves FIELD_REMOVED BREAKING resolver mechanics; never use for corpus generation or evaluation",
+      "rules": {
+        "FIELD_REMOVED": "BREAKING"
+      }
+    },
+    "field-removed-warning-audit": {
+      "description": "AUDIT ONLY: proves FIELD_REMOVED WARNING resolver mechanics; never use for corpus generation or evaluation",
+      "rules": {
+        "FIELD_REMOVED": "WARNING"
+      }
+    },
+    "field-removed-ignore-audit": {
+      "description": "AUDIT ONLY: proves FIELD_REMOVED IGNORE resolver mechanics; never use for corpus generation or evaluation",
+      "rules": {
+        "FIELD_REMOVED": "IGNORE"
+      }
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "format_version": "forward-full-optional-field-direction-aware-decision-v1",
+  "decision": "GO",
+  "decision_scope": "Proceed to family-isolated FORWARD/FULL optional-field corpus generation; do not claim benchmark readiness or run the three-seed benchmark yet.",
+  "engine_behavior": {
+    "open_consumer": "SAFE by baseline FORWARD_OPTIONAL_FIELD_ADDED=IGNORE; policy-configurable",
+    "closed_consumer": "BREAKING when old consumer object has additionalProperties=false",
+    "backward_field_removed": "unchanged",
+    "full_mode": "ordinary BACKWARD result combined with direction-aware FORWARD result"
+  },
+  "scope": {
+    "source_seed": 20260901,
+    "matched_source_families": [
+      "kb_760_Normalized",
+      "sp_129_Normalized",
+      "wp_122_Normalized"
+    ],
+    "consumer_profiles": ["open", "closed"],
+    "compatibility_modes": ["FORWARD", "FULL"],
+    "mutation_variants": [
+      "optional-string-field",
+      "optional-integer-field",
+      "optional-boolean-field",
+      "optional-array-field"
+    ],
+    "policy_packs": 15
+  },
+  "preflight": {
+    "candidate_pool_families": 12,
+    "final_sampled_families": 3,
+    "total": 96,
+    "accepted": 96,
+    "rejected": 0,
+    "ordering": "A bounded deterministic 12-family pool was lint-preflighted before the final three fully accepted families were sampled."
+  },
+  "compatibility_runs": {
+    "total": 720,
+    "accepted": 720,
+    "rejected": 0,
+    "profile_mode_counts": {
+      "open/FORWARD": {"safe": 180},
+      "closed/FORWARD": {"breaking": 180},
+      "open/FULL": {"safe": 180},
+      "closed/FULL": {"breaking": 180}
+    },
+    "per_variant_profile_mode": "Each of the four variants has 45 SAFE Open calls and 45 BREAKING Closed calls in FORWARD, and the same 45/45 split in FULL.",
+    "per_policy": "Each of the 15 policy packs has 24 SAFE Open calls and 24 BREAKING Closed calls across FORWARD and FULL."
+  },
+  "pinned_inputs": {
+    "oracle_jar": {
+      "path": "data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar",
+      "sha256": "cce6fc2fb10ebbbf9bbd940f73477ecf3d0540d52087f7480c0d0bd3f3e6ef94"
+    },
+    "policy_packs": {
+      "path": "data-contract-governance/contracts/policy-packs-v5-compositional.json",
+      "sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+      "modified_for_run": false
+    }
+  },
+  "oracle_version_boundary": {
+    "decision": "track_scoped_not_global_replacement",
+    "forward_full_optional_field_track": {
+      "oracle_jar_sha256": "cce6fc2fb10ebbbf9bbd940f73477ecf3d0540d52087f7480c0d0bd3f3e6ef94",
+      "allowed_work": "New FORWARD/FULL optional-field conformance, corpus, readiness, and evaluation artifacts only."
+    },
+    "backward_v9_and_existing_external_track": {
+      "oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+      "status": "Remains the frozen baseline for existing BACKWARD V9 and external-sourcing comparisons.",
+      "local_binary_present": false,
+      "execution_blocker": "No new BACKWARD V9 or external oracle invocation may run until the exact 809b...677dc binary is restored from its archive and its SHA-256 is verified."
+    },
+    "mixing_rule": "Never combine records, promotions, models, aggregate metrics, or readiness evidence across these JAR hashes. Any cross-track comparison must report both hashes and remain descriptive only."
+  },
+  "evidence": {
+    "matrix_path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-v2.json",
+    "matrix_sha256": "109f64cf8b2844a9dfe17496732db528459ec03b90ffbebc57a53faba353234d",
+    "traces": [
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-string-field",
+        "consumer_profile": "open",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 0,
+        "outcome": "safe",
+        "stdout": "Schema compatibility: PASS",
+        "rejection_stage": null,
+        "rejection_reason": null
+      },
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-string-field",
+        "consumer_profile": "closed",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL; [FORWARD] Optional field added to closed consumer object: dcg_generated_optional_string",
+        "rejection_stage": null,
+        "rejection_reason": null
+      },
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-array-field",
+        "consumer_profile": "closed",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL; [FORWARD] Optional field added to closed consumer object: dcg_generated_optional_array",
+        "rejection_stage": null,
+        "rejection_reason": null
+      }
+    ]
+  },
+  "superseded_diagnostics": [
+    {
+      "path": "data/experiments/forward-full-optional-field-conformance/preflight-path-defect-v2.json",
+      "sha256": "a81a4230974f8c9578ded7d4f9bb039eb2f4d37a291e2d277ab78a83623bbd00",
+      "reason": "Lint staging used an invalid hyphenated contract directory; no compatibility calls ran."
+    },
+    {
+      "path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-pre-array-dedup-v2.json",
+      "sha256": "aae0ce6b87a9c6e64e349c84c05d8bdeccd58c1be62379b7d5a42cca8182d907",
+      "reason": "Labels were correct, but array explanation output duplicated the synthetic item path; superseded after regression fix."
+    },
+    {
+      "path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-preflight-after-sampling-v2.json",
+      "sha256": "2a804ff3a221a4304c156557d379138f2ffdd45d07c6fb6641eee3724b53b6d0",
+      "reason": "All labels were correct, but source families were sampled before lint preflight; superseded by bounded pool preflight followed by final-family sampling."
+    }
+  ],
+  "benchmark_ready": false,
+  "three_seed_evaluation_run": false,
+  "family_isolated_corpus_generated": false
+}

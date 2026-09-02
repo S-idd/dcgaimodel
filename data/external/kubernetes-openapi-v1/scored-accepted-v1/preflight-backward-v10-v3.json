@@ -1,0 +1,41 @@
+{
+  "format_version": "dcg-external-manifest-preflight-report-v1",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "manifest_sha256": "cf0eafd53c47d9000b020063273e6327d7d8b783d1f51606c1dce68f1f8e195e",
+  "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+  "training_oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+  "oracle_jar_sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+  "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+  "max_structural_coordinate_distance": 1,
+  "passed": true,
+  "total_records": 2,
+  "accepted_records": 2,
+  "rejected_records": 0,
+  "records": [
+    {
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "source": "kubernetes/kubernetes",
+      "family_id": "kubernetes.openapi.io.k8s.api.networking.v1.HTTPIngressPath",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "pair_fingerprint": "95e533b7820b34728133dafff1f539d927ee08094291d6051b9cdeee70db1253",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    },
+    {
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "source": "kubernetes/kubernetes",
+      "family_id": "kubernetes.openapi.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "pair_fingerprint": "afd6baa18e9733384df4ca6809e3a9c8704428860246c80b1f63c3aa0fda13c1",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "accepted": true,
+      "rejection_reasons": []
+    }
+  ]
+}

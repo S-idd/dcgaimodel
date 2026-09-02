@@ -6,25 +6,31 @@
 //! generalization.
 
 use super::{
-    ChallengeProtocol, DatasetRole, GeneratedRecordProvenance, ModelConfig, PreparedDcgDataset,
-    PreparedDcgRecord, TargetMode, ThreeWayEvaluation, ThreeWayModelArtifact,
-    TrainingInputProvenance, TrainingMetadata, evaluate_three_way,
+    ChallengeProtocol, DatasetRole, DcgPipelineConfig, EvaluationResult,
+    FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256, GeneratedRecordProvenance, ModelArtifact,
+    ModelConfig, PreparedDcgDataset, PreparedDcgRecord, TargetMode, ThreeWayEvaluation,
+    ThreeWayModelArtifact, TrainingInputProvenance, TrainingMetadata, evaluate_three_way,
     run_three_way_compatibility_pipeline,
 };
 use crate::dataset::DatasetSplitConfig;
+use crate::evaluation::{ClassificationMetrics, evaluate_binary_classification};
 use crate::features::{
     DCG_FEATURE_V4_VERSION, DCG_FEATURE_V5_VERSION, DCG_FEATURE_V6_VERSION, POLICY_ACTION_COUNT,
     POLICY_RULE_ACTION_FEATURE_COUNT, POLICY_RULE_IDS,
 };
 use crate::nn::Sgd;
+use crate::prediction::PredictionKind;
 use crate::training::TrainingConfig;
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
 /// Stable JSON format produced by a multi-seed three-way experiment.
 pub const THREE_WAY_EXPERIMENT_FORMAT_VERSION: &str = "dcg-three-way-experiment-v1";
+/// Stable JSON format for the direction-specific two-label experiment.
+pub const BINARY_THREE_SEED_EXPERIMENT_FORMAT_VERSION: &str = "dcg-binary-three-seed-experiment-v1";
 
 /// Stable representation of the feature-space audit that accompanies unusually
 /// clean held-out challenge scores. The prepared artifact retains features and
@@ -533,6 +539,248 @@ pub struct ThreeWayProtocolAggregate {
     pub summed_confusion_matrix: [[usize; 3]; 3],
 }
 
+/// Portable metrics for the SAFE-versus-BREAKING track. WARNING is absent
+/// under the pinned optional-addition policies and is never fabricated.
+#[derive(Debug, Clone, Serialize)]
+pub struct BinaryExperimentMetrics {
+    pub accuracy: f64,
+    pub precision: f64,
+    pub recall: f64,
+    pub f1_score: f64,
+    /// Rows are actual non-breaking/BREAKING; columns are predicted in that order.
+    pub confusion_matrix: [[usize; 2]; 2],
+}
+
+impl From<ClassificationMetrics> for BinaryExperimentMetrics {
+    fn from(metrics: ClassificationMetrics) -> Self {
+        Self {
+            accuracy: metrics.accuracy,
+            precision: metrics.precision,
+            recall: metrics.recall,
+            f1_score: metrics.f1_score,
+            confusion_matrix: [
+                [
+                    metrics.confusion_matrix.true_negative(),
+                    metrics.confusion_matrix.false_positive(),
+                ],
+                [
+                    metrics.confusion_matrix.false_negative(),
+                    metrics.confusion_matrix.true_positive(),
+                ],
+            ],
+        }
+    }
+}
+
+/// One independent family split and model fit.
+#[derive(Debug, Clone, Serialize)]
+pub struct BinarySeedRunReport {
+    pub seed: u64,
+    pub training_records: usize,
+    pub validation_records: usize,
+    pub test_records: usize,
+    pub challenge_records: usize,
+    pub test_metrics: BinaryExperimentMetrics,
+    pub challenge_metrics: BinaryExperimentMetrics,
+    pub training_loss: Vec<f64>,
+    pub validation_loss: Vec<f64>,
+    pub model_artifact: String,
+    pub model_sha256: String,
+}
+
+/// Complete three-seed result for the two classes the pinned oracle actually
+/// supplies in this direction-specific corpus.
+#[derive(Debug, Clone, Serialize)]
+pub struct BinaryThreeSeedExperimentReport {
+    pub format_version: String,
+    pub dataset_version: String,
+    pub feature_version: String,
+    pub target: String,
+    pub class_order: [String; 2],
+    pub input_provenance: TrainingInputProvenance,
+    pub configuration: ExperimentConfigurationReport,
+    pub seed_runs: Vec<BinarySeedRunReport>,
+    pub mean_test_accuracy: f64,
+    pub mean_challenge_accuracy: f64,
+}
+
+/// Runs the family-isolated binary experiment only after the persisted
+/// `benchmark_ready` decision is present and true. Gate checks precede output
+/// directory creation and therefore precede training or artifact writes.
+pub fn run_binary_three_seed_experiment(
+    dataset: &PreparedDcgDataset,
+    input_provenance: TrainingInputProvenance,
+    configuration: ThreeWayExperimentConfig,
+    output_dir: &Path,
+) -> Result<BinaryThreeSeedExperimentReport, String> {
+    if input_provenance.policy_packs_sha256 == FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256 {
+        return Err(
+            "binary three-seed experiment refused: the FIELD_REMOVED severity audit fixture is mechanism-only"
+                .to_owned(),
+        );
+    }
+    dataset
+        .require_benchmark_ready()
+        .map_err(|reason| format!("binary three-seed experiment refused: {reason}"))?;
+    let standard = standard_records(dataset, |_| true)?;
+    let challenge = PreparedDcgDataset::new(
+        format!("{}-challenge", dataset.dataset_version()),
+        dataset
+            .records()
+            .iter()
+            .filter(|record| record.dataset_role == DatasetRole::Challenge)
+            .cloned()
+            .collect(),
+    )
+    .map_err(|error| error.to_string())?;
+    let readiness = standard.training_readiness(
+        TargetMode::BinaryBreaking,
+        DatasetSplitConfig::new(0.70, 0.15, 0.15, configuration.seeds[0])
+            .map_err(|error| error.to_string())?,
+    );
+    if !readiness.ready_for_training {
+        return Err(format!(
+            "binary standard training data is not ready: {:?}",
+            readiness.reasons
+        ));
+    }
+    let model_directory = output_dir.join("models");
+    fs::create_dir_all(&model_directory).map_err(|error| error.to_string())?;
+    let mut seed_runs = Vec::with_capacity(configuration.seeds.len());
+    for &seed in &configuration.seeds {
+        let split =
+            DatasetSplitConfig::new(0.70, 0.15, 0.15, seed).map_err(|error| error.to_string())?;
+        let pipeline = DcgPipelineConfig::new(
+            PredictionKind::BreakingChange,
+            split,
+            ModelConfig::new(standard.records()[0].features.len(), vec![12, 6], 0.5)
+                .map_err(|error| error.to_string())?,
+            TrainingConfig::new(configuration.epochs, configuration.batch_size)
+                .map_err(|error| error.to_string())?,
+            vec![0.30, 0.40, 0.50, 0.60, 0.70, 0.80],
+        )
+        .map_err(|error| error.to_string())?;
+        let result = pipeline
+            .run(
+                &standard,
+                Sgd::new(configuration.learning_rate).map_err(|error| error.to_string())?,
+            )
+            .map_err(|error| error.to_string())?;
+        let test_metrics = match result.evaluation {
+            EvaluationResult::Classification(metrics) => metrics,
+            EvaluationResult::Regression(_) => {
+                return Err("binary experiment unexpectedly produced regression metrics".to_owned());
+            }
+        };
+        let challenge_raw = challenge
+            .to_dataset(PredictionKind::BreakingChange)
+            .map_err(|error| error.to_string())?;
+        let challenge_normalized = result
+            .scaler
+            .transform_dataset(&challenge_raw)
+            .map_err(|error| error.to_string())?;
+        let challenge_predictions = result
+            .model
+            .predict_batch(challenge_normalized.features())
+            .map_err(|error| error.to_string())?
+            .into_iter()
+            .map(|prediction| {
+                prediction
+                    .label()
+                    .map(f64::from)
+                    .ok_or("binary challenge produced a non-classification prediction".to_owned())
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let challenge_targets = challenge_normalized
+            .targets()
+            .iter()
+            .map(|target| {
+                (target.len() == 1)
+                    .then_some(target[0])
+                    .ok_or_else(|| "binary challenge target must contain one value".to_owned())
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let challenge_metrics =
+            evaluate_binary_classification(&challenge_predictions, &challenge_targets)
+                .map_err(|error| error.to_string())?;
+        let training_records = result.split.train().len();
+        let validation_records = result.split.validation().len();
+        let test_records = result.split.test().len();
+        let training_loss = result.training_history.epoch_losses().to_vec();
+        let validation_loss = result.training_history.validation_losses().to_vec();
+        let model_name = format!("seed-{seed}-binary-breaking.json");
+        let model_path = model_directory.join(&model_name);
+        let metadata = TrainingMetadata {
+            optimizer: "sgd".to_owned(),
+            epochs: configuration.epochs,
+            batch_size: configuration.batch_size,
+            learning_rate: Some(configuration.learning_rate.to_string()),
+            seed,
+            training_samples: training_records,
+            validation_samples: validation_records,
+            test_samples: test_records,
+            dataset_id: dataset.dataset_version().to_owned(),
+        }
+        .validate()
+        .map_err(|error| error.to_string())?;
+        ModelArtifact::new_with_feature_version(
+            "dcg-forward-full-optional-binary-v1",
+            dataset.feature_version(),
+            result.model,
+            result.scaler,
+            metadata,
+        )
+        .map_err(|error| error.to_string())?
+        .save(&model_path)
+        .map_err(|error| error.to_string())?;
+        let model_bytes = fs::read(&model_path).map_err(|error| error.to_string())?;
+        seed_runs.push(BinarySeedRunReport {
+            seed,
+            training_records,
+            validation_records,
+            test_records,
+            challenge_records: challenge.len(),
+            test_metrics: test_metrics.into(),
+            challenge_metrics: challenge_metrics.into(),
+            training_loss,
+            validation_loss,
+            model_artifact: format!("models/{model_name}"),
+            model_sha256: format!("{:x}", Sha256::digest(&model_bytes)),
+        });
+    }
+    let mean_test_accuracy = seed_runs
+        .iter()
+        .map(|run| run.test_metrics.accuracy)
+        .sum::<f64>()
+        / seed_runs.len() as f64;
+    let mean_challenge_accuracy = seed_runs
+        .iter()
+        .map(|run| run.challenge_metrics.accuracy)
+        .sum::<f64>()
+        / seed_runs.len() as f64;
+    Ok(BinaryThreeSeedExperimentReport {
+        format_version: BINARY_THREE_SEED_EXPERIMENT_FORMAT_VERSION.to_owned(),
+        dataset_version: dataset.dataset_version().to_owned(),
+        feature_version: dataset.feature_version().to_owned(),
+        target: "binary_breaking".to_owned(),
+        class_order: ["non_breaking".to_owned(), "breaking".to_owned()],
+        input_provenance,
+        configuration: ExperimentConfigurationReport {
+            seeds: configuration.seeds,
+            epochs: configuration.epochs,
+            batch_size: configuration.batch_size,
+            learning_rate: configuration.learning_rate,
+            split_ratios: [0.70, 0.15, 0.15],
+            architecture: vec![standard.records()[0].features.len(), 12, 6, 1],
+            objective: "binary_cross_entropy".to_owned(),
+            execution_device: "cpu".to_owned(),
+        },
+        seed_runs,
+        mean_test_accuracy,
+        mean_challenge_accuracy,
+    })
+}
+
 /// Runs and persists every normal and challenge evaluation across the supplied
 /// deterministic seeds. `output_dir` must be a fresh directory owned by the
 /// caller; the function creates a `models/` child beneath it.
@@ -542,6 +790,12 @@ pub fn run_three_way_experiment(
     configuration: ThreeWayExperimentConfig,
     output_dir: &Path,
 ) -> Result<ThreeWayExperimentReport, String> {
+    if input_provenance.policy_packs_sha256 == FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256 {
+        return Err(
+            "three-way experiment refused: the FIELD_REMOVED severity audit fixture is mechanism-only and cannot be used for corpus or benchmark evidence"
+                .to_owned(),
+        );
+    }
     dataset
         .require_benchmark_ready()
         .map_err(|reason| format!("three-way experiment refused: {reason}"))?;
@@ -1297,9 +1551,33 @@ mod tests {
         let missing =
             PreparedDcgDataset::from_fixtures("missing-benchmark-ready", &realistic_fixtures())
                 .unwrap();
+        let audit_fixture_provenance = TrainingInputProvenance {
+            dataset_sha256: "a".repeat(64),
+            oracle_jar_sha256: "b".repeat(64),
+            policy_packs_sha256: FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256.to_owned(),
+        };
+        let error = run_three_way_experiment(
+            &missing,
+            audit_fixture_provenance,
+            configuration.clone(),
+            &output,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("severity audit fixture is mechanism-only"),
+            "{error}"
+        );
         let error =
             run_three_way_experiment(&missing, provenance.clone(), configuration.clone(), &output)
                 .unwrap_err();
+        assert!(error.contains("benchmark_ready is missing"), "{error}");
+        let error = run_binary_three_seed_experiment(
+            &missing,
+            provenance.clone(),
+            configuration.clone(),
+            &output,
+        )
+        .unwrap_err();
         assert!(error.contains("benchmark_ready is missing"), "{error}");
 
         let mut false_ready =
@@ -1307,8 +1585,17 @@ mod tests {
                 .unwrap();
         let readiness = false_ready.stamp_benchmark_readiness(None);
         assert!(!readiness.ready_for_generalization_benchmark);
+        let error = run_three_way_experiment(
+            &false_ready,
+            provenance.clone(),
+            configuration.clone(),
+            &output,
+        )
+        .unwrap_err();
+        assert!(error.contains("benchmark_ready=false"), "{error}");
         let error =
-            run_three_way_experiment(&false_ready, provenance, configuration, &output).unwrap_err();
+            run_binary_three_seed_experiment(&false_ready, provenance, configuration, &output)
+                .unwrap_err();
         assert!(error.contains("benchmark_ready=false"), "{error}");
         assert!(
             !output.exists(),

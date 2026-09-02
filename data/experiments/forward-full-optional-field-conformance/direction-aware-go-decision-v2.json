@@ -1,0 +1,147 @@
+{
+  "format_version": "forward-full-optional-field-direction-aware-decision-v2",
+  "decision": "GO",
+  "decision_scope": "The bounded FORWARD/FULL optional-field addition conformance gate passes after fixing and isolating genuine FORWARD removals. Family-isolated generation, benchmark_ready promotion, and three-seed evaluation were not performed in this step.",
+  "gap_reproduction_before_fix": {
+    "optional_field_removal_under_forward": {
+      "check_status": "PASS",
+      "breaking_changes": [],
+      "diagnosis": "The actual base-to-candidate diff.fieldRemoved() was never evaluated by evaluateForward."
+    },
+    "required_field_removal_under_forward": {
+      "check_status": "FAIL",
+      "breaking_changes": [
+        "[FORWARD] Required field added: removed"
+      ],
+      "diagnosis": "The reversed diff surfaced the removal only as REQUIRED_FIELD_ADDED, so the result was breaking but attributed to the wrong rule."
+    },
+    "previous_test_coverage": "No explicit FORWARD-only genuine-removal regression existed. The only genuine-removal regression used CompatibilityMode.BACKWARD.",
+    "full_masking_assessment": "A same-direction removal checked under FULL would have been caught by FULL's BACKWARD half even while the FORWARD half was incomplete. The optional-addition conformance matrix contained additions only, so it did not itself contain or mask a removal case."
+  },
+  "fix": {
+    "actual_removal_path": "DefaultCompatibilityEngine computes diff(base,candidate) and passes it explicitly to DefaultRuleEngine.evaluateForward. evaluateForward places diff.fieldRemoved() in a removal-only SchemaDiff and calls the unchanged evaluateBackward path, which applies RuleId.FIELD_REMOVED and the selected policy-pack severity.",
+    "required_removal_deduplication": "Fields present in actual diff.fieldRemoved() are filtered out of reversedDiff.requiredAdded(), preventing a required removal from being mislabeled as REQUIRED_FIELD_ADDED.",
+    "fragile_signal_used": false,
+    "string_matching_used": false,
+    "ordering_assumption_used": false
+  },
+  "post_fix_forward_only_tests": {
+    "optional_field_removal": {
+      "compatibility_mode": "FORWARD",
+      "check_status": "FAIL",
+      "breaking_changes": [
+        "[FORWARD] Field removed: removed"
+      ]
+    },
+    "required_field_removal": {
+      "compatibility_mode": "FORWARD",
+      "check_status": "FAIL",
+      "breaking_changes": [
+        "[FORWARD] Field removed: removed"
+      ]
+    },
+    "test_file": "data-contract-governance/contract-core/src/test/java/com/ideas/contracts/core/ForwardOptionalFieldCompatibilityTest.java",
+    "full_reactor": {
+      "command": "mvn verify",
+      "tests": 241,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    }
+  },
+  "conformance": {
+    "matrix_path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-removal-fixed-v3.json",
+    "matrix_sha256": "f4fed11058473b97c69e20a628ca292f9f9d5f508c58f4fbedc8b11d68259604",
+    "source_seed": 20260901,
+    "preflight": {
+      "candidate_pool_families": 12,
+      "total": 96,
+      "accepted": 96,
+      "rejected": 0
+    },
+    "final_sampled_families": [
+      "kb_760_Normalized",
+      "sp_129_Normalized",
+      "wp_122_Normalized"
+    ],
+    "compatibility_runs": {
+      "total": 720,
+      "accepted": 720,
+      "rejected": 0,
+      "open_FORWARD": {
+        "safe": 180
+      },
+      "closed_FORWARD": {
+        "breaking": 180
+      },
+      "open_FULL": {
+        "safe": 180
+      },
+      "closed_FULL": {
+        "breaking": 180
+      },
+      "per_variant_profile_mode": "Each string, integer, boolean, and array variant has 45 SAFE open calls and 45 BREAKING closed calls in FORWARD, and the same split in FULL."
+    },
+    "traces": [
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-string-field",
+        "consumer_profile": "open",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 0,
+        "outcome": "safe",
+        "stdout": "Schema compatibility: PASS",
+        "rejection_stage": null,
+        "rejection_reason": null
+      },
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-string-field",
+        "consumer_profile": "closed",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL; [FORWARD] Optional field added to closed consumer object: dcg_generated_optional_string",
+        "rejection_stage": null,
+        "rejection_reason": null
+      },
+      {
+        "family_id": "kb_760_Normalized",
+        "mutation_variant": "optional-array-field",
+        "consumer_profile": "closed",
+        "compatibility_mode": "FORWARD",
+        "policy_pack": "baseline",
+        "exit_code": 1,
+        "outcome": "breaking",
+        "stdout": "Schema compatibility: FAIL; [FORWARD] Optional field added to closed consumer object: dcg_generated_optional_array",
+        "rejection_stage": null,
+        "rejection_reason": null
+      }
+    ]
+  },
+  "pinned_inputs": {
+    "oracle_jar": {
+      "path": "data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar",
+      "sha256": "bfc7603ab425609740be3b2207f298ed0d0c0f816a59841d5aa219ccd6478941",
+      "scope": "FORWARD/FULL optional-field track only"
+    },
+    "policy_packs": {
+      "path": "data-contract-governance/contracts/policy-packs-v5-compositional.json",
+      "sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+      "modified_for_run": false
+    }
+  },
+  "oracle_version_boundary": {
+    "decision": "track_scoped_not_global_replacement",
+    "superseded_forward_full_optional_field_jar_sha256": "cce6fc2fb10ebbbf9bbd940f73477ecf3d0540d52087f7480c0d0bd3f3e6ef94",
+    "current_forward_full_optional_field_jar_sha256": "bfc7603ab425609740be3b2207f298ed0d0c0f816a59841d5aa219ccd6478941",
+    "backward_v9_and_existing_external_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "mixing_rule": "Do not combine records, promotions, models, aggregate metrics, or readiness evidence across these JAR hashes."
+  },
+  "supersedes_decision_artifact": "data/experiments/forward-full-optional-field-conformance/direction-aware-go-decision-v1.json",
+  "benchmark_ready": false,
+  "three_seed_evaluation_run": false,
+  "family_isolated_corpus_generated": false
+}

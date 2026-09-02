@@ -1,4 +1,7 @@
-use crate::models::OracleCompatibilityMode;
+use crate::models::{
+    FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_FILE_NAME, FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256,
+    OracleCompatibilityMode,
+};
 use sha2::{Digest, Sha256};
 use std::error::Error;
 use std::fmt;
@@ -71,6 +74,22 @@ pub struct OracleRun {
     pub stderr: String,
     /// Staged pair directory for successful or rejected inspection.
     pub staged_contract_dir: PathBuf,
+    /// Stage at which a rejected invocation failed; absent for accepted labels.
+    pub rejection_stage: Option<String>,
+    /// First concrete diagnostic emitted for a rejected invocation.
+    pub rejection_reason: Option<String>,
+}
+
+/// Captured schema-lint preflight for a staged base/candidate pair.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct OraclePreflightRun {
+    pub accepted: bool,
+    pub exit_code: i32,
+    pub stdout: String,
+    pub stderr: String,
+    pub staged_contract_dir: PathBuf,
+    pub rejection_stage: Option<String>,
+    pub rejection_reason: Option<String>,
 }
 
 /// Errors from staging or executing the independent oracle.
@@ -118,8 +137,23 @@ pub struct PinnedOracle {
 }
 
 impl PinnedOracle {
-    /// Creates an adapter after verifying that the pinned input files exist.
+    /// Creates a production adapter after verifying that the pinned input
+    /// files exist. The audit-only FIELD_REMOVED fixture is rejected by hash,
+    /// even if it is renamed or copied elsewhere.
     pub fn new(config: OracleConfig) -> Result<Self, GeneratorError> {
+        Self::new_with_policy_scope(config, false)
+    }
+
+    /// Creates the narrowly scoped adapter used only by the removal-severity
+    /// mechanism audit. It requires both the fixture's exact name and hash.
+    pub fn new_policy_mechanism_audit(config: OracleConfig) -> Result<Self, GeneratorError> {
+        Self::new_with_policy_scope(config, true)
+    }
+
+    fn new_with_policy_scope(
+        config: OracleConfig,
+        allow_audit_fixture: bool,
+    ) -> Result<Self, GeneratorError> {
         for (field, path) in [
             ("jar_path", &config.jar_path),
             ("policy_packs_path", &config.policy_packs_path),
@@ -135,10 +169,16 @@ impl PinnedOracle {
             fs::read(&config.policy_packs_path).map_err(|error| GeneratorError::Io {
                 message: error.to_string(),
             })?;
+        let policy_packs_sha256 = format!("{:x}", Sha256::digest(policy_contents));
+        validate_policy_scope(
+            &config.policy_packs_path,
+            &policy_packs_sha256,
+            allow_audit_fixture,
+        )?;
         Ok(Self {
             config,
             jar_sha256: format!("{:x}", Sha256::digest(jar_contents)),
-            policy_packs_sha256: format!("{:x}", Sha256::digest(policy_contents)),
+            policy_packs_sha256,
         })
     }
 
@@ -199,25 +239,75 @@ impl PinnedOracle {
         let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
         let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
         let exit_code = output.status.code();
-        let outcome = match exit_code {
-            Some(0) => outcome_from_success_stdout(&stdout),
+        let (outcome, rejection_stage) = match exit_code {
+            Some(0) => (outcome_from_success_stdout(&stdout), None),
             // The documented exit-1 path is a compatibility failure. The
             // pinned JAR can also leak an uncaught JVM exception through that
             // code. An empty decision stream plus an exception banner is not
             // a compatibility label, so reject it rather than training a
             // model to reproduce an oracle crash.
             Some(1) if has_fatal_oracle_runtime_failure(&stdout, &stderr) => {
-                OracleOutcome::Rejected
+                (OracleOutcome::Rejected, Some("jar_runtime".to_owned()))
             }
-            Some(1) => OracleOutcome::Breaking,
-            Some(2) => OracleOutcome::Rejected,
+            Some(1) => (OracleOutcome::Breaking, None),
+            Some(2) => (
+                OracleOutcome::Rejected,
+                Some("compatibility_validation".to_owned()),
+            ),
             code => {
                 return Err(GeneratorError::UnexpectedExitCode { code, stderr });
             }
         };
+        let rejection_reason = rejection_stage
+            .as_ref()
+            .map(|_| first_diagnostic(&stdout, &stderr));
         Ok(OracleRun {
             outcome,
             exit_code: exit_code.expect("documented oracle exit code was matched"),
+            stdout,
+            stderr,
+            staged_contract_dir,
+            rejection_reason,
+            rejection_stage,
+        })
+    }
+
+    /// Lints both version files before a mutation enters the policy/mode
+    /// matrix. This is deliberately separate from compatibility evaluation.
+    pub fn preflight(
+        &self,
+        workspace: &Path,
+        pair: &GeneratedPair,
+    ) -> Result<OraclePreflightRun, GeneratorError> {
+        validate_pair(pair)?;
+        let staged_contract_dir =
+            self.stage_pair(workspace, pair, OracleCompatibilityMode::Forward)?;
+        let output = Command::new(&self.config.java_program)
+            .arg("-jar")
+            .arg(&self.config.jar_path)
+            .arg("lint")
+            .arg("--path")
+            .arg(&staged_contract_dir)
+            .output()
+            .map_err(|error| GeneratorError::Spawn {
+                message: error.to_string(),
+            })?;
+        let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+        let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
+        let exit_code = output.status.code();
+        let accepted = match exit_code {
+            Some(0) => true,
+            Some(1) => false,
+            code => {
+                return Err(GeneratorError::UnexpectedExitCode { code, stderr });
+            }
+        };
+        let rejection_reason = (!accepted).then(|| first_diagnostic(&stdout, &stderr));
+        Ok(OraclePreflightRun {
+            accepted,
+            exit_code: exit_code.expect("documented lint exit code was matched"),
+            rejection_stage: (!accepted).then(|| "schema_preflight".to_owned()),
+            rejection_reason,
             stdout,
             stderr,
             staged_contract_dir,
@@ -233,7 +323,9 @@ impl PinnedOracle {
         let sequence = STAGING_SEQUENCE.fetch_add(1, Ordering::Relaxed);
         let root = workspace.join(format!("oracle-run-{}-{sequence}", std::process::id()));
         let contracts = root.join("contracts");
-        let contract_dir = contracts.join("generated-contract");
+        // The Java lint command enforces the same lowercase dot-separated
+        // contract-id convention as production contract directories.
+        let contract_dir = contracts.join("generated.contract");
         fs::create_dir_all(&contract_dir).map_err(|error| GeneratorError::Io {
             message: error.to_string(),
         })?;
@@ -267,6 +359,39 @@ impl PinnedOracle {
         })?;
         Ok(contract_dir)
     }
+}
+
+fn validate_policy_scope(
+    path: &Path,
+    sha256: &str,
+    allow_audit_fixture: bool,
+) -> Result<(), GeneratorError> {
+    let is_audit_fixture = sha256 == FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256;
+    if !allow_audit_fixture && is_audit_fixture {
+        return Err(GeneratorError::InvalidInput {
+            field: "audit_only_policy_fixture_forbidden_in_production",
+        });
+    }
+    if allow_audit_fixture {
+        let has_exact_name = path.file_name().and_then(|name| name.to_str())
+            == Some(FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_FILE_NAME);
+        if !is_audit_fixture || !has_exact_name {
+            return Err(GeneratorError::InvalidInput {
+                field: "policy_mechanism_audit_requires_exact_fixture_name_and_hash",
+            });
+        }
+    }
+    Ok(())
+}
+
+fn first_diagnostic(stdout: &str, stderr: &str) -> String {
+    stderr
+        .lines()
+        .chain(stdout.lines())
+        .map(str::trim)
+        .find(|line| !line.is_empty())
+        .unwrap_or("oracle rejected without a diagnostic")
+        .to_owned()
 }
 
 /// The pinned CLI has only three exit codes. Within an accepted exit-0 result,
@@ -341,6 +466,34 @@ mod tests {
                 field: "policy_pack"
             })
         ));
+    }
+
+    #[test]
+    fn production_rejects_audit_fixture_identity_even_if_renamed() {
+        let renamed = Path::new("renamed-policy-packs.json");
+        assert!(matches!(
+            validate_policy_scope(renamed, FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256, false),
+            Err(GeneratorError::InvalidInput {
+                field: "audit_only_policy_fixture_forbidden_in_production"
+            })
+        ));
+    }
+
+    #[test]
+    fn audit_constructor_requires_exact_fixture_name_and_hash() {
+        let exact = Path::new(FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_FILE_NAME);
+        assert!(
+            validate_policy_scope(exact, FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256, true).is_ok()
+        );
+        assert!(validate_policy_scope(exact, &"0".repeat(64), true).is_err());
+        assert!(
+            validate_policy_scope(
+                Path::new("renamed-audit-fixture.json"),
+                FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256,
+                true
+            )
+            .is_err()
+        );
     }
 
     #[test]

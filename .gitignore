@@ -25,6 +25,7 @@
 /data/oracle-staging/
 /data/generated/
 /data/logs/
+/data/experiments/**/oracle-workspace*/
 /data/external/**/source-repository/
 /data/external/**/independent-reproduction-workspace/
 /data/external/**/sources/

@@ -1,0 +1,18 @@
+{
+  "contamination_preflight_passed": true,
+  "corpus_generated": false,
+  "format_version": "dcg-forward-full-optional-isolated-generation-evidence-v1",
+  "schema_preflights": [
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": "Lint failed: Property 'networks' in v1.json must define a type-bearing or supported applicator keyword.",
+      "rejection_stage": "schema_preflight",
+      "seed_id": "forward-optional.stripe.openapi.card.closed",
+      "stderr": "Lint failed: Property 'networks' in v1.json must define a type-bearing or supported applicator keyword.\n",
+      "stdout": ""
+    }
+  ]
+}

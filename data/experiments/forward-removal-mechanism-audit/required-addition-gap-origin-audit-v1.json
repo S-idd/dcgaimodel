@@ -1,0 +1,69 @@
+{
+  "format_version": "dcg-required-addition-gap-origin-audit-v1",
+  "question": "Did the genuine required-addition silently-SAFE gap already exist in the original direction-aware FORWARD implementation, before the later removal-detection fix?",
+  "conclusion": "YES",
+  "repository": "data-contract-governance",
+  "branch_reviewed": "V4-P0",
+  "commit_history": [
+    {
+      "commit": "e19aa13d",
+      "subject": "feat: add profile-aware forward optional fields",
+      "role": "original direction-aware FORWARD/FULL implementation; first code state containing the gap"
+    },
+    {
+      "commit": "18f0f04",
+      "subject": "fix: evaluate removals in forward mode",
+      "role": "later removal-detection fix"
+    },
+    {
+      "commit": "da93082",
+      "subject": "fix: preserve required additions in forward mode",
+      "role": "subsequent required-addition fix"
+    }
+  ],
+  "original_code_evidence": {
+    "commit": "e19aa13d",
+    "path": "contract-core/src/main/java/com/ideas/contracts/core/DefaultRuleEngine.java",
+    "lines": "85-105",
+    "excerpt": [
+      "Set<String> additions = new HashSet<>(diff.fieldAdded());",
+      "List<String> reversedRemovals = reversedDiff.fieldRemoved().stream()",
+      "    .filter(field -> !additions.contains(field))",
+      "    .toList();",
+      "SchemaDiff nonAdditionReversedDiff = new SchemaDiff(",
+      "    reversedDiff.fieldAdded(),",
+      "    reversedRemovals,",
+      "    reversedDiff.typeChanged(),",
+      "    reversedDiff.requiredAdded(),",
+      "    reversedDiff.requiredRemoved(),",
+      "    reversedDiff.enumAdded(),",
+      "    reversedDiff.enumRemoved(),",
+      "    reversedDiff.constraintTightened(),",
+      "    reversedDiff.conditionalRestrictionAdded(),",
+      "    reversedDiff.schemaRestrictionAdded());",
+      "CompatibilityResult reversedResult = evaluateBackward(nonAdditionReversedDiff, policyPack);",
+      "for (String field : topLevelAdditions(diff.fieldAdded())) {"
+    ],
+    "mechanical_diagnosis": "The original implementation forwarded reversedDiff.requiredAdded() but never evaluated diff.requiredAdded(). A genuine base-to-candidate required addition therefore had no required-addition rule path in FORWARD. It was also iterated only as a field addition, so an open consumer resolved it through the optional-addition SAFE path.",
+    "blame_result": "git blame e19aa13 -L 75,126 attributes the complete evaluateForward implementation to e19aa13d."
+  },
+  "original_test_evidence": {
+    "commit": "e19aa13d",
+    "path": "contract-core/src/test/java/com/ideas/contracts/core/ForwardOptionalFieldCompatibilityTest.java",
+    "lines": "133-134",
+    "assertion": "assertEquals(CheckStatus.PASS, engine.checkCompatibility(openBase, requiredCandidate, CompatibilityMode.FORWARD).status());",
+    "interpretation": "The original direction-aware commit explicitly encoded the defective silent-PASS behavior before commit 18f0f04 existed."
+  },
+  "reconstructed_test_run": {
+    "worktree_commit": "e19aa13d",
+    "change_to_test_only": "Replaced the original PASS assertion with an assertion that breakingChanges() equals [\"[FORWARD] Required field added: added\"]. Production code was unchanged.",
+    "command": "mvn -pl contract-core -Dtest=ForwardOptionalFieldCompatibilityTest#fullCombinesBackwardRequirednessWithProfileAwareForwardResult test",
+    "result": "FAIL",
+    "tests_run": 1,
+    "failures": 1,
+    "actual_check_status_in_original_test": "PASS",
+    "actual_breaking_changes": [],
+    "failure_excerpt": "expected: <[[FORWARD] Required field added: added]> but was: <[]>",
+    "meaning": "The gap is reproduced at e19aa13d itself and therefore was not introduced by the later removal-detection fix 18f0f04."
+  }
+}

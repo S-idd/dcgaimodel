@@ -91,8 +91,11 @@ impl CoverageTarget {
 /// One source JSON Schema, with no compatibility claim attached to it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SeedSchema {
-    /// Stable source-provided identifier. All of its generated variants share a split group.
+    /// Stable source-provided schema/profile identifier used in record IDs.
     pub id: String,
+    /// Stable underlying family identity. This may intentionally be shared by
+    /// matched structural profiles so those profiles can never cross a split.
+    pub family_id: String,
     /// Portable source/dataset identifier, not a local path.
     pub source: String,
     /// Raw JSON Schema document.
@@ -125,6 +128,9 @@ pub enum SourceSamplingProfile {
     /// closed root objects. If either source stratum is scarce, the returned
     /// sample is short and the configured coverage gate remains unsatisfied.
     BalancedOptional,
+    /// Select root-object families without regard to their current profile;
+    /// conformance derives matched explicit open/closed copies afterward.
+    MatchedOptional,
 }
 
 impl SourceSamplingProfile {
@@ -135,6 +141,7 @@ impl SourceSamplingProfile {
             "optional-open" => Self::OptionalFieldOpen,
             "optional-closed" => Self::OptionalFieldClosed,
             "balanced-optional" => Self::BalancedOptional,
+            "matched-optional" => Self::MatchedOptional,
             _ => return None,
         })
     }
@@ -237,6 +244,7 @@ impl JsonSchemaBenchSource {
                 let key = (priority, rank, id.to_owned());
                 let seed_schema = SeedSchema {
                     id: id.to_owned(),
+                    family_id: id.to_owned(),
                     source: self.source.clone(),
                     schema: schema.to_owned(),
                 };
@@ -293,6 +301,7 @@ fn source_matches_profile(schema: &str, profile: SourceSamplingProfile) -> bool 
         (SourceSamplingProfile::OptionalFieldOpen, "open")
             | (SourceSamplingProfile::OptionalFieldClosed, "closed")
             | (SourceSamplingProfile::BalancedOptional, _)
+            | (SourceSamplingProfile::MatchedOptional, _)
     )
 }
 
@@ -544,6 +553,10 @@ pub struct GeneratorConfig {
     /// Mutation families for which coverage mode keeps each deterministic
     /// structural variant independently within a source family.
     pub retain_variants_for_mutations: BTreeSet<String>,
+    /// Optional preflight-derived variant allowlist keyed by seed/profile ID.
+    /// When non-empty, a candidate can reach the oracle only if its exact
+    /// deterministic variant was accepted for that seed by the upstream gate.
+    pub allowed_variants_by_seed: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl GeneratorConfig {
@@ -584,6 +597,7 @@ impl GeneratorConfig {
             promotion_manifest: None,
             mutation_filter: BTreeSet::new(),
             retain_variants_for_mutations: BTreeSet::new(),
+            allowed_variants_by_seed: BTreeMap::new(),
         })
     }
 
@@ -720,6 +734,26 @@ impl GeneratorConfig {
         self.retain_variants_for_mutations = mutations;
         Ok(self)
     }
+
+    /// Restricts oracle proposals to variants already approved by a
+    /// record-level preflight. Missing seed IDs are rejected rather than
+    /// falling back to all generator variants.
+    pub fn with_seed_variant_allowlist(
+        mut self,
+        allowlist: BTreeMap<String, BTreeSet<String>>,
+    ) -> Result<Self, GeneratorError> {
+        if allowlist.is_empty()
+            || allowlist
+                .iter()
+                .any(|(seed, variants)| seed.trim().is_empty() || variants.is_empty())
+        {
+            return Err(GeneratorError::InvalidInput {
+                field: "allowed_variants_by_seed",
+            });
+        }
+        self.allowed_variants_by_seed = allowlist;
+        Ok(self)
+    }
 }
 
 /// Counters for an auditable generator run.
@@ -805,6 +839,17 @@ impl TrainingDataGenerator {
                     continue;
                 }
             }
+            if !config.allowed_variants_by_seed.is_empty() {
+                let Some(allowed) = config.allowed_variants_by_seed.get(&seed.id) else {
+                    report.seeds_skipped += 1;
+                    continue;
+                };
+                candidates.retain(|candidate| allowed.contains(&candidate.variant));
+                if candidates.is_empty() {
+                    report.seeds_skipped += 1;
+                    continue;
+                }
+            }
             // Spend oracle calls on mutation families with the least retained
             // evidence first. The oracle still determines every outcome; this
             // only controls proposal order within an independent family.
@@ -821,12 +866,15 @@ impl TrainingDataGenerator {
                     .map(|(_, count)| *count)
                     .sum::<usize>()
             });
-            let dataset_role =
-                if reserve_challenge_family(&seed.id, config.seed, config.challenge_family_ratio) {
-                    DatasetRole::Challenge
-                } else {
-                    DatasetRole::Standard
-                };
+            let dataset_role = if reserve_challenge_family(
+                &seed.family_id,
+                config.seed,
+                config.challenge_family_ratio,
+            ) {
+                DatasetRole::Challenge
+            } else {
+                DatasetRole::Standard
+            };
             let root_object_profile = root_object_profile(&seed.schema).map(str::to_owned);
             for candidate in candidates {
                 let policy_runs = self.check_candidate_policies(
@@ -936,8 +984,8 @@ impl TrainingDataGenerator {
                             policy_pack
                         ),
                         source: seed.source.clone(),
-                        family_id: seed.id.clone(),
-                        split_group_id: seed.id.clone(),
+                        family_id: seed.family_id.clone(),
+                        split_group_id: seed.family_id.clone(),
                         dataset_role,
                         contract_id: seed.id.clone(),
                         old_version: "1.0.0".to_owned(),
@@ -1535,6 +1583,14 @@ mod tests {
         assert!(source_matches_profile(
             closed,
             SourceSamplingProfile::BalancedOptional
+        ));
+        assert!(source_matches_profile(
+            open,
+            SourceSamplingProfile::MatchedOptional
+        ));
+        assert!(source_matches_profile(
+            closed,
+            SourceSamplingProfile::MatchedOptional
         ));
         assert_eq!(root_object_profile(open), Some("open"));
         assert_eq!(root_object_profile(closed), Some("closed"));

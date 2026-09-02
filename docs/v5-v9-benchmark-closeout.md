@@ -15,6 +15,24 @@ policy engine remain authoritative, and these generated-corpus results do not
 establish prospective performance on customer contracts, unseen oracle
 behaviour, or a changed JAR/policy-pack file.
 
+The exact V9 executable later became unavailable and could not be recovered.
+V9 is consequently a permanently frozen historical track: its persisted
+artifacts remain valid for their recorded identity, but no new execution may
+be described as V9. The separately archived `c00da951...f6b6` reconstruction
+candidate is named BACKWARD V10 and is never interchangeable with
+`809b25e6...677dc`.
+
+The later exhaustive audit replayed all 68,820 preserved V9 invocations with
+BACKWARD V10. Outcomes and exact stdout matched in all 68,820 cases; there
+were no rejections, stderr diagnostics, or mismatches. The audit also passed
+ten targeted BACKWARD controls and a known-divergent partial-policy resolver
+probe. Its machine-readable report is
+`data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json`
+(SHA-256
+`c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793`).
+This is behavioral evidence for separately versioned V10 work, not recovery
+or replacement of the V9 executable identity.
+
 ## Reproducible evidence
 
 The final artifact is

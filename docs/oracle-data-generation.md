@@ -323,18 +323,131 @@ repeat that work before a new readiness claim.
 
 Before the production corpus, run the pinned JAR over every applicable
 mutation, every approved policy pack, and `BACKWARD`, `FORWARD`, and `FULL`.
-The output retains every raw exit code and stdout/stderr, including exit-2
-rejections, plus the JAR and policy-pack SHA-256 values.
+The v2 output first records a separate JAR `lint` preflight for each proposed
+pair. Only preflight-accepted pairs enter the compatibility matrix. Every raw
+matrix run retains its mutation variant, consumer profile, exit code,
+stdout/stderr, and (when rejected) its rejection stage and reason, plus the JAR
+and policy-pack SHA-256 values.
 
 ```sh
 cargo run -- oracle-conformance \
   --input /Users/siddarthkanamadi/Desktop/dcg-training-data/raw/jsonschemabench/data/full-00000-of-00001.parquet \
-  --output data/generated/dcg-oracle-conformance-v1.json \
+  --output data/generated/dcg-oracle-conformance-v2.json \
   --jar data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar \
   --policy-packs data-contract-governance/contracts/policy-packs.json \
-  --workspace data/oracle-staging/conformance-v1 \
+  --workspace data/oracle-staging/conformance-v2 \
   --max 100 --seed 20260826 --min-families 50 --min-policies 3 --min-checks 150
 ```
+
+For the bounded optional-field go/no-go, derive explicit Open and Closed
+consumers from the same sampled source families and run only FORWARD/FULL:
+
+```sh
+cargo run -- oracle-conformance \
+  --input /path/to/full-00000-of-00001.parquet \
+  --output data/experiments/forward-full-optional-field-conformance/matched-v2.json \
+  --jar data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar \
+  --policy-packs data-contract-governance/contracts/policy-packs-v5-compositional.json \
+  --workspace data/oracle-staging/forward-full-optional-matched-v2 \
+  --source-profile matched-optional --mutation optional_field_added \
+  --mode FORWARD --mode FULL --max 3 --seed 20260901 \
+  --min-families 3 --min-policies 15 --min-checks 360
+```
+
+Matched mode preflights a deterministic candidate pool capped at four times
+`--max`, excludes an entire source family if any profile/variant fails, and
+only then takes the final `--max` families. All pool preflight diagnostics
+remain persisted.
+
+### Oracle-version boundary for the direction-aware track
+
+The frozen direction-aware executable with SHA-256
+`fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923`
+is scoped only to new FORWARD/FULL optional-field work. It supersedes
+`bfc7603ab425609740be3b2207f298ed0d0c0f816a59841d5aa219ccd6478941`
+after the removal-focused control exposed a pre-existing FORWARD-only gap for
+genuine required-field additions, and it also supersedes
+`cce6fc2fb10ebbbf9bbd940f73477ecf3d0540d52087f7480c0d0bd3f3e6ef94`
+within that track because the earlier build did not evaluate genuine
+base-to-candidate removals in FORWARD-only mode. It does not replace the
+frozen BACKWARD V9 and existing external-sourcing baseline, whose executable
+identity remains
+`809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc`.
+
+Do not combine records, promotions, models, readiness evidence, or aggregate
+metrics across those hashes. The old binary could not be recovered and is now
+permanently frozen as a historical identity: no new invocation may be called
+BACKWARD V9. Existing persisted artifacts remain qualified by their recorded
+old hash.
+
+The reproducible successor candidate is archived separately at
+`data/oracle-binaries/backward-v10/contract-cli-c00da951bac88d2b.jar`, with
+SHA-256
+`c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6`.
+It was built twice from source commit `35dfa8858199da668893ce8fb5dd0e8cf7f6434f`
+using separate worktrees and Maven caches; the outputs matched byte for byte.
+It is permanently BACKWARD V10, never V9 and never interchangeable with
+`809b25e6...677dc`.
+
+The completed behavioral audit reconstructed all 68,820 preserved V9
+base/candidate/policy invocations and verified all 68,820 historical pair
+fingerprints before execution. BACKWARD V10 then matched every preserved V9
+outcome and every complete stdout stream, with zero rejections, zero nonempty
+stderr streams, and zero mismatches. Ten root/nested/array BACKWARD controls
+passed. A deliberate shared-code sensitivity probe also distinguished the old
+partial-policy fallback (`BREAKING`) from the later direction-aware JAR
+(`WARNING`), proving that the audit detects the identified resolver change.
+
+The exhaustive evidence is
+`data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json`,
+SHA-256
+`c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793`.
+The earlier
+`data/oracle-binaries/backward-v10/reconstruction-checkpoint-v1.json` remains
+an accurate pre-audit checkpoint rather than being rewritten after the fact.
+
+The persisted control inventory contains one resolver sensitivity probe plus
+ten synthetic BACKWARD controls: root optional additions for open, closed,
+and omitted `additionalProperties`; a nested optional addition to a closed
+object; root optional-field removal; nested required-field removal; genuine
+required-field addition; nested field-type change; array-item field-type
+change; and nested constraint tightening. All passed with their expected
+SAFE/BREAKING result and exact rule-message fragment. Thus the evidence has
+ten controls in addition to the resolver probe, not nine.
+
+This result qualifies the new binary as a behaviorally matched BACKWARD V10
+candidate for new, separately versioned work. It does not restore the missing
+V9 bytes, authorize relabeling V9 records, or allow V9 and V10 hashes to be
+collapsed in a manifest, model, script, or report. The external evaluator now
+has an explicit dual-provenance gate: it accepts the audited V9-training/V10-
+execution tuple only when the registered audit bytes and all internal coverage
+assertions validate, then records both identities in the V4 report. Stripe,
+Kubernetes, and Vega model-scored follow-ups are mechanically unblocked under
+that one tuple; unaudited pairings remain rejected before inference.
+
+### Removal-severity mechanism audit boundary
+
+The pinned policy file with SHA-256
+`8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6`
+contains 15 packs. All resolve `FIELD_REMOVED` to `BREAKING`; none supplies a
+`WARNING` or `IGNORE` override. Repository documentation does not establish
+whether that is deliberate governance or an oversight, so an owner decision
+is still required rather than inferred here.
+
+The separate file
+`data/experiments/forward-removal-mechanism-audit/field-removed-severity-audit-fixture-v1.json`
+has SHA-256
+`33122df6e7b584935918567d683e8a314afdd53db4499f29791f94fbe9d6fcf6`.
+It is mechanism-only evidence for the `RuleSeverity` resolver and makes no
+claim about production policy behavior. Ordinary `PinnedOracle::new`
+construction rejects this identity by hash even if renamed; only the dedicated
+mechanism-audit constructor accepts its exact name and hash. The three-way
+runner independently rejects the same hash. It is forbidden for corpus
+generation, readiness promotion, external evaluation, and benchmark runs.
+
+The addition conformance corpus remains `optional_field_added`-only. Genuine
+removal coverage is carried separately by the five-family executable audit at
+`data/experiments/forward-removal-mechanism-audit/removal-focused-conformance-v1.json`.
 
 Candidate discovery is automatic but promotion is explicit. After reviewing
 the candidate report, select each qualified mode/policy scope separately:

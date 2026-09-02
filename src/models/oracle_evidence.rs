@@ -5,8 +5,15 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::Path;
 
-pub const ORACLE_CONFORMANCE_FORMAT_VERSION: &str = "dcg-oracle-conformance-v1";
+pub const ORACLE_CONFORMANCE_FORMAT_VERSION: &str = "dcg-oracle-conformance-v2";
+const LEGACY_ORACLE_CONFORMANCE_FORMAT_VERSION: &str = "dcg-oracle-conformance-v1";
 pub const ORACLE_PROMOTION_FORMAT_VERSION: &str = "dcg-oracle-invariant-promotions-v1";
+/// Exact identity of the mechanism-only FIELD_REMOVED severity fixture. Any
+/// production corpus or benchmark path must reject this identity.
+pub const FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_SHA256: &str =
+    "33122df6e7b584935918567d683e8a314afdd53db4499f29791f94fbe9d6fcf6";
+pub const FIELD_REMOVED_SEVERITY_AUDIT_FIXTURE_FILE_NAME: &str =
+    "field-removed-severity-audit-fixture-v1.json";
 
 /// Compatibility direction passed verbatim to the pinned CLI.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -63,12 +70,36 @@ impl Default for InvariantEvidenceConfig {
 pub struct OracleConformanceRun {
     pub family_id: String,
     pub mutation_family: String,
+    #[serde(default)]
+    pub mutation_variant: String,
+    #[serde(default)]
+    pub consumer_profile: String,
     pub compatibility_mode: OracleCompatibilityMode,
     pub policy_pack: String,
     pub exit_code: i32,
     pub outcome: String,
     pub stdout: String,
     pub stderr: String,
+    #[serde(default)]
+    pub rejection_stage: Option<String>,
+    #[serde(default)]
+    pub rejection_reason: Option<String>,
+}
+
+/// One schema-lint preflight performed before a candidate enters the policy
+/// and direction matrix.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OracleConformancePreflight {
+    pub family_id: String,
+    pub mutation_family: String,
+    pub mutation_variant: String,
+    pub consumer_profile: String,
+    pub accepted: bool,
+    pub exit_code: i32,
+    pub stdout: String,
+    pub stderr: String,
+    pub rejection_stage: Option<String>,
+    pub rejection_reason: Option<String>,
 }
 
 /// Matrix cell evidence, qualified to exactly one mutation, mode, and policy.
@@ -121,6 +152,8 @@ pub struct OracleConformanceReport {
     pub policy_packs_sha256: String,
     pub generator_version: String,
     pub thresholds: InvariantEvidenceConfig,
+    #[serde(default)]
+    pub preflight_runs: Vec<OracleConformancePreflight>,
     pub runs: Vec<OracleConformanceRun>,
     pub cells: Vec<OracleConformanceCell>,
     pub cross_policy: Vec<OracleCrossPolicyEvidence>,
@@ -154,17 +187,51 @@ impl OracleConformanceReport {
         oracle_jar_sha256: String,
         policy_packs_sha256: String,
         thresholds: InvariantEvidenceConfig,
+        runs: Vec<OracleConformanceRun>,
+    ) -> Self {
+        Self::new_with_preflights(
+            oracle_jar_sha256,
+            policy_packs_sha256,
+            thresholds,
+            Vec::new(),
+            runs,
+        )
+    }
+
+    pub fn new_with_preflights(
+        oracle_jar_sha256: String,
+        policy_packs_sha256: String,
+        thresholds: InvariantEvidenceConfig,
+        mut preflight_runs: Vec<OracleConformancePreflight>,
         mut runs: Vec<OracleConformanceRun>,
     ) -> Self {
+        preflight_runs.sort_by(|left, right| {
+            (
+                &left.family_id,
+                &left.consumer_profile,
+                &left.mutation_family,
+                &left.mutation_variant,
+            )
+                .cmp(&(
+                    &right.family_id,
+                    &right.consumer_profile,
+                    &right.mutation_family,
+                    &right.mutation_variant,
+                ))
+        });
         runs.sort_by(|left, right| {
             (
                 &left.mutation_family,
+                &left.mutation_variant,
+                &left.consumer_profile,
                 left.compatibility_mode,
                 &left.policy_pack,
                 &left.family_id,
             )
                 .cmp(&(
                     &right.mutation_family,
+                    &right.mutation_variant,
+                    &right.consumer_profile,
                     right.compatibility_mode,
                     &right.policy_pack,
                     &right.family_id,
@@ -178,6 +245,7 @@ impl OracleConformanceReport {
             policy_packs_sha256,
             generator_version: env!("CARGO_PKG_VERSION").to_owned(),
             thresholds,
+            preflight_runs,
             runs,
             cells,
             cross_policy,
@@ -193,12 +261,15 @@ impl OracleConformanceReport {
         let mut report: Self =
             serde_json::from_slice(&fs::read(path).map_err(|error| error.to_string())?)
                 .map_err(|error| error.to_string())?;
-        if report.format_version != ORACLE_CONFORMANCE_FORMAT_VERSION {
+        if report.format_version != ORACLE_CONFORMANCE_FORMAT_VERSION
+            && report.format_version != LEGACY_ORACLE_CONFORMANCE_FORMAT_VERSION
+        {
             return Err(format!(
                 "unsupported conformance report: {}",
                 report.format_version
             ));
         }
+        report.format_version = ORACLE_CONFORMANCE_FORMAT_VERSION.to_owned();
         report.rebuild_aggregates();
         Ok(report)
     }
@@ -508,6 +579,8 @@ mod tests {
         OracleConformanceRun {
             family_id: family.to_owned(),
             mutation_family: mutation.to_owned(),
+            mutation_variant: String::new(),
+            consumer_profile: String::new(),
             compatibility_mode: mode,
             policy_pack: policy.to_owned(),
             exit_code: match outcome {
@@ -518,6 +591,8 @@ mod tests {
             outcome: outcome.to_owned(),
             stdout: String::new(),
             stderr: String::new(),
+            rejection_stage: (outcome == "rejected").then(|| "compatibility_evaluation".to_owned()),
+            rejection_reason: (outcome == "rejected").then(|| "test rejection".to_owned()),
         }
     }
     fn report(runs: Vec<OracleConformanceRun>) -> OracleConformanceReport {

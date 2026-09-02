@@ -1,0 +1,66 @@
+{
+  "format_version": "forward-full-optional-field-direction-aware-decision-v3",
+  "decision": "CONFORMANCE_PASS",
+  "scope": "V4-P0 FORWARD/FULL direction dispatch and bounded optional-field conformance only",
+  "removal_batch": {
+    "path": "data/experiments/forward-removal-mechanism-audit/removal-focused-conformance-v1.json",
+    "sha256": "29e64268f8e89aa33e4dbd52caf2380f6b2e506f1c673c8becc288e9bc5bc41b",
+    "preflights": 13,
+    "accepted_preflights": 13,
+    "invocations": 26,
+    "rejected_invocations": 0,
+    "assertions": 26,
+    "failed_assertions": 0,
+    "independent_families": 5,
+    "cases": [
+      "root optional removal",
+      "root required removal",
+      "nested optional removal",
+      "nested required removal",
+      "genuine required-field addition"
+    ],
+    "production_calls": "10 BREAKING outcomes against the real pinned policy file",
+    "mechanism_only_calls": "8 WARNING and 8 SAFE/IGNORE outcomes against the audit-only fixture",
+    "full_duplication": "BY_DESIGN: FULL retains separate BACKWARD and [FORWARD] findings"
+  },
+  "required_addition_control": {
+    "initial_failed_artifact": "data/experiments/forward-removal-mechanism-audit/pre-required-addition-fix-v1.json",
+    "initial_failed_artifact_sha256": "924ed138629f5f947d98ca839e522ebcb388d4970c15f94363befea591a0facc",
+    "initial_forward_result": "SAFE with no finding",
+    "fix": "Actual diff.requiredAdded() is evaluated through REQUIRED_FIELD_ADDED independently of removal filtering.",
+    "final_forward_result": "BREAKING with [FORWARD] Required field added: added"
+  },
+  "pinned_policy_gap": {
+    "packs": 15,
+    "field_removed_effective_severity": "BREAKING in every pack",
+    "warning_variants": 0,
+    "ignore_variants": 0,
+    "governance_intent": "UNRESOLVED: documentation does not establish whether always-BREAKING removal is deliberate governance or an oversight; owner confirmation is requested."
+  },
+  "final_optional_addition_matrix": {
+    "path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-required-addition-fixed-v4.json",
+    "sha256": "17ea885a18b3d19d8d01613263f19f24dbbf48a923c609373eca5af444751ee4",
+    "preflights": 96,
+    "accepted_preflights": 96,
+    "invocations": 720,
+    "rejected_invocations": 0,
+    "FORWARD": {
+      "open_safe": 180,
+      "closed_breaking": 180
+    },
+    "FULL": {
+      "open_safe": 180,
+      "closed_breaking": 180
+    }
+  },
+  "frozen_inputs": {
+    "oracle_jar_sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "pinned_policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+    "audit_only_fixture_sha256": "33122df6e7b584935918567d683e8a314afdd53db4499f29791f94fbe9d6fcf6"
+  },
+  "source_commit": "da93082e1ac6617ddf8355704e78b34c426b8523",
+  "supersedes": "data/experiments/forward-full-optional-field-conformance/direction-aware-go-decision-v2.json",
+  "family_isolated_corpus_generated": false,
+  "benchmark_ready": false,
+  "three_seed_evaluation_run": false
+}

@@ -1,0 +1,230 @@
+{
+  "format_version": "dcg-external-evaluation-report-v4",
+  "mode": "BACKWARD",
+  "frozen_inference_only": true,
+  "max_structural_coordinate_distance": 1,
+  "v9_reference": {
+    "v9_dataset_path": "data/generated/dcg-oracle-production-v9-structural-balanced.json",
+    "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "model_path": "data/experiments/v9-multiclass-cpu-100e/models/seed-20260826-normal-family-split.json",
+    "model_sha256": "5da2fedbee5d1b3c84c79cb75e2cd10c0b3462066b66571570e93fb7ccd84988",
+    "model_version": "dcg-three-way-v6-normal-family-split-seed-20260826",
+    "feature_version": "dcg-features-v6",
+    "training_oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "dual_provenance": {
+    "training_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3",
+    "training_oracle_jar_sha256": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+    "execution_oracle_jar_sha256": "c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+    "equivalence_audit_path": "data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json",
+    "equivalence_audit_sha256": "c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793",
+    "equivalence_audit_result": "COMPLETE_PRESERVED_V9_MATCH",
+    "identity_interchangeable": false
+  },
+  "manifest_sha256": "cf0eafd53c47d9000b020063273e6327d7d8b783d1f51606c1dce68f1f8e195e",
+  "traceability": {
+    "status": "traceability-only",
+    "accuracy_evidence": false,
+    "clean_record_count": 0,
+    "clean_record_ids": [],
+    "rejected_record_count": 8,
+    "rejection_skew": {
+      "CONSTRAINT_OR_RESTRICTION_CHANGED": {
+        "selected": 3,
+        "clean": 2,
+        "rejected": 1,
+        "rejection_rate": 0.3333333333333333
+      },
+      "FIELD_REMOVED": {
+        "selected": 7,
+        "clean": 0,
+        "rejected": 7,
+        "rejection_rate": 1.0
+      }
+    },
+    "overlap_characterization": "The persisted no-oracle projection accepted these two rows at policy-free V6 structural distance 2; seven FIELD_REMOVED rows and one constraint-change row were rejected at distance <=1.",
+    "preflight_report_path": "preflight-backward-v10-v1.json",
+    "original_preflight_report_path": "../kubernetes-removal-biased-prescreen-v1.json#/projection/preflight",
+    "limitations": [
+      "Only two independent accepted transitions exist; seed repetitions are not additional independent evidence."
+    ]
+  },
+  "total_manifest_records": 2,
+  "scored_records": 2,
+  "traceability_excluded_records": 0,
+  "manifest_overlap_excluded_records": 0,
+  "oracle_rejected_records": 0,
+  "overlap_rejected_records": 0,
+  "overall": {
+    "records": 2,
+    "accuracy": 0.5,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ]
+  },
+  "by_mutation": {
+    "CONSTRAINT_OR_RESTRICTION_CHANGED": {
+      "records": 2,
+      "accuracy": 0.5,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ]
+    }
+  },
+  "by_policy_pack": {
+    "baseline": {
+      "records": 2,
+      "accuracy": 0.5,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ]
+    }
+  },
+  "by_mutation_policy_pack": {
+    "CONSTRAINT_OR_RESTRICTION_CHANGED|baseline": {
+      "records": 2,
+      "accuracy": 0.5,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ]
+    }
+  },
+  "records": [
+    {
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "source": "kubernetes/kubernetes",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/kubernetes/kubernetes",
+      "base_revision": "v1.21.0",
+      "candidate_revision": "v1.22.0",
+      "base_commit": "cb303e613a121a29364f75cc67d3d580833a7479",
+      "candidate_commit": "c2b5237ccd9c0f1d600d3072634ca66cefdf272f",
+      "base_blob_sha1": "60cc68f14be4f491ecf5b6336dcea39e613b3b28",
+      "candidate_blob_sha1": "5404b05fb9bce80daa329a275b86e2efb226e89d",
+      "source_license": "Apache-2.0",
+      "source_path": "api/openapi-spec/swagger.json#/definitions/io.k8s.api.networking.v1.HTTPIngressPath",
+      "family_id": "kubernetes.openapi.io.k8s.api.networking.v1.HTTPIngressPath",
+      "contract_id": "io.k8s.api.networking.v1.HTTPIngressPath",
+      "old_version": "v1.21.0",
+      "new_version": "v1.22.0",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "external_use": "accuracy-bearing",
+      "status": "scored",
+      "rejection_reasons": [],
+      "pair_fingerprint": "95e533b7820b34728133dafff1f539d927ee08094291d6051b9cdeee70db1253",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "oracle": {
+        "outcome": "breaking",
+        "exit_code": 1,
+        "stdout": "Schema compatibility: FAIL\nBreaking changes: [Required field added: pathType]\n",
+        "stderr": ""
+      },
+      "actual_label": "breaking",
+      "predicted_label": "breaking",
+      "predicted_probabilities": [
+        1.0385339572379604e-18,
+        7.650228867581715e-8,
+        0.9999999234977114
+      ]
+    },
+    {
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "source": "kubernetes/kubernetes",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/kubernetes/kubernetes",
+      "base_revision": "v1.28.0",
+      "candidate_revision": "v1.29.0",
+      "base_commit": "855e7c48de7388eb330da0f8d9d2394ee818fb8d",
+      "candidate_commit": "3f7a50f38688eb332e2a1b013678c6435d539ae6",
+      "base_blob_sha1": "6c7f34825af6638ca2d83dabaea438bcc011dfe9",
+      "candidate_blob_sha1": "46401f328bd1f437d583719fcbd8b10df78189f8",
+      "source_license": "Apache-2.0",
+      "source_path": "api/openapi-spec/swagger.json#/definitions/io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "family_id": "kubernetes.openapi.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "contract_id": "io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "old_version": "v1.28.0",
+      "new_version": "v1.29.0",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "external_use": "accuracy-bearing",
+      "status": "scored",
+      "rejection_reasons": [],
+      "pair_fingerprint": "afd6baa18e9733384df4ca6809e3a9c8704428860246c80b1f63c3aa0fda13c1",
+      "exact_model_feature_overlap": false,
+      "nearest_policy_free_structural_distance": 2,
+      "oracle": {
+        "outcome": "safe",
+        "exit_code": 0,
+        "stdout": "Schema compatibility: PASS\n",
+        "stderr": ""
+      },
+      "actual_label": "safe",
+      "predicted_label": "breaking",
+      "predicted_probabilities": [
+        7.589185454828001e-10,
+        0.00020581902501317514,
+        0.9997941802160683
+      ]
+    }
+  ]
+}

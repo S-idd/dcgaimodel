@@ -1,0 +1,199 @@
+{
+  "class_order": [
+    "non_breaking",
+    "breaking"
+  ],
+  "conclusion": "The full model's 100% result is fully explained by feature index 65 on this corpus; this benchmark confirms mechanical wiring and does not demonstrate generalization beyond that feature.",
+  "format_version": "dcg-one-feature-ablation-v1",
+  "input": {
+    "benchmark_ready": true,
+    "dataset_path": "data/generated/dcg-forward-full-optional-field-family-isolated-benchmark-ready-v1.json",
+    "dataset_sha256": "f4f24ca9d09a4417be7c43d7e02d060c186e47fbe0b76439f1b565cd6f7e0d48",
+    "records": 840,
+    "reference_full_model_report_path": "data/experiments/forward-full-optional-field-family-isolated/binary-three-seed-v1/binary-three-seed-experiment-report.json",
+    "reference_full_model_report_sha256": "63dccfd5b37c64a2fcb80224f12d5324c29a83812f887395e6ffaee0764b2c73"
+  },
+  "matches_full_model_on_every_test_and_challenge_split": true,
+  "scope": "Existing FORWARD/FULL optional-field corpus only; no JAR was loaded or executed.",
+  "seed_runs": [
+    {
+      "challenge_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            120,
+            0
+          ],
+          [
+            0,
+            120
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "challenge_records": 240,
+      "learned_rule": {
+        "feature_at_least_0_5_prediction": "breaking",
+        "feature_below_0_5_prediction": "non_breaking"
+      },
+      "matches_full_model_challenge": true,
+      "matches_full_model_test": true,
+      "seed": 20260826,
+      "test_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            90,
+            0
+          ],
+          [
+            0,
+            90
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "test_records": 180,
+      "training_bucket_counts": {
+        "feature_at_least_0_5": {
+          "breaking": 120,
+          "non_breaking": 0
+        },
+        "feature_below_0_5": {
+          "breaking": 0,
+          "non_breaking": 120
+        }
+      },
+      "training_records": 240,
+      "validation_records": 180
+    },
+    {
+      "challenge_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            120,
+            0
+          ],
+          [
+            0,
+            120
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "challenge_records": 240,
+      "learned_rule": {
+        "feature_at_least_0_5_prediction": "breaking",
+        "feature_below_0_5_prediction": "non_breaking"
+      },
+      "matches_full_model_challenge": true,
+      "matches_full_model_test": true,
+      "seed": 20260827,
+      "test_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            90,
+            0
+          ],
+          [
+            0,
+            90
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "test_records": 180,
+      "training_bucket_counts": {
+        "feature_at_least_0_5": {
+          "breaking": 120,
+          "non_breaking": 0
+        },
+        "feature_below_0_5": {
+          "breaking": 0,
+          "non_breaking": 120
+        }
+      },
+      "training_records": 240,
+      "validation_records": 180
+    },
+    {
+      "challenge_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            120,
+            0
+          ],
+          [
+            0,
+            120
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "challenge_records": 240,
+      "learned_rule": {
+        "feature_at_least_0_5_prediction": "breaking",
+        "feature_below_0_5_prediction": "non_breaking"
+      },
+      "matches_full_model_challenge": true,
+      "matches_full_model_test": true,
+      "seed": 20260828,
+      "test_metrics": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            90,
+            0
+          ],
+          [
+            0,
+            90
+          ]
+        ],
+        "f1_score": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "test_records": 180,
+      "training_bucket_counts": {
+        "feature_at_least_0_5": {
+          "breaking": 120,
+          "non_breaking": 0
+        },
+        "feature_below_0_5": {
+          "breaking": 0,
+          "non_breaking": 120
+        }
+      },
+      "training_records": 240,
+      "validation_records": 180
+    }
+  ],
+  "single_feature": {
+    "all_other_features_used": false,
+    "index": 65,
+    "name": "root_optional_fields_added_to_closed_object",
+    "threshold": 0.5
+  },
+  "split_contract": {
+    "test": 0.15,
+    "train": 0.7,
+    "validation": 0.15
+  },
+  "status": "CONFIRMED",
+  "target": "binary_breaking",
+  "training_method": "For each seed, independently fit the majority binary label in the <0.5 and >=0.5 feature buckets using only that seed's training partition."
+}

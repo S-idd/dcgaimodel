@@ -1,20 +1,23 @@
 use dcgaimodel::dataset::DatasetSplitConfig;
 use dcgaimodel::evaluation::{ClassificationMetrics, evaluate_binary_classification};
 use dcgaimodel::generation::{
-    CoverageTarget, GeneratorConfig, JsonSchemaBenchSource, MutationKind,
-    OptionalProfileCoverageTarget, OracleConfig, PinnedOracle, SourceSamplingProfile,
-    TrainingDataGenerator, build_oracle_conformance_matrix, has_fatal_oracle_runtime_failure,
-    refeature_v5_as_v6,
+    BackwardEquivalenceAuditConfig, CoverageTarget, GeneratedPair, GeneratorConfig,
+    JsonSchemaBenchSource, MutationKind, OptionalProfileCoverageTarget, OracleConfig, PinnedOracle,
+    SeedSchema, SourceSamplingProfile, TrainingDataGenerator,
+    build_forward_removal_mechanism_audit, build_matched_optional_field_conformance_matrix,
+    build_oracle_conformance_matrix, candidates_for_schema, has_fatal_oracle_runtime_failure,
+    refeature_v5_as_v6, run_backward_equivalence_audit,
 };
 use dcgaimodel::models::{
-    ChallengeProtocol, DatasetRole, DcgPipelineConfig, DcgPipelineResult, ExternalEvaluationConfig,
-    ExternalFeatureDiagnosticConfig, ExternalManifestPreflightConfig, InvariantEvidenceConfig,
-    ModelArtifact, ModelConfig, OracleCompatibilityMode, OracleConformanceReport,
-    OracleInvariantPromotionManifest, PreparedDcgDataset, TargetMode, ThreeWayExperimentConfig,
-    TrainingInputProvenance, TrainingMetadata, audit_challenge_near_duplicates,
-    diagnose_external_feature_space, evaluate_external_transitions, evaluate_three_way,
-    preflight_external_manifest, run_three_way_compatibility_pipeline, run_three_way_experiment,
-    structural_variant_key,
+    ChallengeProtocol, CompatibilityLabel, DatasetRole, DcgPipelineConfig, DcgPipelineResult,
+    ExternalEvaluationConfig, ExternalFeatureDiagnosticConfig, ExternalManifestPreflightConfig,
+    InvariantEvidenceConfig, ModelArtifact, ModelConfig, OracleCompatibilityMode,
+    OracleConformanceReport, OracleInvariantPromotionManifest, PreparedDcgDataset, TargetMode,
+    ThreeWayExperimentConfig, TrainingInputProvenance, TrainingMetadata,
+    audit_challenge_near_duplicates, diagnose_external_feature_space,
+    evaluate_external_transitions, evaluate_three_way, preflight_external_manifest,
+    run_binary_three_seed_experiment, run_three_way_compatibility_pipeline,
+    run_three_way_experiment, structural_variant_key,
 };
 use dcgaimodel::nn::Sgd;
 use dcgaimodel::prediction::PredictionKind;
@@ -32,6 +35,10 @@ fn main() {
         Some("refeature-v6") => refeature_v6(arguments.collect()),
         Some("audit") => audit(arguments.collect()),
         Some("oracle-conformance") => oracle_conformance(arguments.collect()),
+        Some("audit-forward-removals") => audit_forward_removals(arguments.collect()),
+        Some("audit-backward-v10-equivalence") => {
+            audit_backward_v10_equivalence(arguments.collect())
+        }
         Some("reclassify-conformance") => reclassify_conformance(arguments.collect()),
         Some("merge-conformance") => merge_conformance(arguments.collect()),
         Some("promote-invariants") => promote_invariants(arguments.collect()),
@@ -40,18 +47,193 @@ fn main() {
         Some("evaluate-three-way-mutation") => evaluate_three_way_mutation(arguments.collect()),
         Some("evaluate-protocols") => evaluate_protocols(arguments.collect()),
         Some("run-three-way-experiments") => run_three_way_experiments(arguments.collect()),
+        Some("run-binary-three-seed-experiment") => {
+            run_binary_three_seed_experiment_command(arguments.collect())
+        }
+        Some("run-feature-ablation") => run_feature_ablation(arguments.collect()),
         Some("audit-challenge-near-duplicates") => {
             audit_challenge_near_duplicates_command(arguments.collect())
         }
         Some("evaluate-external") => evaluate_external(arguments.collect()),
         Some("preflight-external") => preflight_external(arguments.collect()),
+        Some("generate-forward-optional-isolated") => {
+            generate_forward_optional_isolated(arguments.collect())
+        }
+        Some("promote-forward-optional-benchmark-ready") => {
+            promote_forward_optional_benchmark_ready(arguments.collect())
+        }
         Some("diagnose-external-features") => diagnose_external_features(arguments.collect()),
-        _ => Err("Usage: dcgaimodel <generate|refeature-v6|audit|oracle-conformance|reclassify-conformance|merge-conformance|promote-invariants|train|train-three-way|evaluate-three-way-mutation|evaluate-protocols|run-three-way-experiments|audit-challenge-near-duplicates|evaluate-external|preflight-external|diagnose-external-features> [options]".to_owned()),
+        _ => Err("Usage: dcgaimodel <generate|generate-forward-optional-isolated|promote-forward-optional-benchmark-ready|refeature-v6|audit|oracle-conformance|audit-forward-removals|audit-backward-v10-equivalence|reclassify-conformance|merge-conformance|promote-invariants|train|train-three-way|evaluate-three-way-mutation|evaluate-protocols|run-three-way-experiments|run-binary-three-seed-experiment|run-feature-ablation|audit-challenge-near-duplicates|evaluate-external|preflight-external|diagnose-external-features> [options]".to_owned()),
     };
     if let Err(error) = result {
         eprintln!("dcgaimodel failed: {error}");
         std::process::exit(2);
     }
+}
+
+fn audit_backward_v10_equivalence(arguments: Vec<String>) -> Result<(), String> {
+    let mut v9_dataset = None;
+    let mut source_parquet = None;
+    let mut v10_jar = None;
+    let mut divergent_control_jar = None;
+    let mut policy_packs = None;
+    let mut workspace = None;
+    let mut output = None;
+    let mut workers = 1usize;
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--v9-dataset" => v9_dataset = Some(PathBuf::from(value)),
+            "--source-parquet" => source_parquet = Some(PathBuf::from(value)),
+            "--v10-jar" => v10_jar = Some(PathBuf::from(value)),
+            "--divergent-control-jar" => divergent_control_jar = Some(PathBuf::from(value)),
+            "--policy-packs" => policy_packs = Some(PathBuf::from(value)),
+            "--workspace" => workspace = Some(PathBuf::from(value)),
+            "--output" => output = Some(PathBuf::from(value)),
+            "--workers" => {
+                workers = value.parse().map_err(|_| {
+                    format!("--workers must be a positive whole number, got {value}")
+                })?;
+            }
+            _ => {
+                return Err(format!(
+                    "Unknown audit-backward-v10-equivalence option: {flag}"
+                ));
+            }
+        }
+        index += 2;
+    }
+    let output = output.ok_or("Missing --output")?;
+    if output.exists() {
+        return Err(format!(
+            "--output already exists; refusing to overwrite {}",
+            output.display()
+        ));
+    }
+    let report = run_backward_equivalence_audit(&BackwardEquivalenceAuditConfig {
+        v9_dataset_path: v9_dataset.ok_or("Missing --v9-dataset")?,
+        source_parquet_path: source_parquet.ok_or("Missing --source-parquet")?,
+        v10_jar_path: v10_jar.ok_or("Missing --v10-jar")?,
+        divergent_control_jar_path: divergent_control_jar
+            .ok_or("Missing --divergent-control-jar")?,
+        policy_packs_path: policy_packs.ok_or("Missing --policy-packs")?,
+        workspace: workspace.ok_or("Missing --workspace")?,
+        workers,
+    })
+    .map_err(|error| error.to_string())?;
+    if let Some(parent) = output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &output,
+        serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "BACKWARD V10 equivalence audit complete: result={}, invocations={}, outcome_mismatches={}, stdout_mismatches={}, output={}",
+        report.conclusion.behavioral_result,
+        report.preserved_v9_replay.invocations,
+        report.preserved_v9_replay.outcome_mismatches,
+        report.preserved_v9_replay.exact_stdout_mismatches,
+        output.display(),
+    );
+    if report.conclusion.behavioral_result == "BEHAVIORAL_DIVERGENCE" {
+        return Err(format!(
+            "behavioral divergence recorded in {}",
+            output.display()
+        ));
+    }
+    Ok(())
+}
+
+fn audit_forward_removals(arguments: Vec<String>) -> Result<(), String> {
+    let mut output = None;
+    let mut jar = None;
+    let mut pinned_policy_packs = None;
+    let mut audit_policy_fixture = None;
+    let mut workspace = None;
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--output" => output = Some(PathBuf::from(value)),
+            "--jar" => jar = Some(PathBuf::from(value)),
+            "--pinned-policy-packs" => pinned_policy_packs = Some(PathBuf::from(value)),
+            "--audit-policy-fixture" => audit_policy_fixture = Some(PathBuf::from(value)),
+            "--workspace" => workspace = Some(PathBuf::from(value)),
+            _ => return Err(format!("Unknown audit-forward-removals option: {flag}")),
+        }
+        index += 2;
+    }
+    let output = output.ok_or("Missing --output")?;
+    if output.exists() {
+        return Err(format!(
+            "--output already exists; refusing to overwrite {}",
+            output.display()
+        ));
+    }
+    let jar = jar.ok_or("Missing --jar")?;
+    let pinned_oracle = PinnedOracle::new(OracleConfig {
+        java_program: PathBuf::from("java"),
+        jar_path: jar.clone(),
+        policy_packs_path: pinned_policy_packs.ok_or("Missing --pinned-policy-packs")?,
+    })
+    .map_err(|error| error.to_string())?;
+    let audit_oracle = PinnedOracle::new_policy_mechanism_audit(OracleConfig {
+        java_program: PathBuf::from("java"),
+        jar_path: jar,
+        policy_packs_path: audit_policy_fixture.ok_or("Missing --audit-policy-fixture")?,
+    })
+    .map_err(|error| error.to_string())?;
+    let report = build_forward_removal_mechanism_audit(
+        &pinned_oracle,
+        &audit_oracle,
+        &workspace.ok_or("Missing --workspace")?,
+    )
+    .map_err(|error| error.to_string())?;
+    if let Some(parent) = output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &output,
+        serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    let passed = report["passed"].as_bool() == Some(true);
+    println!(
+        "FORWARD removal mechanism audit: passed={passed}, preflights={}, invocations={}, assertions={}, jar_sha256={}, pinned_policy_packs_sha256={}, audit_fixture_sha256={}, output={}",
+        report["preflights"].as_array().map_or(0, Vec::len),
+        report["invocations"].as_array().map_or(0, Vec::len),
+        report["assertions"].as_array().map_or(0, Vec::len),
+        report["identity"]["oracle_jar_sha256"]
+            .as_str()
+            .unwrap_or("missing"),
+        report["identity"]["pinned_policy_packs_sha256"]
+            .as_str()
+            .unwrap_or("missing"),
+        report["identity"]["audit_only_policy_fixture_sha256"]
+            .as_str()
+            .unwrap_or("missing"),
+        output.display(),
+    );
+    if !passed {
+        return Err(format!(
+            "removal-focused conformance assertions failed; inspect {}",
+            output.display()
+        ));
+    }
+    Ok(())
 }
 
 /// Writes a bounded, reproducible overlap audit for selected held-out
@@ -252,6 +434,609 @@ fn preflight_external(arguments: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
+/// Generates only the FORWARD/FULL optional-addition track from a manifest
+/// that has passed the existing V9 external-contamination gate. The gate is
+/// called here directly before `PinnedOracle` is constructed, so a rejected
+/// source/family/pair/feature record cannot reach a JAR invocation.
+fn generate_forward_optional_isolated(arguments: Vec<String>) -> Result<(), String> {
+    let mut manifest = None;
+    let mut v9_dataset = None;
+    let mut jar = None;
+    let mut policy_packs = None;
+    let mut workspace = None;
+    let mut output = None;
+    let mut preflight_output = None;
+    let mut evidence_output = None;
+    let mut seed = 2u64;
+    let mut challenge_family_ratio = 0.30f64;
+    let mut oracle_workers = 15usize;
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--manifest" => manifest = Some(PathBuf::from(value)),
+            "--v9-dataset" => v9_dataset = Some(PathBuf::from(value)),
+            "--jar" => jar = Some(PathBuf::from(value)),
+            "--policy-packs" => policy_packs = Some(PathBuf::from(value)),
+            "--workspace" => workspace = Some(PathBuf::from(value)),
+            "--output" => output = Some(PathBuf::from(value)),
+            "--preflight-output" => preflight_output = Some(PathBuf::from(value)),
+            "--evidence-output" => evidence_output = Some(PathBuf::from(value)),
+            "--seed" => {
+                seed = value
+                    .parse()
+                    .map_err(|_| format!("--seed must be a whole number, got {value}"))?
+            }
+            "--challenge-family-ratio" => {
+                challenge_family_ratio = value
+                    .parse()
+                    .map_err(|_| format!("--challenge-family-ratio must be finite, got {value}"))?
+            }
+            "--oracle-workers" => {
+                oracle_workers = value
+                    .parse()
+                    .map_err(|_| format!("--oracle-workers must be a whole number, got {value}"))?
+            }
+            _ => {
+                return Err(format!(
+                    "Unknown generate-forward-optional-isolated option: {flag}"
+                ));
+            }
+        }
+        index += 2;
+    }
+    let manifest = manifest.ok_or("Missing --manifest")?;
+    let v9_dataset = v9_dataset.ok_or("Missing --v9-dataset")?;
+    let jar = jar.ok_or("Missing --jar")?;
+    let policy_packs = policy_packs.ok_or("Missing --policy-packs")?;
+    let workspace = workspace.ok_or("Missing --workspace")?;
+    let output = output.ok_or("Missing --output")?;
+    let preflight_output = preflight_output.ok_or("Missing --preflight-output")?;
+    let evidence_output = evidence_output.ok_or("Missing --evidence-output")?;
+    for path in [&output, &preflight_output, &evidence_output] {
+        if path.exists() {
+            return Err(format!(
+                "refusing to overwrite existing isolated-track artifact {}",
+                path.display()
+            ));
+        }
+    }
+
+    // This is the already-reviewed isolation implementation. Do not replace
+    // it with a track-local approximation.
+    let preflight = preflight_external_manifest(&ExternalManifestPreflightConfig {
+        manifest_path: manifest.clone(),
+        v9_dataset_path: v9_dataset,
+        jar_path: jar.clone(),
+        policy_packs_path: policy_packs.clone(),
+        max_structural_coordinate_distance: 1,
+    })?;
+    if let Some(parent) = preflight_output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &preflight_output,
+        serde_json::to_vec_pretty(&preflight).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    if !preflight.passed {
+        return Err(format!(
+            "preflight_external_manifest rejected {} of {} transitions; no JAR was invoked and no corpus was generated",
+            preflight.rejected_records, preflight.total_records
+        ));
+    }
+
+    let manifest_document = fs::read_to_string(&manifest).map_err(|error| error.to_string())?;
+    let manifest_json = serde_json::from_str::<serde_json::Value>(&manifest_document)
+        .map_err(|error| error.to_string())?;
+    let transitions = manifest_json
+        .get("transitions")
+        .and_then(serde_json::Value::as_array)
+        .ok_or("isolated optional manifest has no transitions array")?;
+    let mut seeds = BTreeMap::<String, SeedSchema>::new();
+    let mut allowed_variants = BTreeMap::<String, BTreeSet<String>>::new();
+    let mut family_profiles = BTreeMap::<String, BTreeSet<String>>::new();
+    let mut policies = BTreeSet::new();
+    for transition in transitions {
+        let field = |name: &str| {
+            transition
+                .get(name)
+                .and_then(serde_json::Value::as_str)
+                .ok_or_else(|| format!("isolated optional manifest transition lacks {name}"))
+        };
+        if field("mutation_id")? != "OPTIONAL_FIELD_ADDED" {
+            return Err(
+                "isolated optional corpus manifest contains a non-optional-addition mutation"
+                    .to_owned(),
+            );
+        }
+        if field("external_use")? != "traceability-only" {
+            return Err(
+                "generated-source isolation manifests must remain traceability-only and cannot claim external accuracy evidence"
+                    .to_owned(),
+            );
+        }
+        let family_id = field("family_id")?.to_owned();
+        let profile_id = field("contract_id")?.to_owned();
+        let mutation_variant = field("mutation_variant")?.to_owned();
+        let source = field("source")?.to_owned();
+        let base = transition
+            .get("base_schema")
+            .ok_or("isolated optional manifest transition lacks base_schema")?;
+        let profile = if base
+            .get("additionalProperties")
+            .and_then(serde_json::Value::as_bool)
+            == Some(false)
+        {
+            "closed"
+        } else {
+            "open"
+        };
+        family_profiles
+            .entry(family_id.clone())
+            .or_default()
+            .insert(profile.to_owned());
+        policies.insert(field("policy_pack")?.to_owned());
+        allowed_variants
+            .entry(profile_id.clone())
+            .or_default()
+            .insert(mutation_variant);
+        let schema = serde_json::to_string(base).map_err(|error| error.to_string())?;
+        match seeds.entry(profile_id.clone()) {
+            std::collections::btree_map::Entry::Vacant(entry) => {
+                entry.insert(SeedSchema {
+                    id: profile_id,
+                    family_id,
+                    source,
+                    schema,
+                });
+            }
+            std::collections::btree_map::Entry::Occupied(entry)
+                if entry.get().schema != schema || entry.get().family_id != family_id =>
+            {
+                return Err(format!(
+                    "profile seed {} maps to inconsistent base schemas or families",
+                    entry.key()
+                ));
+            }
+            _ => {}
+        }
+    }
+    let incomplete_families = family_profiles
+        .iter()
+        .filter(|(_, profiles)| !profiles.contains("open") || !profiles.contains("closed"))
+        .map(|(family, _)| family.clone())
+        .collect::<Vec<_>>();
+    if !incomplete_families.is_empty() {
+        return Err(format!(
+            "isolated optional corpus requires matched open/closed profiles for every family; incomplete families: {incomplete_families:?}"
+        ));
+    }
+    if family_profiles.len() < 4 {
+        return Err(
+            "isolated optional corpus requires at least four matched source families so standard and challenge roles can both remain independent"
+                .to_owned(),
+        );
+    }
+    let seeds = seeds.into_values().collect::<Vec<_>>();
+    let policies = policies.into_iter().collect::<Vec<_>>();
+    let oracle = PinnedOracle::new(OracleConfig {
+        java_program: PathBuf::from("java"),
+        jar_path: jar,
+        policy_packs_path: policy_packs,
+    })
+    .map_err(|error| error.to_string())?;
+    let mut schema_preflights = Vec::new();
+    for source_seed in &seeds {
+        let allowed = allowed_variants
+            .get(&source_seed.id)
+            .expect("manifest-derived seed has a variant allowlist");
+        for candidate in candidates_for_schema(&source_seed.schema)
+            .map_err(|error| error.to_string())?
+            .into_iter()
+            .filter(|candidate| {
+                candidate.kind == MutationKind::OptionalFieldAdded
+                    && allowed.contains(&candidate.variant)
+            })
+        {
+            let preflight_run = oracle
+                .preflight(
+                    &workspace.join("schema-preflight"),
+                    &GeneratedPair {
+                        contract_id: source_seed.id.clone(),
+                        policy_pack: "baseline".to_owned(),
+                        base_schema: source_seed.schema.clone(),
+                        candidate_schema: candidate.candidate_schema,
+                    },
+                )
+                .map_err(|error| error.to_string())?;
+            schema_preflights.push(serde_json::json!({
+                "seed_id": source_seed.id,
+                "family_id": source_seed.family_id,
+                "mutation_variant": candidate.variant,
+                "accepted": preflight_run.accepted,
+                "exit_code": preflight_run.exit_code,
+                "rejection_stage": preflight_run.rejection_stage,
+                "rejection_reason": preflight_run.rejection_reason,
+                "stdout": preflight_run.stdout,
+                "stderr": preflight_run.stderr
+            }));
+            if !preflight_run.accepted {
+                fs::write(
+                    &evidence_output,
+                    serde_json::to_vec_pretty(&serde_json::json!({
+                        "format_version": "dcg-forward-full-optional-isolated-generation-evidence-v1",
+                        "corpus_generated": false,
+                        "contamination_preflight_passed": true,
+                        "schema_preflights": schema_preflights
+                    }))
+                    .map_err(|error| error.to_string())?,
+                )
+                .map_err(|error| error.to_string())?;
+                return Err(
+                    "schema lint preflight rejected a projected optional-addition pair; compatibility evaluation was not started"
+                        .to_owned(),
+                );
+            }
+        }
+    }
+    let mut combined_records = Vec::new();
+    let mut generation_reports = Vec::new();
+    for mode in [
+        OracleCompatibilityMode::Forward,
+        OracleCompatibilityMode::Full,
+    ] {
+        let config = GeneratorConfig::new(
+            format!(
+                "forward-full-optional-field-isolated-{}",
+                mode.as_str().to_lowercase()
+            ),
+            policies.clone(),
+            seeds.len(),
+        )
+        .map_err(|error| error.to_string())?
+        .with_seed(seed)
+        .with_compatibility_mode(mode)
+        .with_oracle_workers(oracle_workers)
+        .map_err(|error| error.to_string())?
+        .with_challenge_family_ratio(challenge_family_ratio)
+        .map_err(|error| error.to_string())?
+        .with_mutation_filter([MutationKind::OptionalFieldAdded.as_str().to_owned()])
+        .map_err(|error| error.to_string())?
+        .with_variant_retention([MutationKind::OptionalFieldAdded.as_str().to_owned()])
+        .map_err(|error| error.to_string())?
+        .with_seed_variant_allowlist(allowed_variants.clone())
+        .map_err(|error| error.to_string())?;
+        let (dataset, report) = TrainingDataGenerator::new(oracle.clone())
+            .generate(
+                &config,
+                &workspace.join(mode.as_str().to_lowercase()),
+                seeds.clone(),
+            )
+            .map_err(|error| error.to_string())?;
+        for mut record in dataset.records().iter().cloned() {
+            record.record_id = format!("{}:{}", mode.as_str(), record.record_id);
+            combined_records.push(record);
+        }
+        generation_reports.push(serde_json::json!({
+            "mode": mode.as_str(),
+            "seeds_seen": report.seeds_seen,
+            "candidates_proposed": report.candidates_proposed,
+            "oracle_safe": report.oracle_safe,
+            "oracle_warning": report.oracle_warning,
+            "oracle_breaking": report.oracle_breaking,
+            "oracle_rejected": report.oracle_rejected,
+            "duplicates_rejected": report.duplicates_rejected,
+            "quota_skipped": report.outcome_quota_skipped,
+            "seeds_skipped": report.seeds_skipped
+        }));
+    }
+    let dataset = PreparedDcgDataset::new(
+        "forward-full-optional-field-family-isolated-v1",
+        combined_records,
+    )
+    .map_err(|error| error.to_string())?;
+    if dataset.benchmark_ready().is_some() {
+        return Err(
+            "new isolated corpus was unexpectedly readiness-stamped during generation".to_owned(),
+        );
+    }
+    if let Some(parent) = output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    dataset.save(&output).map_err(|error| error.to_string())?;
+    let statistics = dataset.statistics();
+    let concrete_traces = ["open", "closed"]
+        .into_iter()
+        .filter_map(|profile| {
+            dataset.records().iter().find(|record| {
+                record.generation.as_ref().is_some_and(|generation| {
+                    generation.root_object_profile.as_deref() == Some(profile)
+                        && record.policy_pack == "baseline"
+                        && generation.mutation_variant == "optional-string-field"
+                        && generation.compatibility_mode == "FORWARD"
+                })
+            })
+        })
+        .map(|record| {
+            let generation = record.generation.as_ref().expect("trace is generated");
+            serde_json::json!({
+                "record_id": record.record_id,
+                "family_id": record.family_id,
+                "dataset_role": record.dataset_role.as_str(),
+                "policy_pack": record.policy_pack,
+                "compatibility_mode": generation.compatibility_mode,
+                "mutation": generation.declared_mutation,
+                "mutation_variant": generation.mutation_variant,
+                "root_object_profile": generation.root_object_profile,
+                "oracle_outcome": generation.oracle_outcome,
+                "compatibility_label": record.compatibility_label.map(|label| label.as_str()),
+                "pair_fingerprint": generation.pair_fingerprint,
+                "oracle_stdout": generation.oracle_stdout
+            })
+        })
+        .collect::<Vec<_>>();
+    let evidence = serde_json::json!({
+        "format_version": "dcg-forward-full-optional-isolated-generation-evidence-v1",
+        "isolation_gate": {
+            "reused_function": "src/models/external_evaluation.rs::preflight_external_manifest",
+            "new_isolation_check_written": false,
+            "max_structural_coordinate_distance": 1,
+            "passed": preflight.passed,
+            "records": preflight.total_records,
+            "source_family_pair_exact_feature_near_structural_checks": true,
+            "report_path": preflight_output,
+            "manifest_path": manifest,
+            "manifest_sha256": preflight.manifest_sha256,
+            "v9_dataset_sha256": preflight.v9_dataset_sha256
+        },
+        "oracle_identity": {
+            "jar_sha256": preflight.oracle_jar_sha256,
+            "policy_packs_sha256": preflight.policy_packs_sha256,
+            "audit_fixture_used": false
+        },
+        "generation": {
+            "seed": seed,
+            "challenge_family_ratio": challenge_family_ratio,
+            "matched_source_families": family_profiles.len(),
+            "profile_seeds": seeds.len(),
+            "policy_packs": policies,
+            "modes": ["FORWARD", "FULL"],
+            "mutation": "optional_field_added",
+            "reports": generation_reports
+        },
+        "schema_preflights": schema_preflights,
+        "corpus": {
+            "path": output,
+            "dataset_version": dataset.dataset_version(),
+            "benchmark_ready": dataset.benchmark_ready(),
+            "total_records": statistics.total_records,
+            "independent_families": statistics.independent_families,
+            "safe": statistics.safe,
+            "warning": statistics.warning,
+            "breaking": statistics.breaking,
+            "policy_packs": statistics.policy_packs,
+            "mutation_categories": statistics.mutation_categories
+        },
+        "concrete_traces": concrete_traces,
+        "next_gate": "benchmark_ready remains missing until runner enforcement tests pass and a separate readiness-promotion command verifies this exact preflight report"
+    });
+    if let Some(parent) = evidence_output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &evidence_output,
+        serde_json::to_vec_pretty(&evidence).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "Family-isolated FORWARD/FULL optional corpus generated but not readiness-promoted: records={}, families={}, safe={}, warning={}, breaking={}, output={}",
+        statistics.total_records,
+        statistics.independent_families,
+        statistics.safe,
+        statistics.warning,
+        statistics.breaking,
+        output.display()
+    );
+    Ok(())
+}
+
+/// Promotes the exact isolated corpus only after its persisted contamination
+/// report and frozen track identities are revalidated. This command cannot
+/// manufacture readiness: it delegates the decision to the dataset audit.
+fn promote_forward_optional_benchmark_ready(arguments: Vec<String>) -> Result<(), String> {
+    const TRACK_JAR_SHA256: &str =
+        "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923";
+    const PINNED_POLICY_SHA256: &str =
+        "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6";
+    let mut input = None;
+    let mut isolation_report = None;
+    let mut output = None;
+    let mut evidence_output = None;
+    let mut seed = 5u64;
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--input" => input = Some(PathBuf::from(value)),
+            "--isolation-report" => isolation_report = Some(PathBuf::from(value)),
+            "--output" => output = Some(PathBuf::from(value)),
+            "--evidence-output" => evidence_output = Some(PathBuf::from(value)),
+            "--seed" => {
+                seed = value
+                    .parse()
+                    .map_err(|_| format!("--seed must be a whole number, got {value}"))?
+            }
+            _ => {
+                return Err(format!(
+                    "Unknown promote-forward-optional-benchmark-ready option: {flag}"
+                ));
+            }
+        }
+        index += 2;
+    }
+    let input = input.ok_or("Missing --input")?;
+    let isolation_report = isolation_report.ok_or("Missing --isolation-report")?;
+    let output = output.ok_or("Missing --output")?;
+    let evidence_output = evidence_output.ok_or("Missing --evidence-output")?;
+    for path in [&output, &evidence_output] {
+        if path.exists() {
+            return Err(format!(
+                "refusing to overwrite existing readiness artifact {}",
+                path.display()
+            ));
+        }
+    }
+    let isolation_bytes = fs::read(&isolation_report).map_err(|error| error.to_string())?;
+    let isolation = serde_json::from_slice::<serde_json::Value>(&isolation_bytes)
+        .map_err(|error| error.to_string())?;
+    let isolation_passed =
+        isolation.get("passed").and_then(serde_json::Value::as_bool) == Some(true);
+    let rejected = isolation
+        .get("rejected_records")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or("isolation report lacks rejected_records")?;
+    let accepted = isolation
+        .get("accepted_records")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or("isolation report lacks accepted_records")?;
+    let total = isolation
+        .get("total_records")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or("isolation report lacks total_records")?;
+    let report_jar = isolation
+        .get("oracle_jar_sha256")
+        .and_then(serde_json::Value::as_str)
+        .ok_or("isolation report lacks oracle_jar_sha256")?;
+    let report_policies = isolation
+        .get("policy_packs_sha256")
+        .and_then(serde_json::Value::as_str)
+        .ok_or("isolation report lacks policy_packs_sha256")?;
+    if !isolation_passed
+        || rejected != 0
+        || accepted != total
+        || report_jar != TRACK_JAR_SHA256
+        || report_policies != PINNED_POLICY_SHA256
+    {
+        return Err(
+            "readiness promotion refused: isolation report did not pass cleanly under the frozen track JAR and real pinned policy file"
+                .to_owned(),
+        );
+    }
+    let mut dataset = PreparedDcgDataset::load(&input).map_err(|error| error.to_string())?;
+    if dataset.benchmark_ready().is_some() {
+        return Err("readiness promotion requires the original unstamped corpus".to_owned());
+    }
+    let identities_are_frozen = dataset.records().iter().all(|record| {
+        record.generation.as_ref().is_some_and(|generation| {
+            generation.oracle_jar_sha256 == TRACK_JAR_SHA256
+                && generation.policy_packs_sha256 == PINNED_POLICY_SHA256
+                && matches!(generation.compatibility_mode.as_str(), "FORWARD" | "FULL")
+                && generation.declared_mutation == "optional_field_added"
+        })
+    });
+    if !identities_are_frozen {
+        return Err(
+            "readiness promotion refused: corpus records escape the frozen FORWARD/FULL optional-addition identity boundary"
+                .to_owned(),
+        );
+    }
+    let readiness = dataset.stamp_benchmark_readiness(None);
+    if !readiness.ready_for_generalization_benchmark {
+        return Err(format!(
+            "readiness promotion refused by the generalization audit: {:?}",
+            readiness.reasons
+        ));
+    }
+    dataset
+        .require_benchmark_ready()
+        .map_err(|reason| format!("stamped corpus failed its runner gate: {reason}"))?;
+    if let Some(parent) = output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    dataset.save(&output).map_err(|error| error.to_string())?;
+    let split =
+        DatasetSplitConfig::new(0.70, 0.15, 0.15, seed).map_err(|error| error.to_string())?;
+    let binary = dataset.training_readiness(TargetMode::BinaryBreaking, split);
+    let three_way = dataset.training_readiness(TargetMode::ThreeWayCompatibility, split);
+    let evidence = serde_json::json!({
+        "format_version": "dcg-forward-full-optional-benchmark-readiness-v1",
+        "input_corpus": input,
+        "input_corpus_sha256": sha256_file(&input)?,
+        "isolation_report": isolation_report,
+        "isolation_report_sha256": format!("{:x}", Sha256::digest(&isolation_bytes)),
+        "frozen_identity": {
+            "oracle_jar_sha256": TRACK_JAR_SHA256,
+            "policy_packs_sha256": PINNED_POLICY_SHA256,
+            "audit_fixture_used": false
+        },
+        "isolation": {
+            "passed": isolation_passed,
+            "accepted_records": accepted,
+            "rejected_records": rejected,
+            "total_records": total,
+            "reused_gate": "src/models/external_evaluation.rs::preflight_external_manifest"
+        },
+        "benchmark_ready": dataset.benchmark_ready(),
+        "runner_gate_verified_in_process": dataset.require_benchmark_ready().is_ok(),
+        "generalization": {
+            "ready": readiness.ready_for_generalization_benchmark,
+            "standard_families": readiness.standard_families,
+            "challenge_families": readiness.challenge_families,
+            "family_leakage": readiness.challenge_family_leakage,
+            "pair_leakage": readiness.challenge_pair_leakage,
+            "complete_policy_counterfactual_pairs": readiness.complete_policy_counterfactual_pairs,
+            "shortcut_risks": readiness.shortcut_risks,
+            "reasons": readiness.reasons
+        },
+        "training_targets": {
+            "binary_breaking": {
+                "ready": binary.ready_for_training,
+                "reasons": binary.reasons,
+                "partition_records": binary.partition_records,
+                "partition_families": binary.partition_families
+            },
+            "three_way_compatibility": {
+                "ready": three_way.ready_for_training,
+                "reasons": three_way.reasons,
+                "note": "The pinned policy file produces no WARNING optional-addition rows. The scientifically valid three-seed evaluation target for this isolated corpus is binary BREAKING/non-breaking; three-class training remains refused."
+            }
+        },
+        "output_corpus": output
+    });
+    if let Some(parent) = evidence_output.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &evidence_output,
+        serde_json::to_vec_pretty(&evidence).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "benchmark_ready=true persisted after clean isolation and readiness audits: binary_ready={}, three_way_ready={}, output={}",
+        binary.ready_for_training,
+        three_way.ready_for_training,
+        output.display()
+    );
+    Ok(())
+}
+
 /// Labels externally sourced transitions with the pinned oracle, excludes all
 /// V9 identity/near-feature overlap, and runs frozen three-way inference only.
 /// It cannot train a network, refit a scaler, or modify either V9 artifact.
@@ -261,6 +1046,7 @@ fn evaluate_external(arguments: Vec<String>) -> Result<(), String> {
     let mut model = None;
     let mut jar = None;
     let mut policy_packs = None;
+    let mut oracle_equivalence_audit = None;
     let mut workspace = None;
     let mut output = None;
     let mut max_structural_distance = 1usize;
@@ -276,6 +1062,7 @@ fn evaluate_external(arguments: Vec<String>) -> Result<(), String> {
             "--model" => model = Some(PathBuf::from(value)),
             "--jar" => jar = Some(PathBuf::from(value)),
             "--policy-packs" => policy_packs = Some(PathBuf::from(value)),
+            "--oracle-equivalence-audit" => oracle_equivalence_audit = Some(PathBuf::from(value)),
             "--workspace" => workspace = Some(PathBuf::from(value)),
             "--output" => output = Some(PathBuf::from(value)),
             "--max-structural-distance" => {
@@ -306,6 +1093,11 @@ fn evaluate_external(arguments: Vec<String>) -> Result<(), String> {
             policy_packs_path: policy_packs.ok_or("Missing --policy-packs")?,
         },
         oracle_workspace: workspace.ok_or("Missing --workspace")?,
+        oracle_equivalence_audit_path: Some(
+            oracle_equivalence_audit.ok_or(
+                "Missing --oracle-equivalence-audit; model-scored external evaluation requires an approved training/execution oracle pairing",
+            )?,
+        ),
         max_structural_coordinate_distance: max_structural_distance,
     };
     let report = evaluate_external_transitions(&config)?;
@@ -526,6 +1318,374 @@ fn run_three_way_experiments(arguments: Vec<String>) -> Result<(), String> {
         );
     }
     Ok(())
+}
+
+fn run_binary_three_seed_experiment_command(arguments: Vec<String>) -> Result<(), String> {
+    let mut input = None;
+    let mut output_dir = None;
+    let mut oracle_jar = None;
+    let mut policy_packs = None;
+    let mut epochs = 100usize;
+    let mut batch_size = 16usize;
+    let mut learning_rate = 0.05f64;
+    let mut seeds = Vec::new();
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--input" => input = Some(PathBuf::from(value)),
+            "--output-dir" => output_dir = Some(PathBuf::from(value)),
+            "--oracle-jar" => oracle_jar = Some(PathBuf::from(value)),
+            "--policy-packs" => policy_packs = Some(PathBuf::from(value)),
+            "--epochs" => {
+                epochs = value
+                    .parse()
+                    .map_err(|_| format!("--epochs must be a whole number, got {value}"))?
+            }
+            "--batch-size" => {
+                batch_size = value
+                    .parse()
+                    .map_err(|_| format!("--batch-size must be a whole number, got {value}"))?
+            }
+            "--learning-rate" => {
+                learning_rate = value
+                    .parse()
+                    .map_err(|_| format!("--learning-rate must be finite, got {value}"))?
+            }
+            "--seeds" => {
+                seeds = value
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|seed| !seed.is_empty())
+                    .map(|seed| {
+                        seed.parse::<u64>()
+                            .map_err(|_| format!("--seeds contains invalid seed {seed}"))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+            }
+            _ => {
+                return Err(format!(
+                    "Unknown run-binary-three-seed-experiment option: {flag}"
+                ));
+            }
+        }
+        index += 2;
+    }
+    if seeds.is_empty() {
+        seeds = vec![20_260_826, 20_260_827, 20_260_828];
+    }
+    seeds.sort_unstable();
+    seeds.dedup();
+    if seeds.len() != 3 {
+        return Err(format!(
+            "binary three-seed experiment requires exactly three distinct seeds, got {seeds:?}"
+        ));
+    }
+    let input = input.ok_or("Missing --input")?;
+    let output_dir = output_dir.ok_or("Missing --output-dir")?;
+    let oracle_jar = oracle_jar.ok_or("Missing --oracle-jar")?;
+    let policy_packs = policy_packs.ok_or("Missing --policy-packs")?;
+    ensure_fresh_output_directory(&output_dir)?;
+    let dataset = PreparedDcgDataset::load(&input).map_err(|error| error.to_string())?;
+    let provenance =
+        verify_experiment_input_provenance(&dataset, &input, &oracle_jar, &policy_packs)?;
+    let configuration = ThreeWayExperimentConfig::new(seeds, epochs, batch_size, learning_rate)?;
+    let report =
+        run_binary_three_seed_experiment(&dataset, provenance, configuration, &output_dir)?;
+    let report_path = output_dir.join("binary-three-seed-experiment-report.json");
+    fs::write(
+        &report_path,
+        serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "Binary three-seed experiment complete: mean_test_accuracy={:.6}, mean_challenge_accuracy={:.6}, report={}",
+        report.mean_test_accuracy,
+        report.mean_challenge_accuracy,
+        report_path.display()
+    );
+    Ok(())
+}
+
+const OPTIONAL_CLOSED_OBJECT_FEATURE_INDEX: usize = 65;
+
+fn run_feature_ablation(arguments: Vec<String>) -> Result<(), String> {
+    let mut input = None;
+    let mut reference_report = None;
+    let mut output = None;
+    let mut feature_index = OPTIONAL_CLOSED_OBJECT_FEATURE_INDEX;
+    let mut seeds = vec![20_260_826, 20_260_827, 20_260_828];
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--input" => input = Some(PathBuf::from(value)),
+            "--reference-report" => reference_report = Some(PathBuf::from(value)),
+            "--output" => output = Some(PathBuf::from(value)),
+            "--feature-index" => {
+                feature_index = value
+                    .parse()
+                    .map_err(|_| format!("--feature-index must be a whole number, got {value}"))?
+            }
+            "--seeds" => {
+                seeds = value
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|seed| !seed.is_empty())
+                    .map(|seed| {
+                        seed.parse::<u64>()
+                            .map_err(|_| format!("--seeds contains invalid seed {seed}"))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+            }
+            _ => return Err(format!("Unknown run-feature-ablation option: {flag}")),
+        }
+        index += 2;
+    }
+    if feature_index != OPTIONAL_CLOSED_OBJECT_FEATURE_INDEX {
+        return Err(format!(
+            "this bounded ablation requires feature index {OPTIONAL_CLOSED_OBJECT_FEATURE_INDEX}, got {feature_index}"
+        ));
+    }
+    seeds.sort_unstable();
+    seeds.dedup();
+    if seeds != [20_260_826, 20_260_827, 20_260_828] {
+        return Err(format!(
+            "the ablation must replay the original three seeds [20260826, 20260827, 20260828], got {seeds:?}"
+        ));
+    }
+    let input = input.ok_or("Missing --input")?;
+    let reference_report = reference_report.ok_or("Missing --reference-report")?;
+    let output = output.ok_or("Missing --output")?;
+    if output.exists() {
+        return Err(format!(
+            "--output already exists; refusing to overwrite ablation evidence: {}",
+            output.display()
+        ));
+    }
+
+    let dataset = PreparedDcgDataset::load(&input).map_err(|error| error.to_string())?;
+    dataset
+        .require_benchmark_ready()
+        .map_err(|reason| format!("feature ablation refused: {reason}"))?;
+    if dataset.feature_version() != dcgaimodel::features::DCG_FEATURE_V6_VERSION {
+        return Err(format!(
+            "feature ablation requires {}, got {}",
+            dcgaimodel::features::DCG_FEATURE_V6_VERSION,
+            dataset.feature_version()
+        ));
+    }
+    let feature_name = dcgaimodel::features::DCG_FEATURE_V6_NAMES[feature_index];
+    if feature_name != "root_optional_fields_added_to_closed_object" {
+        return Err(format!(
+            "feature index {feature_index} unexpectedly resolves to {feature_name}"
+        ));
+    }
+
+    let standard = PreparedDcgDataset::new(
+        format!("{}-feature-65-standard", dataset.dataset_version()),
+        dataset
+            .records()
+            .iter()
+            .filter(|record| record.dataset_role == DatasetRole::Standard)
+            .cloned()
+            .collect(),
+    )
+    .map_err(|error| error.to_string())?;
+    let challenge = dataset
+        .records()
+        .iter()
+        .filter(|record| record.dataset_role == DatasetRole::Challenge)
+        .collect::<Vec<_>>();
+    if challenge.is_empty() {
+        return Err("feature ablation requires the persisted challenge family".to_owned());
+    }
+
+    let reference_bytes = fs::read(&reference_report).map_err(|error| error.to_string())?;
+    let reference: serde_json::Value =
+        serde_json::from_slice(&reference_bytes).map_err(|error| error.to_string())?;
+    let reference_runs = reference
+        .get("seed_runs")
+        .and_then(serde_json::Value::as_array)
+        .ok_or("reference report is missing seed_runs")?;
+    let mut seed_reports = Vec::with_capacity(seeds.len());
+    let mut all_match = true;
+    for seed in seeds {
+        let split = standard
+            .split_by_group(
+                DatasetSplitConfig::new(0.70, 0.15, 0.15, seed)
+                    .map_err(|error| error.to_string())?,
+            )
+            .map_err(|error| error.to_string())?;
+        let (bucket_counts, bucket_predictions) =
+            fit_feature_bucket_rule(split.train().records(), feature_index)?;
+        let test_metrics = evaluate_feature_bucket_rule(
+            split.test().records().iter().collect::<Vec<_>>().as_slice(),
+            feature_index,
+            bucket_predictions,
+        )?;
+        let challenge_metrics =
+            evaluate_feature_bucket_rule(&challenge, feature_index, bucket_predictions)?;
+        let test_metrics_json = binary_metrics_json(test_metrics);
+        let challenge_metrics_json = binary_metrics_json(challenge_metrics);
+        let reference_seed = reference_runs
+            .iter()
+            .find(|run| run.get("seed").and_then(serde_json::Value::as_u64) == Some(seed))
+            .ok_or_else(|| format!("reference report has no seed {seed}"))?;
+        let test_matches = reference_seed.get("test_metrics") == Some(&test_metrics_json);
+        let challenge_matches =
+            reference_seed.get("challenge_metrics") == Some(&challenge_metrics_json);
+        all_match &= test_matches && challenge_matches;
+        seed_reports.push(serde_json::json!({
+            "seed": seed,
+            "training_records": split.train().len(),
+            "validation_records": split.validation().len(),
+            "test_records": split.test().len(),
+            "challenge_records": challenge.len(),
+            "training_bucket_counts": {
+                "feature_below_0_5": {"non_breaking": bucket_counts[0][0], "breaking": bucket_counts[0][1]},
+                "feature_at_least_0_5": {"non_breaking": bucket_counts[1][0], "breaking": bucket_counts[1][1]}
+            },
+            "learned_rule": {
+                "feature_below_0_5_prediction": if bucket_predictions[0] == 1.0 { "breaking" } else { "non_breaking" },
+                "feature_at_least_0_5_prediction": if bucket_predictions[1] == 1.0 { "breaking" } else { "non_breaking" }
+            },
+            "test_metrics": test_metrics_json,
+            "challenge_metrics": challenge_metrics_json,
+            "matches_full_model_test": test_matches,
+            "matches_full_model_challenge": challenge_matches
+        }));
+    }
+    let output_document = serde_json::json!({
+        "format_version": "dcg-one-feature-ablation-v1",
+        "status": if all_match { "CONFIRMED" } else { "DIFFERS" },
+        "scope": "Existing FORWARD/FULL optional-field corpus only; no JAR was loaded or executed.",
+        "input": {
+            "dataset_path": input.display().to_string(),
+            "dataset_sha256": sha256_file(&input)?,
+            "records": dataset.len(),
+            "benchmark_ready": dataset.benchmark_ready(),
+            "reference_full_model_report_path": reference_report.display().to_string(),
+            "reference_full_model_report_sha256": format!("{:x}", Sha256::digest(&reference_bytes))
+        },
+        "target": "binary_breaking",
+        "class_order": ["non_breaking", "breaking"],
+        "single_feature": {
+            "index": feature_index,
+            "name": feature_name,
+            "threshold": 0.5,
+            "all_other_features_used": false
+        },
+        "training_method": "For each seed, independently fit the majority binary label in the <0.5 and >=0.5 feature buckets using only that seed's training partition.",
+        "split_contract": {"train": 0.70, "validation": 0.15, "test": 0.15},
+        "seed_runs": seed_reports,
+        "matches_full_model_on_every_test_and_challenge_split": all_match,
+        "conclusion": if all_match {
+            "The full model's 100% result is fully explained by feature index 65 on this corpus; this benchmark confirms mechanical wiring and does not demonstrate generalization beyond that feature."
+        } else {
+            "The one-feature baseline does not fully explain the persisted full-model result."
+        }
+    });
+    if let Some(parent) = output.parent() {
+        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    fs::write(
+        &output,
+        serde_json::to_vec_pretty(&output_document).map_err(|error| error.to_string())?,
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "Feature-65 ablation complete: matches_full_model={}, output={}",
+        all_match,
+        output.display()
+    );
+    Ok(())
+}
+
+fn fit_feature_bucket_rule(
+    records: &[dcgaimodel::models::PreparedDcgRecord],
+    feature_index: usize,
+) -> Result<([[usize; 2]; 2], [f64; 2]), String> {
+    let mut counts = [[0usize; 2]; 2];
+    for record in records {
+        let bucket = usize::from(
+            record
+                .features
+                .get(feature_index)
+                .map_err(|error| error.to_string())?
+                >= 0.5,
+        );
+        let label = match record.compatibility_label {
+            Some(CompatibilityLabel::Breaking) => 1,
+            Some(CompatibilityLabel::Safe) | Some(CompatibilityLabel::Warning) => 0,
+            None => {
+                return Err(format!(
+                    "record {} has no compatibility label",
+                    record.record_id
+                ));
+            }
+        };
+        counts[bucket][label] += 1;
+    }
+    let mut predictions = [0.0; 2];
+    for bucket in 0..2 {
+        if counts[bucket][0] == 0 && counts[bucket][1] == 0 {
+            return Err(format!(
+                "training split has no records in feature bucket {bucket}"
+            ));
+        }
+        if counts[bucket][0] == counts[bucket][1] {
+            return Err(format!(
+                "training split has a tied label vote in feature bucket {bucket}: {:?}",
+                counts[bucket]
+            ));
+        }
+        predictions[bucket] = f64::from(counts[bucket][1] > counts[bucket][0]);
+    }
+    Ok((counts, predictions))
+}
+
+fn evaluate_feature_bucket_rule(
+    records: &[&dcgaimodel::models::PreparedDcgRecord],
+    feature_index: usize,
+    bucket_predictions: [f64; 2],
+) -> Result<ClassificationMetrics, String> {
+    let mut predictions = Vec::with_capacity(records.len());
+    let mut targets = Vec::with_capacity(records.len());
+    for record in records {
+        let bucket = usize::from(
+            record
+                .features
+                .get(feature_index)
+                .map_err(|error| error.to_string())?
+                >= 0.5,
+        );
+        let label = record
+            .compatibility_label
+            .ok_or_else(|| format!("record {} has no compatibility label", record.record_id))?;
+        predictions.push(bucket_predictions[bucket]);
+        targets.push(label.binary_breaking());
+    }
+    evaluate_binary_classification(&predictions, &targets).map_err(|error| error.to_string())
+}
+
+fn binary_metrics_json(metrics: ClassificationMetrics) -> serde_json::Value {
+    serde_json::json!({
+        "accuracy": metrics.accuracy,
+        "precision": metrics.precision,
+        "recall": metrics.recall,
+        "f1_score": metrics.f1_score,
+        "confusion_matrix": [
+            [metrics.confusion_matrix.true_negative(), metrics.confusion_matrix.false_positive()],
+            [metrics.confusion_matrix.false_negative(), metrics.confusion_matrix.true_positive()]
+        ]
+    })
 }
 
 fn ensure_fresh_output_directory(path: &Path) -> Result<(), String> {
@@ -793,7 +1953,7 @@ fn oracle_conformance(arguments: Vec<String>) -> Result<(), String> {
             "--source-profile" => {
                 source_profile = SourceSamplingProfile::parse(value).ok_or_else(|| {
                     format!(
-                        "--source-profile must be broad, optional-open, or optional-closed, got {value}"
+                        "--source-profile must be broad, optional-open, optional-closed, or matched-optional, got {value}"
                     )
                 })?
             }
@@ -858,8 +2018,13 @@ fn oracle_conformance(arguments: Vec<String>) -> Result<(), String> {
         path: input,
         source: "jsonschemabench-conformance".to_owned(),
     };
+    let source_pool_limit = if source_profile == SourceSamplingProfile::MatchedOptional {
+        max.saturating_mul(4)
+    } else {
+        max
+    };
     let seeds = source
-        .load_sampled_with_profile(max, seed, source_profile)
+        .load_sampled_with_profile(source_pool_limit, seed, source_profile)
         .map_err(|error| error.to_string())?;
     let oracle = PinnedOracle::new(OracleConfig {
         java_program: PathBuf::from("java"),
@@ -867,26 +2032,46 @@ fn oracle_conformance(arguments: Vec<String>) -> Result<(), String> {
         policy_packs_path: policy_packs,
     })
     .map_err(|error| error.to_string())?;
-    let report = build_oracle_conformance_matrix(
-        &oracle,
-        &workspace,
-        &policies,
-        &compatibility_modes,
-        &mutation_families,
-        InvariantEvidenceConfig {
-            min_independent_families: min_families,
-            min_policies,
-            min_oracle_checks: min_checks,
-        },
-        seeds,
-    )
+    let thresholds = InvariantEvidenceConfig {
+        min_independent_families: min_families,
+        min_policies,
+        min_oracle_checks: min_checks,
+    };
+    let report = if source_profile == SourceSamplingProfile::MatchedOptional {
+        if mutation_families
+            .iter()
+            .any(|mutation| mutation != "optional_field_added")
+        {
+            return Err("matched-optional only supports optional_field_added".to_owned());
+        }
+        build_matched_optional_field_conformance_matrix(
+            &oracle,
+            &workspace,
+            &policies,
+            &compatibility_modes,
+            thresholds,
+            max,
+            seeds,
+        )
+    } else {
+        build_oracle_conformance_matrix(
+            &oracle,
+            &workspace,
+            &policies,
+            &compatibility_modes,
+            &mutation_families,
+            thresholds,
+            seeds,
+        )
+    }
     .map_err(|error| error.to_string())?;
     if let Some(parent) = output.parent() {
         std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
     report.save(&output)?;
     println!(
-        "Oracle conformance: runs={}, cells={}, cross_policy={}, jar_sha256={}, policy_packs_sha256={}, output={}",
+        "Oracle conformance: preflights={}, runs={}, cells={}, cross_policy={}, jar_sha256={}, policy_packs_sha256={}, output={}",
+        report.preflight_runs.len(),
         report.runs.len(),
         report.cells.len(),
         report.cross_policy.len(),

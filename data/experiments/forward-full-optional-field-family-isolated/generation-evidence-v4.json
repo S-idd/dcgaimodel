@@ -1,0 +1,427 @@
+{
+  "concrete_traces": [
+    {
+      "compatibility_label": "safe",
+      "compatibility_mode": "FORWARD",
+      "dataset_role": "challenge",
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation": "optional_field_added",
+      "mutation_variant": "optional-string-field",
+      "oracle_outcome": "safe",
+      "oracle_stdout": "Schema compatibility: PASS\n",
+      "pair_fingerprint": "085c48cba08cbfc7f20f9011c0ef494721e561a6ddcd1fc30dbed12c222f998c",
+      "policy_pack": "baseline",
+      "record_id": "FORWARD:forward-optional.stripe.openapi.card.open:optional_field_added:optional-string-field:baseline",
+      "root_object_profile": "open"
+    },
+    {
+      "compatibility_label": "breaking",
+      "compatibility_mode": "FORWARD",
+      "dataset_role": "challenge",
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation": "optional_field_added",
+      "mutation_variant": "optional-string-field",
+      "oracle_outcome": "breaking",
+      "oracle_stdout": "Schema compatibility: FAIL\nBreaking changes: [[FORWARD] Optional field added to closed consumer object: dcg_generated_optional_string]\n",
+      "pair_fingerprint": "52fec09db9ce39e04d45320d1cac7c841f4b5722bb4784730e0741bee5b66121",
+      "policy_pack": "baseline",
+      "record_id": "FORWARD:forward-optional.stripe.openapi.card.closed:optional_field_added:optional-string-field:baseline",
+      "root_object_profile": "closed"
+    }
+  ],
+  "corpus": {
+    "benchmark_ready": null,
+    "breaking": 420,
+    "dataset_version": "forward-full-optional-field-family-isolated-v1",
+    "independent_families": 4,
+    "mutation_categories": 1,
+    "path": "data/generated/dcg-forward-full-optional-field-family-isolated-v1.json",
+    "policy_packs": 15,
+    "safe": 420,
+    "total_records": 840,
+    "warning": 0
+  },
+  "format_version": "dcg-forward-full-optional-isolated-generation-evidence-v1",
+  "generation": {
+    "challenge_family_ratio": 0.3,
+    "matched_source_families": 4,
+    "modes": [
+      "FORWARD",
+      "FULL"
+    ],
+    "mutation": "optional_field_added",
+    "policy_packs": [
+      "baseline",
+      "baseline-warning-peer",
+      "composition-enum-breaking-constraint-breaking",
+      "composition-enum-breaking-constraint-ignore",
+      "composition-enum-breaking-constraint-warning",
+      "composition-enum-ignore-constraint-breaking",
+      "composition-enum-ignore-constraint-ignore",
+      "composition-enum-ignore-constraint-warning",
+      "composition-enum-warning-constraint-breaking",
+      "composition-enum-warning-constraint-ignore",
+      "composition-enum-warning-constraint-warning",
+      "relaxed",
+      "relaxed-ignore-peer",
+      "strict",
+      "strict-breaking-peer"
+    ],
+    "profile_seeds": 8,
+    "reports": [
+      {
+        "candidates_proposed": 420,
+        "duplicates_rejected": 0,
+        "mode": "FORWARD",
+        "oracle_breaking": 210,
+        "oracle_rejected": 0,
+        "oracle_safe": 210,
+        "oracle_warning": 0,
+        "quota_skipped": 0,
+        "seeds_seen": 8,
+        "seeds_skipped": 0
+      },
+      {
+        "candidates_proposed": 420,
+        "duplicates_rejected": 0,
+        "mode": "FULL",
+        "oracle_breaking": 210,
+        "oracle_rejected": 0,
+        "oracle_safe": 210,
+        "oracle_warning": 0,
+        "quota_skipped": 0,
+        "seeds_seen": 8,
+        "seeds_skipped": 0
+      }
+    ],
+    "seed": 5
+  },
+  "isolation_gate": {
+    "manifest_path": "data/experiments/forward-full-optional-field-family-isolated/optional-addition-isolation-manifest-v4.json",
+    "manifest_sha256": "e5a94b08026ae320f7565cc4ca50166da935e99c61938eec675a21e2b102e799",
+    "max_structural_coordinate_distance": 1,
+    "new_isolation_check_written": false,
+    "passed": true,
+    "records": 420,
+    "report_path": "data/experiments/forward-full-optional-field-family-isolated/v9-preflight-passed-v4.json",
+    "reused_function": "src/models/external_evaluation.rs::preflight_external_manifest",
+    "source_family_pair_exact_feature_near_structural_checks": true,
+    "v9_dataset_sha256": "fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3"
+  },
+  "next_gate": "benchmark_ready remains missing until runner enforcement tests pass and a separate readiness-promotion command verifies this exact preflight report",
+  "oracle_identity": {
+    "audit_fixture_used": false,
+    "jar_sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "policy_packs_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "schema_preflights": [
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-0/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-1/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-2/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-array-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-3/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-4/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-5/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-6/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.card",
+      "mutation_variant": "optional-array-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.card.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-7/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-8/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-9/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-10/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-11/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-12/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.stripe.openapi.payment_intent_next_action",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.stripe.openapi.payment_intent_next_action.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-13/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-14/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-15/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-16/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-array-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-17/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-18/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-19/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-20/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "mutation_variant": "optional-array-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.Scale.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-21/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-22/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-23/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.closed",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-24/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-string-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-25/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-integer-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-26/contracts/generated.contract\n"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "family_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex",
+      "mutation_variant": "optional-boolean-field",
+      "rejection_reason": null,
+      "rejection_stage": null,
+      "seed_id": "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex.open",
+      "stderr": "",
+      "stdout": "Lint passed: data/oracle-staging-forward-full-family-isolated/schema-preflight/oracle-run-9695-27/contracts/generated.contract\n"
+    }
+  ]
+}

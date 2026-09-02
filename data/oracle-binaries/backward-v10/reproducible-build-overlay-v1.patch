@@ -1,0 +1,27 @@
+diff --git a/pom.xml b/pom.xml
+index 573e2ba..5a25126 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -27,6 +27,7 @@
+     <java.version>21</java.version>
+     <maven.compiler.release>${java.version}</maven.compiler.release>
+     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    <project.build.outputTimestamp>2026-08-22T12:21:04Z</project.build.outputTimestamp>
+     <!-- Bumped from 3.3.5 -> 3.5.14 (latest 3.x line) to pick up fixed
+          Spring Framework, Spring Security, Tomcat, Jackson, Logback and
+          Thymeleaf versions transitively via the Boot BOM. -->
+@@ -222,6 +223,14 @@
+             <release>${maven.compiler.release}</release>
+           </configuration>
+         </plugin>
++        <plugin>
++          <groupId>org.apache.maven.plugins</groupId>
++          <artifactId>maven-jar-plugin</artifactId>
++          <version>3.4.2</version>
++          <configuration>
++            <outputTimestamp>${project.build.outputTimestamp}</outputTimestamp>
++          </configuration>
++        </plugin>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-surefire-plugin</artifactId>

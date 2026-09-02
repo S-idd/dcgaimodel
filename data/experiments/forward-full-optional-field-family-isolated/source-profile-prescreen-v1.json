@@ -1,0 +1,35 @@
+{
+  "format_version": "dcg-forward-optional-source-profile-prescreen-v1",
+  "oracle_invoked": false,
+  "model_inference_invoked": false,
+  "v9_source": "jsonschemabench",
+  "candidate_source_families": {
+    "stripe": 40,
+    "vega_lite": 238,
+    "total": 278
+  },
+  "gate_function": "src/models/external_evaluation.rs::preflight_external_manifest",
+  "max_structural_coordinate_distance": 1,
+  "stripe": {
+    "profile_policy_variant_records": 4800,
+    "accepted_records": 660,
+    "rejected_records": 4140,
+    "matched_accepted_families": [
+      "forward-optional.stripe.openapi.card",
+      "forward-optional.stripe.openapi.payment_intent_next_action"
+    ]
+  },
+  "vega_lite": {
+    "profile_screen_records": 476,
+    "accepted_records": 12,
+    "rejected_records": 464,
+    "matched_accepted_families": [
+      "forward-optional.vega.schema.vega-lite.v6.4.1.Scale",
+      "forward-optional.vega.schema.vega-lite.v6.4.1.StyleConfigIndex"
+    ]
+  },
+  "selection_rule": "Retain a source family only when both derived open and closed profiles pass for at least the string, integer, and boolean variants; retain each concrete variant only when that family/profile/variant passes the existing distance-greater-than-one contamination gate.",
+  "selected_matched_families": 4,
+  "projected_clean_transitions": 420,
+  "note": "This pre-screen never invoked the JAR. The projected 420-transition manifest is rechecked in full by preflight_external_manifest inside the corpus-generation command before PinnedOracle is constructed. Array variants for Stripe payment_intent_next_action and Vega StyleConfigIndex were excluded after distance-one rejection; no rejected variant reached the JAR."
+}

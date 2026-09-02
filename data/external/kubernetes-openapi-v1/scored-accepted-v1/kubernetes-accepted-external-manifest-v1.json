@@ -1,0 +1,209 @@
+{
+  "format_version": "dcg-external-transition-manifest-v3",
+  "summary": {
+    "total_transitions": 2,
+    "mutation_id_counts": {
+      "CONSTRAINT_OR_RESTRICTION_CHANGED": 2
+    },
+    "limitations": [
+      "This manifest materializes only the two candidates already accepted by the persisted Kubernetes V9 overlap projection; it performs no new candidate sourcing or selection.",
+      "The two independent transitions are sparse and all aggregate strata must remain traceability-only regardless of repeated seed invocations.",
+      "Seven FIELD_REMOVED and one additional constraint-change candidate rejected by the existing overlap gate are excluded."
+    ],
+    "preserved_source_files": [
+      {
+        "revision": "v1.21.0",
+        "commit": "cb303e613a121a29364f75cc67d3d580833a7479",
+        "blob_sha1": "60cc68f14be4f491ecf5b6336dcea39e613b3b28",
+        "source_path": "api/openapi-spec/swagger.json",
+        "audit_copy_path": "sources/v1.21.0-swagger.json"
+      },
+      {
+        "revision": "v1.22.0",
+        "commit": "c2b5237ccd9c0f1d600d3072634ca66cefdf272f",
+        "blob_sha1": "5404b05fb9bce80daa329a275b86e2efb226e89d",
+        "source_path": "api/openapi-spec/swagger.json",
+        "audit_copy_path": "sources/v1.22.0-swagger.json"
+      },
+      {
+        "revision": "v1.28.0",
+        "commit": "855e7c48de7388eb330da0f8d9d2394ee818fb8d",
+        "blob_sha1": "6c7f34825af6638ca2d83dabaea438bcc011dfe9",
+        "source_path": "api/openapi-spec/swagger.json",
+        "audit_copy_path": "sources/v1.28.0-swagger.json"
+      },
+      {
+        "revision": "v1.29.0",
+        "commit": "3f7a50f38688eb332e2a1b013678c6435d539ae6",
+        "blob_sha1": "46401f328bd1f437d583719fcbd8b10df78189f8",
+        "source_path": "api/openapi-spec/swagger.json",
+        "audit_copy_path": "sources/v1.29.0-swagger.json"
+      }
+    ],
+    "traceability_only": {
+      "status": "traceability-only",
+      "accuracy_evidence": false,
+      "clean_record_count": 0,
+      "clean_record_ids": [],
+      "rejected_record_count": 8,
+      "rejection_skew": {
+        "FIELD_REMOVED": {
+          "selected": 7,
+          "clean": 0,
+          "rejected": 7,
+          "rejection_rate": 1.0
+        },
+        "CONSTRAINT_OR_RESTRICTION_CHANGED": {
+          "selected": 3,
+          "clean": 2,
+          "rejected": 1,
+          "rejection_rate": 0.3333333333333333
+        }
+      },
+      "overlap_characterization": "The persisted no-oracle projection accepted these two rows at policy-free V6 structural distance 2; seven FIELD_REMOVED rows and one constraint-change row were rejected at distance <=1.",
+      "preflight_report_path": "preflight-backward-v10-v1.json",
+      "original_preflight_report_path": "../kubernetes-removal-biased-prescreen-v1.json#/projection/preflight",
+      "limitations": [
+        "Only two independent accepted transitions exist; seed repetitions are not additional independent evidence."
+      ]
+    }
+  },
+  "transitions": [
+    {
+      "record_id": "kubernetes.prescreen.v1.21.0-to-v1.22.0.io.k8s.api.networking.v1.HTTPIngressPath",
+      "source": "kubernetes/kubernetes",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/kubernetes/kubernetes",
+      "base_revision": "v1.21.0",
+      "candidate_revision": "v1.22.0",
+      "base_commit": "cb303e613a121a29364f75cc67d3d580833a7479",
+      "candidate_commit": "c2b5237ccd9c0f1d600d3072634ca66cefdf272f",
+      "base_blob_sha1": "60cc68f14be4f491ecf5b6336dcea39e613b3b28",
+      "candidate_blob_sha1": "5404b05fb9bce80daa329a275b86e2efb226e89d",
+      "source_license": "Apache-2.0",
+      "source_path": "api/openapi-spec/swagger.json#/definitions/io.k8s.api.networking.v1.HTTPIngressPath",
+      "family_id": "kubernetes.openapi.io.k8s.api.networking.v1.HTTPIngressPath",
+      "contract_id": "io.k8s.api.networking.v1.HTTPIngressPath",
+      "old_version": "v1.21.0",
+      "new_version": "v1.22.0",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "external_use": "accuracy-bearing",
+      "base_schema": {
+        "description": "HTTPIngressPath associates a path with a backend. Incoming urls matching the path are forwarded to the backend.",
+        "properties": {
+          "backend": {
+            "$ref": "#/definitions/io.k8s.api.networking.v1.IngressBackend",
+            "description": "Backend defines the referenced service endpoint to which the traffic will be forwarded to."
+          },
+          "path": {
+            "description": "Path is matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional \"path\" part of a URL as defined by RFC 3986. Paths must begin with a '/'. When unspecified, all paths from incoming requests are matched.",
+            "type": "string"
+          },
+          "pathType": {
+            "description": "PathType determines the interpretation of the Path matching. PathType can be one of the following values: * Exact: Matches the URL path exactly. * Prefix: Matches based on a URL path prefix split by '/'. Matching is\n  done on a path element by element basis. A path element refers is the\n  list of labels in the path split by the '/' separator. A request is a\n  match for path p if every p is an element-wise prefix of p of the\n  request path. Note that if the last element of the path is a substring\n  of the last element in request path, it is not a match (e.g. /foo/bar\n  matches /foo/bar/baz, but does not match /foo/barbaz).\n* ImplementationSpecific: Interpretation of the Path matching is up to\n  the IngressClass. Implementations can treat this as a separate PathType\n  or treat it identically to Prefix or Exact path types.\nImplementations are required to support all path types.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "backend"
+        ],
+        "type": "object"
+      },
+      "candidate_schema": {
+        "description": "HTTPIngressPath associates a path with a backend. Incoming urls matching the path are forwarded to the backend.",
+        "properties": {
+          "backend": {
+            "$ref": "#/definitions/io.k8s.api.networking.v1.IngressBackend",
+            "description": "Backend defines the referenced service endpoint to which the traffic will be forwarded to."
+          },
+          "path": {
+            "description": "Path is matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional \"path\" part of a URL as defined by RFC 3986. Paths must begin with a '/' and must be present when using PathType with value \"Exact\" or \"Prefix\".",
+            "type": "string"
+          },
+          "pathType": {
+            "description": "PathType determines the interpretation of the Path matching. PathType can be one of the following values: * Exact: Matches the URL path exactly. * Prefix: Matches based on a URL path prefix split by '/'. Matching is\n  done on a path element by element basis. A path element refers is the\n  list of labels in the path split by the '/' separator. A request is a\n  match for path p if every p is an element-wise prefix of p of the\n  request path. Note that if the last element of the path is a substring\n  of the last element in request path, it is not a match (e.g. /foo/bar\n  matches /foo/bar/baz, but does not match /foo/barbaz).\n* ImplementationSpecific: Interpretation of the Path matching is up to\n  the IngressClass. Implementations can treat this as a separate PathType\n  or treat it identically to Prefix or Exact path types.\nImplementations are required to support all path types.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pathType",
+          "backend"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "record_id": "kubernetes.prescreen.v1.28.0-to-v1.29.0.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "source": "kubernetes/kubernetes",
+      "source_kind": "public-version-history",
+      "source_url": "https://github.com/kubernetes/kubernetes",
+      "base_revision": "v1.28.0",
+      "candidate_revision": "v1.29.0",
+      "base_commit": "855e7c48de7388eb330da0f8d9d2394ee818fb8d",
+      "candidate_commit": "3f7a50f38688eb332e2a1b013678c6435d539ae6",
+      "base_blob_sha1": "6c7f34825af6638ca2d83dabaea438bcc011dfe9",
+      "candidate_blob_sha1": "46401f328bd1f437d583719fcbd8b10df78189f8",
+      "source_license": "Apache-2.0",
+      "source_path": "api/openapi-spec/swagger.json#/definitions/io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "family_id": "kubernetes.openapi.io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "contract_id": "io.k8s.api.batch.v1.PodFailurePolicyRule",
+      "old_version": "v1.28.0",
+      "new_version": "v1.29.0",
+      "policy_pack": "baseline",
+      "mutation_id": "CONSTRAINT_OR_RESTRICTION_CHANGED",
+      "external_use": "accuracy-bearing",
+      "base_schema": {
+        "description": "PodFailurePolicyRule describes how a pod failure is handled when the requirements are met. One of onExitCodes and onPodConditions, but not both, can be used in each rule.",
+        "properties": {
+          "action": {
+            "description": "Specifies the action taken on a pod failure when the requirements are satisfied. Possible values are:\n\n- FailJob: indicates that the pod's job is marked as Failed and all\n  running pods are terminated.\n- FailIndex: indicates that the pod's index is marked as Failed and will\n  not be restarted.\n  This value is alpha-level. It can be used when the\n  `JobBackoffLimitPerIndex` feature gate is enabled (disabled by default).\n- Ignore: indicates that the counter towards the .backoffLimit is not\n  incremented and a replacement pod is created.\n- Count: indicates that the pod is handled in the default way - the\n  counter towards the .backoffLimit is incremented.\nAdditional values are considered to be added in the future. Clients should react to an unknown action by skipping the rule.",
+            "type": "string"
+          },
+          "onExitCodes": {
+            "$ref": "#/definitions/io.k8s.api.batch.v1.PodFailurePolicyOnExitCodesRequirement",
+            "description": "Represents the requirement on the container exit codes."
+          },
+          "onPodConditions": {
+            "description": "Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.",
+            "items": {
+              "$ref": "#/definitions/io.k8s.api.batch.v1.PodFailurePolicyOnPodConditionsPattern"
+            },
+            "type": "array",
+            "x-kubernetes-list-type": "atomic"
+          }
+        },
+        "required": [
+          "action",
+          "onPodConditions"
+        ],
+        "type": "object"
+      },
+      "candidate_schema": {
+        "description": "PodFailurePolicyRule describes how a pod failure is handled when the requirements are met. One of onExitCodes and onPodConditions, but not both, can be used in each rule.",
+        "properties": {
+          "action": {
+            "description": "Specifies the action taken on a pod failure when the requirements are satisfied. Possible values are:\n\n- FailJob: indicates that the pod's job is marked as Failed and all\n  running pods are terminated.\n- FailIndex: indicates that the pod's index is marked as Failed and will\n  not be restarted.\n  This value is beta-level. It can be used when the\n  `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).\n- Ignore: indicates that the counter towards the .backoffLimit is not\n  incremented and a replacement pod is created.\n- Count: indicates that the pod is handled in the default way - the\n  counter towards the .backoffLimit is incremented.\nAdditional values are considered to be added in the future. Clients should react to an unknown action by skipping the rule.",
+            "type": "string"
+          },
+          "onExitCodes": {
+            "$ref": "#/definitions/io.k8s.api.batch.v1.PodFailurePolicyOnExitCodesRequirement",
+            "description": "Represents the requirement on the container exit codes."
+          },
+          "onPodConditions": {
+            "description": "Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.",
+            "items": {
+              "$ref": "#/definitions/io.k8s.api.batch.v1.PodFailurePolicyOnPodConditionsPattern"
+            },
+            "type": "array",
+            "x-kubernetes-list-type": "atomic"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

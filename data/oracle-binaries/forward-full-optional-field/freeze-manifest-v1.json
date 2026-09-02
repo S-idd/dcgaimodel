@@ -1,0 +1,57 @@
+{
+  "format_version": "forward-full-oracle-freeze-v1",
+  "status": "FROZEN",
+  "scope": "FORWARD/FULL optional-field and removal conformance track only",
+  "binary": {
+    "path": "data/oracle-binaries/forward-full-optional-field/contract-cli-fee3759a1f09bad4.jar",
+    "sha256": "fee3759a1f09bad477d2624a5c5342dd4f7c35d3d9089f7b9cbba5333949d923",
+    "source_repository": "https://github.com/S-idd/data-contract-governance",
+    "source_branch": "V4-P0",
+    "source_commit": "da93082e1ac6617ddf8355704e78b34c426b8523"
+  },
+  "pinned_policy_packs": {
+    "path": "data-contract-governance/contracts/policy-packs-v5-compositional.json",
+    "sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6"
+  },
+  "audit_only_fixture": {
+    "path": "data/experiments/forward-removal-mechanism-audit/field-removed-severity-audit-fixture-v1.json",
+    "sha256": "33122df6e7b584935918567d683e8a314afdd53db4499f29791f94fbe9d6fcf6",
+    "production_policy_claim": false,
+    "allowed_use": "FIELD_REMOVED RuleSeverity resolver mechanism audit only",
+    "forbidden_uses": [
+      "corpus generation",
+      "benchmark_ready promotion",
+      "three-seed evaluation",
+      "external evaluation"
+    ],
+    "code_enforcement": "PinnedOracle::new rejects this SHA-256 even if the file is renamed; only new_policy_mechanism_audit accepts the exact fixture name and hash. The three-way runner separately rejects this policy hash."
+  },
+  "verification": {
+    "removal_focused_conformance": {
+      "path": "data/experiments/forward-removal-mechanism-audit/removal-focused-conformance-v1.json",
+      "sha256": "29e64268f8e89aa33e4dbd52caf2380f6b2e506f1c673c8becc288e9bc5bc41b",
+      "passed": true
+    },
+    "optional_addition_regression_matrix": {
+      "path": "data/experiments/forward-full-optional-field-conformance/matched-direction-aware-required-addition-fixed-v4.json",
+      "sha256": "17ea885a18b3d19d8d01613263f19f24dbbf48a923c609373eca5af444751ee4",
+      "passed": true
+    },
+    "java_reactor": {
+      "command": "mvn verify",
+      "tests": 242,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 19,
+      "exit_code": 0
+    }
+  },
+  "superseded_track_jars": [
+    "cce6fc2fb10ebbbf9bbd940f73477ecf3d0540d52087f7480c0d0bd3f3e6ef94",
+    "bfc7603ab425609740be3b2207f298ed0d0c0f816a59841d5aa219ccd6478941"
+  ],
+  "backward_v9_jar_unchanged": "809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc",
+  "family_isolated_corpus_generated": false,
+  "benchmark_ready_promoted": false,
+  "three_seed_evaluation_run": false
+}

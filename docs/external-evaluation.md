@@ -2,6 +2,10 @@
 
 This protocol tests whether a frozen V9 three-way model transfers to independently sourced contract transitions. It is intentionally separate from V5–V9 corpus generation: it never retrains the model, refits its scaler, or adds records to the V9 dataset.
 
+The Stripe/Kubernetes/Vega track is closed. Its final claims, sourcing yield,
+non-deployment purpose, backlog boundary, and complete evidence ledger are in
+[`external-v9-v10-evaluation-closeout.md`](external-v9-v10-evaluation-closeout.md).
+
 ## Closed sourcing finding: simple root-property removal
 
 Further public sourcing is closed for the specific `FIELD_REMOVED` structural
@@ -64,6 +68,15 @@ preserved but never treated as labels. Therefore the label-variation gate is
 **NO-GO**: no family-isolated corpus, `benchmark_ready=true` corpus status,
 or three-seed evaluation was produced. The decision is intentionally separate
 from the BACKWARD V9 corpus and its artifacts.
+
+That NO-GO remains the historical result for the former reversal-only engine
+and its old pinned executable. It is not the status of the later V4-P0
+direction-aware track. After the engine gained an explicit profile-aware
+FORWARD optional-addition rule, the separately frozen `fee3759a...` JAR showed
+SAFE open-consumer and BREAKING closed-consumer outcomes. The resulting
+family-isolated corpus, runner-enforced readiness gate, and binary three-seed
+evaluation are documented in `docs/forward-full-optional-field-v4-p0.md` and
+must not be mixed with BACKWARD V9.
 
 ## TYPE_CHANGED external pre-screen: Vega (no accepted rows)
 
@@ -194,7 +207,7 @@ Before the JAR is allowed to label any external record, validate the manifest an
 target/release/dcgaimodel preflight-external \
   --manifest data/external/stripe-openapi-v3/stripe-openapi-external-manifest-v3.json \
   --v9-dataset data/generated/dcg-oracle-production-v9-structural-balanced.json \
-  --jar data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar \
+  --jar data/oracle-binaries/backward-v10/contract-cli-c00da951bac88d2b.jar \
   --policy-packs data-contract-governance/contracts/policy-packs-v5-compositional.json \
   --output data/external/stripe-openapi-v3/v9-preflight-report.json
 ```
@@ -203,6 +216,27 @@ target/release/dcgaimodel preflight-external \
 
 Build the release binary first, then select one persisted V9 `normal-family-split` model. The example below uses the first V9 seed. Repeating it once per frozen seed gives a seed-aware transfer report without changing any model.
 
+The original V9 executable (`809b25e6...677dc`) is unavailable. Model-scored
+external work therefore uses the separately identified BACKWARD V10 binary
+only through the runner-enforced dual-provenance gate. The gate requires this
+exact registered tuple before any oracle invocation or model inference:
+
+- V9 training dataset:
+  `fa09e645480737ba856940778264284d8e832f4532e989c92a259320cfe05ad3`;
+- V9 training oracle:
+  `809b25e627e43f847f00a0ce87dcde33ad359006bf22be403e26d662274677dc`;
+- BACKWARD V10 execution oracle:
+  `c00da951bac88d2be245e08917e6fc62f55abf3a50aad2dea67178a82285f6b6`;
+- pinned policy pack:
+  `8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6`;
+- equivalence audit:
+  `c090f38c178d5652b788501ec7a26919ec24bd215a32d344dbeb2d9392634793`.
+
+The audit file is not trusted merely because its JSON claims success: its
+bytes must match the registered audit hash, and its internal identities,
+68,820-record coverage, zero mismatch/rejection counts, negative-control
+result, and non-interchangeable identity declaration are all checked.
+
 ```bash
 cargo build --release
 
@@ -210,10 +244,11 @@ target/release/dcgaimodel evaluate-external \
   --manifest data/external/independent-transitions.json \
   --v9-dataset data/generated/dcg-oracle-production-v9-structural-balanced.json \
   --model data/experiments/v9-multiclass-cpu-100e/models/seed-20260826-normal-family-split.json \
-  --jar data-contract-governance/contract-cli/target/contract-cli-0.1.0-SNAPSHOT-all.jar \
+  --jar data/oracle-binaries/backward-v10/contract-cli-c00da951bac88d2b.jar \
   --policy-packs data-contract-governance/contracts/policy-packs-v5-compositional.json \
-  --workspace data/oracle-staging/external-v9 \
-  --output data/experiments/external-v9/seed-20260826-report.json
+  --oracle-equivalence-audit data/oracle-binaries/backward-v10/behavioral-equivalence-audit-v1.json \
+  --workspace data/oracle-staging/external-backward-v10 \
+  --output data/experiments/external-backward-v10/seed-20260826-report.json
 ```
 
 The command rejects overwriting an existing report. Use a separate empty workspace per invocation when running multiple seeds.
@@ -223,10 +258,24 @@ The command rejects overwriting an existing report. Use a separate empty workspa
 Before scoring, the evaluator:
 
 - confirms the selected model is a V6 three-way `normal-family-split` artifact;
-- verifies the V9 dataset SHA-256 plus the pinned JAR and policy-pack SHA-256 against the model and corpus provenance;
+- verifies the model's V9 dataset/training-oracle identities, the V10 execution
+  identity, the shared policy identity, and the registered equivalence-audit
+  bytes and contents before reaching any scored transition;
 - labels every submitted transition with the pinned JAR in `BACKWARD` mode;
 - rejects invalid-oracle records (exit code `2`), V9 source/family overlap, duplicate external pairs, exact V9 pair overlap, exact model-input overlap, and near V9 structural-feature overlap (Hamming distance at most one by default);
 - limits policy packs to the audited V9 pack set. A new policy pack needs a separately conformed benchmark rather than being silently mixed into this evaluation.
+
+Every V4 report persists a `dual_provenance` object containing the training
+dataset, training oracle, execution oracle, policy pack, and audit hashes. The
+runner calls `require_scored_dual_provenance` before returning the report; the
+same public guard is the required entry point for any future promotion path.
+There is currently no separate external-results promotion command.
+
+This unblocks model-scored Stripe, Kubernetes, and Vega follow-ups under the
+single registered V9-training/BACKWARD-V10-execution tuple, subject to their
+ordinary manifest, contamination, schema-validity, and class-support gates.
+Every other training/execution oracle pairing remains blocked until it has its
+own exhaustive audit and explicit approved-pairing registry entry.
 
 Records rejected by an overlap gate retain their JAR evidence in the report but are excluded from metrics. Oracle-rejected records are also excluded; they are not feature-extracted or inferred. A malformed manifest or an unextractable V6 feature for an oracle-accepted transition fails the run rather than producing a partially trusted report.
 
