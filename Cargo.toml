@@ -12,10 +12,16 @@ keywords = ["data-contracts", "governance", "machine-learning", "schema", "rust"
 categories = ["algorithms", "science"]
 
 [dependencies]
+axum = "0.8"
+jsonschema = { version = "0.53", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 parquet = "57"
 sha2 = "0.10"
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
 
 [package.metadata.docs.rs]
 all-features = true

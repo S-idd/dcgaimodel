@@ -1,3 +1,4 @@
+use dcgaimodel::api::{ShadowInferenceService, serve_frozen_v9};
 use dcgaimodel::dataset::DatasetSplitConfig;
 use dcgaimodel::evaluation::{ClassificationMetrics, evaluate_binary_classification};
 use dcgaimodel::generation::{
@@ -63,12 +64,49 @@ fn main() {
             promote_forward_optional_benchmark_ready(arguments.collect())
         }
         Some("diagnose-external-features") => diagnose_external_features(arguments.collect()),
-        _ => Err("Usage: dcgaimodel <generate|generate-forward-optional-isolated|promote-forward-optional-benchmark-ready|refeature-v6|audit|oracle-conformance|audit-forward-removals|audit-backward-v10-equivalence|reclassify-conformance|merge-conformance|promote-invariants|train|train-three-way|evaluate-three-way-mutation|evaluate-protocols|run-three-way-experiments|run-binary-three-seed-experiment|run-feature-ablation|audit-challenge-near-duplicates|evaluate-external|preflight-external|diagnose-external-features> [options]".to_owned()),
+        Some("serve-shadow-inference") => serve_shadow_inference(arguments.collect()),
+        _ => Err("Usage: dcgaimodel <generate|generate-forward-optional-isolated|promote-forward-optional-benchmark-ready|refeature-v6|audit|oracle-conformance|audit-forward-removals|audit-backward-v10-equivalence|reclassify-conformance|merge-conformance|promote-invariants|train|train-three-way|evaluate-three-way-mutation|evaluate-protocols|run-three-way-experiments|run-binary-three-seed-experiment|run-feature-ablation|audit-challenge-near-duplicates|evaluate-external|preflight-external|diagnose-external-features|serve-shadow-inference> [options]".to_owned()),
     };
     if let Err(error) = result {
         eprintln!("dcgaimodel failed: {error}");
         std::process::exit(2);
     }
+}
+
+fn serve_shadow_inference(arguments: Vec<String>) -> Result<(), String> {
+    let mut artifact_root = None;
+    let mut bind = "127.0.0.1:8080".to_owned();
+    let mut index = 0;
+    while index < arguments.len() {
+        let flag = &arguments[index];
+        let value = arguments
+            .get(index + 1)
+            .ok_or_else(|| format!("Missing value for {flag}"))?;
+        match flag.as_str() {
+            "--artifact-root" => artifact_root = Some(PathBuf::from(value)),
+            "--bind" => bind = value.clone(),
+            _ => return Err(format!("Unknown serve-shadow-inference option: {flag}")),
+        }
+        index += 2;
+    }
+    let artifact_root = artifact_root.ok_or("Missing --artifact-root")?;
+    let address = bind
+        .parse::<std::net::SocketAddr>()
+        .map_err(|error| format!("Invalid --bind address `{bind}`: {error}"))?;
+    let service = ShadowInferenceService::load_frozen_v9(&artifact_root)?;
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .map_err(|error| format!("could not create inference runtime: {error}"))?;
+    runtime.block_on(async move {
+        let listener = tokio::net::TcpListener::bind(address)
+            .await
+            .map_err(|error| format!("could not bind shadow inference service: {error}"))?;
+        println!("shadow inference listening on http://{address}/v1/shadow/predict");
+        serve_frozen_v9(listener, service)
+            .await
+            .map_err(|error| format!("shadow inference service failed: {error}"))
+    })
 }
 
 fn audit_backward_v10_equivalence(arguments: Vec<String>) -> Result<(), String> {

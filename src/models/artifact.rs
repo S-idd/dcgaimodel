@@ -377,7 +377,12 @@ impl ThreeWayModelArtifact {
         let contents = fs::read(path).map_err(|error| ModelArtifactError::Io {
             message: error.to_string(),
         })?;
-        let file = serde_json::from_slice::<ThreeWayArtifactFile>(&contents).map_err(|error| {
+        Self::from_slice(&contents)
+    }
+
+    /// Validates a three-way artifact from already authenticated JSON bytes.
+    pub fn from_slice(contents: &[u8]) -> Result<Self, ModelArtifactError> {
+        let file = serde_json::from_slice::<ThreeWayArtifactFile>(contents).map_err(|error| {
             ModelArtifactError::Serialization {
                 message: error.to_string(),
             }
