@@ -92,6 +92,27 @@ The client error codes are:
 Unexpected scaler/model failures return HTTP 500 with `INFERENCE_FAILED`; they
 are responses, not panics.
 
+## Readiness
+
+`GET /health/ready` returns HTTP 200 only after the pinned policy and all three
+frozen model artifacts have loaded and a valid inference probe succeeds. The
+response reports the feature version, policy SHA-256, and model seeds without
+exposing model files or contract contents:
+
+```json
+{
+  "status": "UP",
+  "service": "dcgaimodel-shadow-inference",
+  "feature_version": "dcg-features-v6",
+  "policy_sha256": "8f82b058f81ace43c89180803c7ec26ac734b84d0092036a77115688337e1bb6",
+  "model_seeds": ["20260826", "20260827", "20260828"]
+}
+```
+
+The Compose healthcheck uses this endpoint. A readiness failure prevents the
+Compose Java container from starting, while failures after readiness remain
+handled by Java's fail-open, logging-only shadow observer.
+
 ## Frozen inputs and execution path
 
 At startup the service reads, hashes, and loads these tracked files into

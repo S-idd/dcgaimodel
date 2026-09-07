@@ -120,6 +120,18 @@ impl ApiError {
             },
         }
     }
+
+    fn unavailable(message: impl Into<String>) -> Self {
+        Self {
+            status: StatusCode::SERVICE_UNAVAILABLE,
+            body: ErrorResponse {
+                error: ErrorBody {
+                    code: "NOT_READY".to_owned(),
+                    message: message.into(),
+                },
+            },
+        }
+    }
 }
 
 impl IntoResponse for ApiError {
@@ -140,6 +152,15 @@ pub struct ShadowInferenceService {
     policy_contexts: ApprovedPolicyContexts,
     declared_policy_packs: BTreeSet<String>,
     models: Vec<FrozenSeedModel>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ReadinessResponse {
+    pub status: String,
+    pub service: String,
+    pub feature_version: String,
+    pub policy_sha256: String,
+    pub model_seeds: Vec<String>,
 }
 
 impl ShadowInferenceService {
@@ -247,11 +268,42 @@ impl ShadowInferenceService {
         }
         Ok(ShadowInferenceResponse { predictions })
     }
+
+    fn readiness(&self) -> Result<ReadinessResponse, ApiError> {
+        let policy_pack = self
+            .declared_policy_packs
+            .first()
+            .ok_or_else(|| ApiError::unavailable("no frozen policy packs are loaded"))?;
+        self.predict(&InferenceRequest {
+            base_schema: serde_json::json!({"type": "object"}),
+            candidate_schema: serde_json::json!({"type": "object"}),
+            policy_pack: policy_pack.clone(),
+        })
+        .map_err(|error| {
+            ApiError::unavailable(format!(
+                "readiness inference failed: {}",
+                error.body.error.message
+            ))
+        })?;
+
+        Ok(ReadinessResponse {
+            status: "UP".to_owned(),
+            service: "dcgaimodel-shadow-inference".to_owned(),
+            feature_version: DCG_FEATURE_V6_VERSION.to_owned(),
+            policy_sha256: FROZEN_V9_POLICY_PACK_SHA256.to_owned(),
+            model_seeds: self
+                .models
+                .iter()
+                .map(|model| model.seed.to_owned())
+                .collect(),
+        })
+    }
 }
 
 /// Constructs the HTTP router without binding a socket, enabling in-process tests.
 pub fn frozen_v9_router(service: ShadowInferenceService) -> Router {
     Router::new()
+        .route("/health/ready", axum::routing::get(readiness_handler))
         .route("/v1/shadow/predict", post(predict_handler))
         .with_state(Arc::new(service))
 }
@@ -275,6 +327,12 @@ async fn predict_handler(
         )
     })?;
     service.predict(&request).map(Json)
+}
+
+async fn readiness_handler(
+    State(service): State<Arc<ShadowInferenceService>>,
+) -> Result<Json<ReadinessResponse>, ApiError> {
+    service.readiness().map(Json)
 }
 
 fn verify_artifact_identity(
@@ -441,6 +499,19 @@ mod tests {
             .unwrap()
     }
 
+    async fn get_readiness() -> Response {
+        app()
+            .oneshot(
+                Request::builder()
+                    .method("GET")
+                    .uri("/health/ready")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap()
+    }
+
     async fn response_json<T: serde::de::DeserializeOwned>(response: Response) -> T {
         serde_json::from_slice(&to_bytes(response.into_body(), usize::MAX).await.unwrap()).unwrap()
     }
@@ -474,6 +545,18 @@ mod tests {
                     .abs()
                     < 1e-12
         }));
+    }
+
+    #[tokio::test]
+    async fn readiness_reports_frozen_identity_after_valid_inference() {
+        let response = get_readiness().await;
+        assert_eq!(response.status(), StatusCode::OK);
+        let body: ReadinessResponse = response_json(response).await;
+        assert_eq!(body.status, "UP");
+        assert_eq!(body.service, "dcgaimodel-shadow-inference");
+        assert_eq!(body.feature_version, "dcg-features-v6");
+        assert_eq!(body.policy_sha256, FROZEN_V9_POLICY_PACK_SHA256);
+        assert_eq!(body.model_seeds, ["20260826", "20260827", "20260828"]);
     }
 
     #[tokio::test]

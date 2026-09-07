@@ -1,0 +1,14 @@
+.git
+target
+data/external
+data/experiments/v9-multiclass-cpu-100e/models/*
+!data/experiments/v9-multiclass-cpu-100e/models/seed-20260826-normal-family-split.json
+!data/experiments/v9-multiclass-cpu-100e/models/seed-20260827-normal-family-split.json
+!data/experiments/v9-multiclass-cpu-100e/models/seed-20260828-normal-family-split.json
+data/inference/frozen-v9/*
+!data/inference/frozen-v9/policy-packs-v5-compositional.json
+*.parquet
+*.db
+*.sqlite
+*.log
+.DS_Store
